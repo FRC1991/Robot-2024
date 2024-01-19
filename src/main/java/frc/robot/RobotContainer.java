@@ -13,6 +13,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEvent;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
@@ -23,7 +27,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -32,6 +39,41 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  //region - network tables
+  public static AtomicReference<Double> tv = new AtomicReference<Double>();
+  public static AtomicReference<Double> tx = new AtomicReference<Double>();
+  public static AtomicReference<Double> ty = new AtomicReference<Double>();
+  public static AtomicReference<Double> tid = new AtomicReference<Double>();
+
+  private DoubleTopic dlbTopic_tv;
+  private DoubleTopic dlbTopic_tx;
+  private DoubleTopic dlbTopic_ty;
+  private DoubleTopic dlbTopic_tid;
+
+
+  public double tvHandle; //Whether the limelight has any valid targets (0 or 1)
+  public double txHandle; //Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
+  public double tyHandle; //Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
+  public double tidHandle; //ID of the primary in-view AprilTag
+
+  public static AtomicReference<Double> intaketv = new AtomicReference<Double>();
+  public static AtomicReference<Double> intaketx = new AtomicReference<Double>();
+  public static AtomicReference<Double> intakety = new AtomicReference<Double>();
+  public static AtomicReference<Double> intaketid = new AtomicReference<Double>();
+
+  private DoubleTopic intakeDlbTopic_tv;
+  private DoubleTopic intakeDlbTopic_tx;
+  private DoubleTopic intakeDlbTopic_ty;
+  private DoubleTopic intakeDlbTopic_tid;
+
+
+  public double intakeTvHandle; //Whether the limelight has any valid targets (0 or 1)
+  public double intakeTxHandle; //Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
+  public double intakeTyHandle; //Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
+  public double intakeTidHandle; //ID of the primary in-view AprilTag
+  //endregion
+  
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
@@ -44,6 +86,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    configureNetworkTables();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -120,5 +163,99 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+  }
+
+  /**
+   * Configures the network tables for the robot. 
+   * Also adds listeners to automatically update the network table values.
+   * 
+   * Use the AtomicReference<Double> values when trying to reference
+   * a value from a network table
+   */
+  public void configureNetworkTables() {
+    NetworkTableInstance defaultNTinst = NetworkTableInstance.getDefault();
+    NetworkTable aimingLime = defaultNTinst.getTable("limelight-aimming");
+
+    NetworkTable intakeLime = defaultNTinst.getTable("limelight-intake");
+
+    dlbTopic_tv = aimingLime.getDoubleTopic("tv");
+
+     tvHandle = defaultNTinst.addListener(
+      dlbTopic_tv,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        tv.set(event.valueData.value.getDouble());
+      }
+     );
+
+    dlbTopic_tx = aimingLime.getDoubleTopic("tx");
+
+     txHandle = defaultNTinst.addListener(
+      dlbTopic_tx,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        tx.set(event.valueData.value.getDouble());
+      }
+     );
+
+    dlbTopic_ty = aimingLime.getDoubleTopic("ty");
+
+     tyHandle = defaultNTinst.addListener(
+      dlbTopic_ty,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        ty.set(event.valueData.value.getDouble());
+      }
+    );
+
+     dlbTopic_tid = aimingLime.getDoubleTopic("tid");
+
+     tidHandle = defaultNTinst.addListener(
+      dlbTopic_tid,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        tid.set(event.valueData.value.getDouble());
+      }
+     );
+
+    intakeDlbTopic_tv = intakeLime.getDoubleTopic("tv");
+
+     intakeTvHandle = defaultNTinst.addListener(
+      intakeDlbTopic_tv,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        intaketv.set(event.valueData.value.getDouble());
+      }
+     );
+
+    intakeDlbTopic_tx = intakeLime.getDoubleTopic("tx");
+
+     intakeTxHandle = defaultNTinst.addListener(
+      intakeDlbTopic_tx,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        intaketx.set(event.valueData.value.getDouble());
+      }
+    );
+
+    intakeDlbTopic_ty = intakeLime.getDoubleTopic("ty");
+
+     intakeTyHandle = defaultNTinst.addListener(
+      intakeDlbTopic_ty,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        intakety.set(event.valueData.value.getDouble());
+      }
+     );
+
+    intakeDlbTopic_tid = intakeLime.getDoubleTopic("tid");
+
+     intakeTidHandle = defaultNTinst.addListener(
+      intakeDlbTopic_tid,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        intaketid.set(event.valueData.value.getDouble());
+      }
+     );
   }
 }
