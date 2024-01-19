@@ -1,22 +1,14 @@
-# MAXSwerve Java Template v2023.1
+# FRC Team 1991 The Dragons - 2024 Robot Code base
 
-See [the online changelog](https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/CHANGELOG.md) for information about updates to the template that may have been released since you created your project.
+You can find a complete guide to both the software and hardware on the robot in this repository. [Contanct information](#Link-tree) will be left below, so feel free to reach out! Due to lack of resources, 1991 will only be competing in two events this year. We will be hosting with team 181, Birds of Prey, in [Hartford](https://www.thebluealliance.com/event/2024cthar) and attending [Waterbury](https://www.thebluealliance.com/event/2024ctwat).
 
-## Description
+## Season timeline
+Starting at kickoff our team has been diligent in documenting our season in an engineering notebook. Everyday we take attendance of students and mentors, take notes on what happened that day, and action items to finish. The engineering notebook acts almost like a git history, with each day being another commit. It's available for view in google docs [here](https://docs.google.com/document/d/1IYIvurchCGXITy4c3Y5kDGU6yW_Gognxy2Y8CyMoIX4/edit).
 
-A template project for an FRC swerve drivetrain that uses REV MAXSwerve Modules.
-
-Note that this is meant to be used with a drivetrain composed of four MAXSwerve Modules, each configured with two SPARKS MAX, a NEO as the driving motor, a NEO 550 as the turning motor, and a REV Through Bore Encoder as the absolute turning encoder.
-
-To get started, make sure you have calibrated the zero offsets for the absolute encoders in the Hardware Client using the `Absolute Encoder` tab under the associated turning SPARK MAX devices.
-
-## Prerequisites
-
-* SPARK MAX Firmware v1.6.2 - Adds features that are required for swerve
-* REVLib v2023.1.2 - Includes APIs for the new firmware features
-
-## Configuration
-
-It is possible that this project will not work for your robot right out of the box. Various things like the CAN IDs, PIDF gains, chassis configuration, etc. must be determined for your own robot!
-
-These values can be adjusted in the `Constants.java` file.
+## Link tree
+ - [frc1991dragons@gmail.com](mailto:frc1991dragons@gmail.com)
+ - [Instagram](https://www.instagram.com/frcteam1991)
+ - [Blue Alliance](https://www.thebluealliance.com/team/1991)
+ - [Github](https://github.com/frc1991)
+ - [Twitter](https://twitter.com/frcteam1991)
+ - [Threads](about:blank)
