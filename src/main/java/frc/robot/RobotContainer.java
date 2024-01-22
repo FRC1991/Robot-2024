@@ -18,7 +18,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -75,7 +75,7 @@ public class RobotContainer {
   //endregion
   
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -97,7 +97,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                false, true),
+                true, true),
             m_robotDrive));
   }
 
@@ -113,9 +113,15 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Stops movement while Button.kR1.value is held down
-    new JoystickButton(m_driverController, Button.kR1.value)
+    new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
+            () -> m_robotDrive.setTank(),
+            m_robotDrive));
+    
+    //Forms a tank drivetrain while Button.kL1.value is held down
+    new JoystickButton(m_driverController, Button.kLeftBumper.value)
+        .whileTrue(new RunCommand(
+            () -> m_robotDrive.setTank(),
             m_robotDrive));
   }
 
