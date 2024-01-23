@@ -34,9 +34,9 @@ public class TurnToTarget extends Command {
   @Override
   public void execute() {
     if(xDiff.get() > 0.05) {
-      m_DriveSubsystem.drive(0, 0, 1, false, true);
+      m_DriveSubsystem.drive(0, 0, 1, false, true, 0.2);
     } else if(xDiff.get() < -0.05) {
-      m_DriveSubsystem.drive(0, 0, -1, false, true);
+      m_DriveSubsystem.drive(0, 0, -1, false, true, 0.2);
     }
   }
 

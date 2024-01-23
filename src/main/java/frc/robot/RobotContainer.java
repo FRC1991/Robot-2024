@@ -17,6 +17,7 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
@@ -79,6 +80,7 @@ public class RobotContainer {
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -97,8 +99,16 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true, true),
+                true, false, DriveConstants.speedScale),
             m_robotDrive));
+
+        // new RunCommand(
+        //     () -> m_robotDrive.drive(
+        //         -MathUtil.applyDeadband(driverJoytick.getRawAxis(1), 0.1),
+        //         -MathUtil.applyDeadband(driverJoytick.getRawAxis(0), 0.1),
+        //         -MathUtil.applyDeadband(driverJoytick.getRawAxis(2), 0.1),
+        //         true, true, DriveConstants.speedScale),
+        //     m_robotDrive));
   }
 
   /**
@@ -115,13 +125,18 @@ public class RobotContainer {
     //Stops movement while Button.kR1.value is held down
     new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(
-            () -> m_robotDrive.setTank(),
+            () -> m_robotDrive.setX(),
             m_robotDrive));
     
     //Forms a tank drivetrain while Button.kL1.value is held down
     new JoystickButton(m_driverController, Button.kLeftBumper.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setTank(),
+            m_robotDrive));
+
+    new JoystickButton(m_driverController, Button.kB.value)
+        .whileTrue(new RunCommand(
+            () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
   }
 
@@ -168,7 +183,7 @@ public class RobotContainer {
     m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false, 0));
   }
 
   /**

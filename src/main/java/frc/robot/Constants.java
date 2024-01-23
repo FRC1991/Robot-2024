@@ -64,6 +64,8 @@ public final class Constants {
 
     public static final boolean kGyroReversed = false;
     public static final int kGyroId = 10;
+
+    public static final double speedScale = 0.3;
   }
 
   public static final class ModuleConstants {
