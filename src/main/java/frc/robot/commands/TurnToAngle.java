@@ -9,18 +9,18 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class TurnToTarget extends Command {
+public class TurnToAngle extends Command {
 
-  private Supplier<Double> xDiff;
+  private Supplier<Double> angle;
   private DriveSubsystem m_DriveSubsystem;
   /** 
    * Creates a command that minimizes the xDiff and doesn't end
    * 
-   * @param xDiff The angle between the target and the current heading of the robot
+   * @param angle The desired angle to arrive at
    * @param driveSubsystem The drive subsystem of the robot
   */
-  public TurnToTarget(Supplier<Double> xDiff, DriveSubsystem driveSubsystem) {
-    this.xDiff = xDiff;
+  public TurnToAngle(Supplier<Double> angle, DriveSubsystem driveSubsystem) {
+    this.angle = angle;
     this.m_DriveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);
@@ -33,9 +33,9 @@ public class TurnToTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(xDiff.get() > 0.05) {
+    if(angle.get() > 180) {
       m_DriveSubsystem.drive(0, 0, 1, false, true, 0.2);
-    } else if(xDiff.get() < -0.05) {
+    } else if(angle.get() <= 180) {
       m_DriveSubsystem.drive(0, 0, -1, false, true, 0.2);
     }
   }
@@ -47,7 +47,7 @@ public class TurnToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(xDiff.get()) < 0.05) {
+    if(Math.abs(angle.get()) < 0.05) {
       return true;
     } else {
       return false;
