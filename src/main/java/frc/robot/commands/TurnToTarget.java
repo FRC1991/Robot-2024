@@ -33,9 +33,9 @@ public class TurnToTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(xDiff.get() > 0.05) {
+    if(xDiff.get() > 2) {
       m_DriveSubsystem.drive(0, 0, 0.2, false, true);
-    } else if(xDiff.get() < -0.05) {
+    } else if(xDiff.get() < -2) {
       m_DriveSubsystem.drive(0, 0, -0.2, false, true);
     }
   }
@@ -47,7 +47,7 @@ public class TurnToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(xDiff.get()) <= 0.5) {
+    if(Math.abs(xDiff.get()) <= 10) {
       return true;
     } else {
       return false;
