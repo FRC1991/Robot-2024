@@ -47,6 +47,10 @@ public class TurnToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if(Math.abs(xDiff.get()) <= 0.5) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
