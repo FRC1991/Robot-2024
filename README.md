@@ -5,6 +5,9 @@ You can find a complete guide to both the software and hardware on the robot in 
 ## Season timeline
 Starting at kickoff our team has been diligent in documenting our season in an engineering notebook. Everyday we take attendance of students and mentors, take notes on what happened that day, and action items to finish. The engineering notebook acts almost like a git history, with each day being another commit. It's available for view in google docs [here](https://docs.google.com/document/d/1IYIvurchCGXITy4c3Y5kDGU6yW_Gognxy2Y8CyMoIX4/edit).
 
+## Swerve
+This repository is based on the [MAXSwerve library](https://github.com/REVrobotics/MAXSwerve-Java-Template) made by REV Robotics.
+
 ## Link tree
  - [frc1991dragons@gmail.com](mailto:frc1991dragons@gmail.com)
  - [Instagram](https://www.instagram.com/frcteam1991)
