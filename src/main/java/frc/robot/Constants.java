@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -35,16 +35,16 @@ public final class Constants {
     public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(27);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(33);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
-
+ 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
     public static final double kFrontRightChassisAngularOffset = 0;
@@ -52,18 +52,20 @@ public final class Constants {
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
     // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 8;
-    public static final int kRearLeftDrivingCanId = 7;
-    public static final int kFrontRightDrivingCanId = 2;
-    public static final int kRearRightDrivingCanId = 4;
+    public static final int kFrontLeftDrivingCanId = 2;
+    public static final int kRearLeftDrivingCanId = 4;
+    public static final int kFrontRightDrivingCanId = 6;
+    public static final int kRearRightDrivingCanId = 8;
 
-    public static final int kFrontLeftTurningCanId = 9;
-    public static final int kRearLeftTurningCanId = 6;
-    public static final int kFrontRightTurningCanId = 3;
-    public static final int kRearRightTurningCanId = 5;
+    public static final int kFrontLeftTurningCanId = 3;
+    public static final int kRearLeftTurningCanId = 5;
+    public static final int kFrontRightTurningCanId = 7;
+    public static final int kRearRightTurningCanId = 9;
 
     public static final boolean kGyroReversed = false;
-    public static final int kGyroId = 1;
+    public static final int kGyroId = 10;
+
+    public static final double speedScale = 0.3;
   }
 
   public static final class ModuleConstants {
@@ -78,7 +80,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = Units.inchesToMeters(9.4);
+    public static final double kWheelDiameterMeters = Units.inchesToMeters(3);
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 14 teeth on the bevel pinion
     public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 14);
@@ -111,7 +113,7 @@ public final class Constants {
     public static final double kTurningMaxOutput = 1;
 
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
-    public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
+    public static final IdleMode kTurningMotorIdleMode = IdleMode.kCoast;
 
     public static final int kDrivingMotorCurrentLimit = 50; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps

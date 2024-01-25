@@ -4,13 +4,12 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleBinaryOperator;
 import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class TurnToTarget extends CommandBase {
+public class TurnToTarget extends Command {
 
   private Supplier<Double> xDiff;
   private DriveSubsystem m_DriveSubsystem;
@@ -35,9 +34,9 @@ public class TurnToTarget extends CommandBase {
   @Override
   public void execute() {
     if(xDiff.get() > 0.05) {
-      m_DriveSubsystem.drive(0, 0, 1, false, true);
+      m_DriveSubsystem.drive(0, 0, 1, false, true, 0.2);
     } else if(xDiff.get() < -0.05) {
-      m_DriveSubsystem.drive(0, 0, -1, false, true);
+      m_DriveSubsystem.drive(0, 0, -1, false, true, 0.2);
     }
   }
 
