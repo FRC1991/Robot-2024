@@ -4,14 +4,12 @@
 
 package frc.robot.commands;
 
-import frc.utils.SwerveUtils;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class TurnToAngle extends Command {
 
-  private double angle;
+  private double angle, currentHeading;
   private DriveSubsystem m_DriveSubsystem;
   /** 
    * Creates a command that minimizes the angle and doesn't end
@@ -32,10 +30,12 @@ public class TurnToAngle extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {    
-    if(m_DriveSubsystem.getHeading() < angle) {
+  public void execute() {
+    currentHeading = m_DriveSubsystem.getHeading() - angle;
+    
+    if(currentHeading < 180) {
       m_DriveSubsystem.drive(0, 0, -0.2, false, true);
-    } else if(m_DriveSubsystem.getHeading() > angle) {
+    } else if(currentHeading > 180) {
       m_DriveSubsystem.drive(0, 0, 0.2, false, true);
     }
   }
