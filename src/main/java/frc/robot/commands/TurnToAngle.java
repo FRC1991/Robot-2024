@@ -4,23 +4,23 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
+import frc.utils.SwerveUtils;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class TurnToTarget extends Command {
+public class TurnToAngle extends Command {
 
-  private Supplier<Double> xDiff;
+  private double angle;
   private DriveSubsystem m_DriveSubsystem;
   /** 
-   * Creates a command that minimizes the xDiff and doesn't end
+   * Creates a command that minimizes the angle and doesn't end
    * 
-   * @param xDiff The angle between the target and the current heading of the robot
+   * @param angle The angle between the target and the current heading of the robot
    * @param driveSubsystem The drive subsystem of the robot
   */
-  public TurnToTarget(Supplier<Double> xDiff, DriveSubsystem driveSubsystem) {
-    this.xDiff = xDiff;
+  public TurnToAngle(double angle, DriveSubsystem driveSubsystem) {
+    this.angle = angle;
     this.m_DriveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);
@@ -32,11 +32,11 @@ public class TurnToTarget extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if(xDiff.get() > 2) {
-      m_DriveSubsystem.drive(0, 0, 0.2, false, true);
-    } else if(xDiff.get() < -2) {
+  public void execute() {    
+    if(m_DriveSubsystem.getHeading() < angle) {
       m_DriveSubsystem.drive(0, 0, -0.2, false, true);
+    } else if(m_DriveSubsystem.getHeading() > angle) {
+      m_DriveSubsystem.drive(0, 0, 0.2, false, true);
     }
   }
 
@@ -47,7 +47,7 @@ public class TurnToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(xDiff.get()) <= 10) {
+    if(Math.abs(angle - m_DriveSubsystem.getHeading()) <= 10) {
       return true;
     } else {
       return false;

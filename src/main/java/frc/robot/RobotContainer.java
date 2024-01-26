@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -141,7 +142,10 @@ public class RobotContainer {
             m_robotDrive));
 
     new JoystickButton(m_driverController, Button.kX.value)
-        .whileTrue(new TurnToTarget(() -> m_robotDrive.getHeading(), m_robotDrive));
+        .onTrue(new TurnToTarget(() -> m_robotDrive.getHeading(), m_robotDrive));
+
+    new JoystickButton(m_driverController, Button.kY.value)
+        .onTrue(new TurnToAngle(90, m_robotDrive));
   }
 
   /**
