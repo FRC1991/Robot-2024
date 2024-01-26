@@ -2,25 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
-
-import java.util.function.Supplier;
+package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class TurnToTarget extends Command {
+public class TurnToAngle extends Command {
 
-  private Supplier<Double> xDiff;
+  private double angle, currentHeading;
   private DriveSubsystem m_DriveSubsystem;
   /** 
-   * Creates a command that minimizes the xDiff and doesn't end
+   * Creates a command that minimizes the angle and doesn't end
    * 
-   * @param xDiff The angle between the target and the current heading of the robot
+   * @param angle The angle between the target and the current heading of the robot
    * @param driveSubsystem The drive subsystem of the robot
   */
-  public TurnToTarget(Supplier<Double> xDiff, DriveSubsystem driveSubsystem) {
-    this.xDiff = xDiff;
+  public TurnToAngle(double angle, DriveSubsystem driveSubsystem) {
+    this.angle = angle;
     this.m_DriveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);
@@ -33,10 +31,12 @@ public class TurnToTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(xDiff.get() > 10) {
-      m_DriveSubsystem.drive(0, 0, 0.2, false, true);
-    } else if(xDiff.get() < -10) {
+    currentHeading = m_DriveSubsystem.getHeading() - angle;
+    
+    if(currentHeading < 180) {
       m_DriveSubsystem.drive(0, 0, -0.2, false, true);
+    } else if(currentHeading > 180) {
+      m_DriveSubsystem.drive(0, 0, 0.2, false, true);
     }
   }
 
@@ -47,7 +47,7 @@ public class TurnToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(xDiff.get()) <= 10) {
+    if(Math.abs(angle - m_DriveSubsystem.getHeading()) <= 10) {
       return true;
     } else {
       return false;
