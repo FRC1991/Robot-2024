@@ -19,11 +19,11 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.TurnToTarget;
+import frc.robot.commands.drivetrain.TurnToAngle;
+import frc.robot.commands.drivetrain.TurnToTarget;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -80,8 +80,8 @@ public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  // XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  final Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
+  //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  public final Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -166,6 +166,17 @@ public class RobotContainer {
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(6, 0, new Rotation2d(180)),
         config);
+    
+    Trajectory exampleTrajectoryPt2 = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(3, 0, new Rotation2d(180)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(2, 1), new Translation2d(1, -1)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(0, 0, new Rotation2d(0)),
+        config);
+
+    exampleTrajectory.concatenate(exampleTrajectoryPt2);
 
     Trajectory exampleTrajectoryPt2 = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
@@ -210,49 +221,49 @@ public class RobotContainer {
    */
   public void configureNetworkTables() {
     NetworkTableInstance defaultNTinst = NetworkTableInstance.getDefault();
-    NetworkTable aimingLime = defaultNTinst.getTable("limelight-aimming");
+    //NetworkTable aimingLime = defaultNTinst.getTable("limelight-aimming");
 
     NetworkTable intakeLime = defaultNTinst.getTable("limelight-intake");
 
-    dlbTopic_tv = aimingLime.getDoubleTopic("tv");
+    // dlbTopic_tv = aimingLime.getDoubleTopic("tv");
 
-     tvHandle = defaultNTinst.addListener(
-      dlbTopic_tv,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-      event -> {
-        tv.set(event.valueData.value.getDouble());
-      }
-     );
+    //  tvHandle = defaultNTinst.addListener(
+    //   dlbTopic_tv,
+    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+    //   event -> {
+    //     tv.set(event.valueData.value.getDouble());
+    //   }
+    //  );
 
-    dlbTopic_tx = aimingLime.getDoubleTopic("tx");
+    // dlbTopic_tx = aimingLime.getDoubleTopic("tx");
 
-     txHandle = defaultNTinst.addListener(
-      dlbTopic_tx,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-      event -> {
-        tx.set(event.valueData.value.getDouble());
-      }
-     );
+    //  txHandle = defaultNTinst.addListener(
+    //   dlbTopic_tx,
+    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+    //   event -> {
+    //     tx.set(event.valueData.value.getDouble());
+    //   }
+    //  );
 
-    dlbTopic_ty = aimingLime.getDoubleTopic("ty");
+    // dlbTopic_ty = aimingLime.getDoubleTopic("ty");
 
-     tyHandle = defaultNTinst.addListener(
-      dlbTopic_ty,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-      event -> {
-        ty.set(event.valueData.value.getDouble());
-      }
-    );
+    //  tyHandle = defaultNTinst.addListener(
+    //   dlbTopic_ty,
+    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+    //   event -> {
+    //     ty.set(event.valueData.value.getDouble());
+    //   }
+    // );
 
-     dlbTopic_tid = aimingLime.getDoubleTopic("tid");
+    //  dlbTopic_tid = aimingLime.getDoubleTopic("tid");
 
-     tidHandle = defaultNTinst.addListener(
-      dlbTopic_tid,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-      event -> {
-        tid.set(event.valueData.value.getDouble());
-      }
-     );
+    //  tidHandle = defaultNTinst.addListener(
+    //   dlbTopic_tid,
+    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+    //   event -> {
+    //     tid.set(event.valueData.value.getDouble());
+    //   }
+    //  );
 
     intakeDlbTopic_tv = intakeLime.getDoubleTopic("tv");
 

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.drivetrain;
 
 import java.util.function.Supplier;
 
@@ -33,10 +33,10 @@ public class TurnToTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(xDiff.get() > 0.05) {
-      m_DriveSubsystem.drive(0, 0, 1, false, true, 0.2);
-    } else if(xDiff.get() < -0.05) {
-      m_DriveSubsystem.drive(0, 0, -1, false, true, 0.2);
+    if(xDiff.get() < 0.5) {
+      m_DriveSubsystem.drive(0, 0, 0.2, false, true);
+    } else if(xDiff.get() > -0.5) {
+      m_DriveSubsystem.drive(0, 0, -0.2, false, true);
     }
   }
 
@@ -47,6 +47,10 @@ public class TurnToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if(Math.abs(xDiff.get()) <= 10) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

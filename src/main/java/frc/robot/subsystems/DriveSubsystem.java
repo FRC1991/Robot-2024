@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.InputMismatchException;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.DriveConstants;
@@ -78,6 +80,14 @@ public class DriveSubsystem extends SubsystemBase {
       }
     };
     Shuffleboard.getTab("Main").addDouble("angle", angleForShuffleboard);
+
+    DoubleSupplier speedScaleForShuffleboard = new DoubleSupplier() {
+      @Override
+      public double getAsDouble() {
+        return DriveConstants.speedScale;
+      }
+    };
+    Shuffleboard.getTab("Main").addDouble("speed scale", speedScaleForShuffleboard);
   }
 
   @Override
@@ -128,9 +138,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @param fieldRelative Whether the provided x and y speeds are relative to the
    *                      field.
    * @param rateLimit     Whether to enable rate limiting for smoother control.
-   * @param speedScale    A percent to shrink the robot speed by. Must be between 0-1.
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, double speedScale) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
     
     double xSpeedCommanded;
     double ySpeedCommanded;
@@ -184,9 +193,9 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     // Convert the commanded speeds into the correct units for the drivetrain and scaling the speed
-    double xSpeedDelivered = xSpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond * speedScale;
-    double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond * speedScale;
-    double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed * speedScale;
+    double xSpeedDelivered = xSpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
+    double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
+    double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
@@ -200,6 +209,25 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param xSpeed        Speed of the robot in the x direction (forward).
+   * @param ySpeed        Speed of the robot in the y direction (sideways).
+   * @param rot           Angular rate of the robot.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the
+   *                      field.
+   * @param rateLimit     Whether to enable rate limiting for smoother control.
+   * @param speedScale    A percent to shrink the robot speed by. Must be between 0-1.
+   */
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, double speedScale) {
+    xSpeed *= speedScale;
+    ySpeed *= speedScale;
+    rot *= (speedScale / 2);
+
+    drive(xSpeed, ySpeed, rot, fieldRelative, rateLimit);
+  }
+  
   /**
    * Sets the wheels into an X formation to prevent movement.
    */
@@ -244,7 +272,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
-    m_gyro.reset();
+    m_gyro.setYaw(0);
   }
 
   /**
@@ -263,5 +291,20 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  public void setSpeedScale(double newSpeed) {
+    if(newSpeed < 0) {
+      newSpeed = 0;
+    }
+
+    if(newSpeed < 0 || newSpeed > 1) {
+      throw new InputMismatchException("speed scale must be between zero and one\n" + "speed scale:  " + newSpeed);
+    }
+    System.out.println(newSpeed);
+    System.out.println(Math.round(newSpeed*100));
+    System.out.println((double)(Math.round(newSpeed * 100) / 100));
+    newSpeed = (double) Math.round(newSpeed * 100) / 100;
+    DriveConstants.speedScale = newSpeed;
   }
 }

@@ -98,16 +98,16 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    // m_robotContainer.m_robotDrive.setDefaultCommand(
-    //     // The left stick controls translation of the robot.
-    //     // Turning is controlled by the X axis of the right stick.
-    //     new RunCommand(
-    //         () -> m_robotContainer.m_robotDrive.drive(
-    //             -MathUtil.applyDeadband(m_robotContainer.m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-    //             -MathUtil.applyDeadband(m_robotContainer.m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-    //             -MathUtil.applyDeadband(m_robotContainer.m_driverController.getRightX(), OIConstants.kDriveDeadband),
-    //             true, false, DriveConstants.speedScale),
-    //         m_robotContainer.m_robotDrive));
+    m_robotContainer.m_robotDrive.setDefaultCommand(
+        // The left stick controls translation of the robot.
+        // Turning is controlled by the X axis of the right stick.
+        new RunCommand(
+            () -> m_robotContainer.m_robotDrive.drive(
+                -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(1), 0.1),
+                -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(0), 0.1),
+                -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
+                true, false, DriveConstants.speedScale),
+            m_robotContainer.m_robotDrive));
   }
 
   /** This function is called periodically during test mode. */
