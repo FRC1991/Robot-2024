@@ -19,7 +19,6 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -81,8 +80,8 @@ public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
+  //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  public final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -96,21 +95,21 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true, false, DriveConstants.speedScale),
-            m_robotDrive));
-
         // new RunCommand(
         //     () -> m_robotDrive.drive(
-        //         -MathUtil.applyDeadband(driverJoytick.getRawAxis(1), 0.1),
-        //         -MathUtil.applyDeadband(driverJoytick.getRawAxis(0), 0.1),
-        //         -MathUtil.applyDeadband(driverJoytick.getRawAxis(2), 0.1),
-        //         true, true, DriveConstants.speedScale),
+        //         -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+        //         -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+        //         -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+        //         true, false, DriveConstants.speedScale),
         //     m_robotDrive));
+
+        new RunCommand(
+            () -> m_robotDrive.drive(
+                -MathUtil.applyDeadband(driverJoytick.getRawAxis(1), 0.1),
+                -MathUtil.applyDeadband(driverJoytick.getRawAxis(0), 0.1),
+                -MathUtil.applyDeadband(driverJoytick.getRawAxis(2), 0.1),
+                true, true, DriveConstants.speedScale),
+            m_robotDrive));
   }
 
   /**
@@ -125,27 +124,32 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Stops movement while Button.kR1.value is held down
-    new JoystickButton(m_driverController, Button.kRightBumper.value)
+    new JoystickButton(driverJoytick, 1)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
     
     //Forms a tank drivetrain while Button.kL1.value is held down
-    new JoystickButton(m_driverController, Button.kLeftBumper.value)
+    new JoystickButton(driverJoytick, 3)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setTank(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kB.value)
+    new JoystickButton(driverJoytick, 2)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kX.value)
+    new JoystickButton(driverJoytick, 4)
         .onTrue(new TurnToTarget(() -> m_robotDrive.getHeading(), m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kY.value)
+    new JoystickButton(driverJoytick, 5)
         .onTrue(new TurnToAngle(90, m_robotDrive));
+    
+    new JoystickButton(driverJoytick, 6)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3))
+          ));
   }
 
   /**

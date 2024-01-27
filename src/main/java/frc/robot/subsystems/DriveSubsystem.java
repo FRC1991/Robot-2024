@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.InputMismatchException;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -79,6 +80,14 @@ public class DriveSubsystem extends SubsystemBase {
       }
     };
     Shuffleboard.getTab("Main").addDouble("angle", angleForShuffleboard);
+
+    DoubleSupplier speedScaleForShuffleboard = new DoubleSupplier() {
+      @Override
+      public double getAsDouble() {
+        return DriveConstants.speedScale;
+      }
+    };
+    Shuffleboard.getTab("Main").addDouble("speed scale", speedScaleForShuffleboard);
   }
 
   @Override
@@ -272,7 +281,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return 360 - Units.radiansToDegrees(SwerveUtils.WrapAngle(Units.degreesToRadians(m_gyro.getYaw().getValue())));
+    return (360 - Units.radiansToDegrees(SwerveUtils.WrapAngle(Units.degreesToRadians(m_gyro.getYaw().getValue()))));
   }
 
   /**
@@ -282,5 +291,20 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  public void setSpeedScale(double newSpeed) {
+    if(newSpeed < 0) {
+      newSpeed = 0;
+    }
+
+    if(newSpeed < 0 || newSpeed > 1) {
+      throw new InputMismatchException("speed scale must be between zero and one\n" + "speed scale:  " + newSpeed);
+    }
+    System.out.println(newSpeed);
+    System.out.println(Math.round(newSpeed*100));
+    System.out.println((double)(Math.round(newSpeed * 100) / 100));
+    newSpeed = (double) Math.round(newSpeed * 100) / 100;
+    DriveConstants.speedScale = newSpeed;
   }
 }
