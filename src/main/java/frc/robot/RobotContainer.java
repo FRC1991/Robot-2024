@@ -169,17 +169,6 @@ public class RobotContainer {
     
     Trajectory exampleTrajectoryPt2 = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(3, 0, new Rotation2d(180)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(2, 1), new Translation2d(1, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(0, 0, new Rotation2d(0)),
-        config);
-
-    exampleTrajectory.concatenate(exampleTrajectoryPt2);
-
-    Trajectory exampleTrajectoryPt2 = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
         new Pose2d(6, 0, new Rotation2d(180)),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(new Translation2d(4, 1), new Translation2d(2, -1)),
@@ -187,7 +176,7 @@ public class RobotContainer {
         new Pose2d(0, 0, new Rotation2d(0)),
         config);
 
-    exampleTrajectory = exampleTrajectory.concatenate(exampleTrajectoryPt2);
+    exampleTrajectory.concatenate(exampleTrajectoryPt2);
 
     var thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
