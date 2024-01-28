@@ -31,7 +31,12 @@ public class TurnToAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currentHeading = m_DriveSubsystem.getHeading() - angle;
+    currentHeading = m_DriveSubsystem.getHeading();
+    if(currentHeading > (angle + 180)) {
+      currentHeading -= 360;
+    } else if(currentHeading < (angle - 180)) {
+      currentHeading += 360;
+    }
     
     if(currentHeading < 180) {
       m_DriveSubsystem.drive(0, 0, -0.2, false, true);
