@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
                 -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(1), 0.1),
                 -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(0), 0.1),
                 -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
-                true, false, DriveConstants.speedScale),
+                true, false, DriveConstants.kSpeedScale),
             m_robotContainer.m_robotDrive));
   }
 

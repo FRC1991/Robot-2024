@@ -83,7 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
     DoubleSupplier speedScaleForShuffleboard = new DoubleSupplier() {
       @Override
       public double getAsDouble() {
-        return DriveConstants.speedScale;
+        return DriveConstants.kSpeedScale;
       }
     };
     Shuffleboard.getTab("Main").addDouble("speed scale", speedScaleForShuffleboard);
@@ -304,6 +304,6 @@ public class DriveSubsystem extends SubsystemBase {
     System.out.println(Math.round(newSpeed*100));
     System.out.println((double)(Math.round(newSpeed * 100) / 100));
     newSpeed = (double) Math.round(newSpeed * 100) / 100;
-    DriveConstants.speedScale = newSpeed;
+    DriveConstants.kSpeedScale = newSpeed;
   }
 }

@@ -66,7 +66,7 @@ public final class Constants {
     public static final int kGyroId = 10;
 
     //this is not final so it can be set by the slider on the flightstick
-    public static double speedScale = 0.7;
+    public static double kSpeedScale = 0.7;
   }
 
   public static final class ModuleConstants {
