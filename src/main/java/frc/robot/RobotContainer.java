@@ -114,9 +114,11 @@ public class RobotContainer {
                 true, true, DriveConstants.kSpeedScale),
             m_robotDrive));
 
-    m_Intake.setDefaultCommand(
-        new RunCommand(() -> m_Intake.setIntakeSpeed(m_auxController.getLeftY()),
-            m_Intake));
+    m_Intake.setDefaultCommand(new RunIntake(m_auxController.getLeftY(), m_Intake));
+    // m_Intake.setDefaultCommand(
+    //     new RunCommand(() -> m_Intake.setIntakeSpeed(m_auxController.getLeftY()),
+    //         m_Intake));
+
   }
 
   /**
