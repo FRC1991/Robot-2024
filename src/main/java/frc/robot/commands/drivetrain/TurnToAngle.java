@@ -36,7 +36,7 @@ public class TurnToAngle extends Command {
   public void execute() {
     currentHeading = m_DriveSubsystem.getHeading();
 
-    //optimizing angle for continous output
+    //optimizing angle to account for continous output
     if(currentHeading > (angle + 180)) {
       currentHeading -= 360;
     } else if(currentHeading < (angle - 180)) {
