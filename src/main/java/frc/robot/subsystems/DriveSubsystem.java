@@ -56,6 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
+  private double speedScale;
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -83,7 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
     DoubleSupplier speedScaleForShuffleboard = new DoubleSupplier() {
       @Override
       public double getAsDouble() {
-        return DriveConstants.kSpeedScale;
+        return speedScale;
       }
     };
     Shuffleboard.getTab("Main").addDouble("speed scale", speedScaleForShuffleboard);
@@ -304,6 +305,6 @@ public class DriveSubsystem extends SubsystemBase {
     System.out.println(Math.round(newSpeed*100));
     System.out.println((double)(Math.round(newSpeed * 100) / 100));
     newSpeed = (double) Math.round(newSpeed * 100) / 100;
-    DriveConstants.kSpeedScale = newSpeed;
+    speedScale = newSpeed;
   }
 }

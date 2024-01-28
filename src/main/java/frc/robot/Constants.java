@@ -64,9 +64,6 @@ public final class Constants {
 
     public static final boolean kGyroReversed = false;
     public static final int kGyroId = 10;
-
-    //this is not final so it can be set by the slider on the flightstick
-    public static double kSpeedScale = 0.7;
   }
 
   public static final class ModuleConstants {
