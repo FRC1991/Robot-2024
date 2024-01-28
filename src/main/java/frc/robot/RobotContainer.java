@@ -144,7 +144,7 @@ public class RobotContainer {
         .onTrue(new TurnToTarget(() -> intaketx.get(), m_robotDrive));
 
     new JoystickButton(driverJoytick, 5)
-        .onTrue(new TurnToAngle(90, m_robotDrive));
+        .onTrue(new TurnToAngle(90, 5, m_robotDrive));
     
     new JoystickButton(driverJoytick, 6)
         .whileTrue(new RunCommand(
