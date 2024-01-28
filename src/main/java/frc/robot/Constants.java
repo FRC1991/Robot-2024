@@ -145,6 +145,7 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int intakeMotorId = 11;
+    public static final int kIntakeMotor1Id = 11;
+    public static final int kIntakeMotor2Id = 12;
   }
 }

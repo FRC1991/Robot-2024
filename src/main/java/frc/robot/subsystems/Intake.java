@@ -9,30 +9,42 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
 
-  private CANSparkMax intakeMotor;
+  private CANSparkMax intakeMotor1, intakeMotor2;
 
   /** Creates a new Intake. */
-  public Intake(int intakeMotorId) {
-    intakeMotor = new CANSparkMax(intakeMotorId, MotorType.kBrushless);
+  public Intake() {
+    intakeMotor1 = new CANSparkMax(IntakeConstants.kIntakeMotor1Id, MotorType.kBrushless);
+    intakeMotor2 = new CANSparkMax(IntakeConstants.kIntakeMotor2Id, MotorType.kBrushless);
   }
 
-  public CANSparkMax getIntakeMotor() {
-    return intakeMotor;
+  public CANSparkMax getIntakeMotor1() {
+    return intakeMotor1;
+  }
+
+  public CANSparkMax getIntakeMotor2() {
+    return intakeMotor2;
   }
 
   public void setIntakeSpeed(double speed) {
-    intakeMotor.set(speed);
+    intakeMotor1.set(speed);
+    intakeMotor2.set(speed);
   }
 
-  public RelativeEncoder getEncoder() {
-    return intakeMotor.getEncoder();
+  public RelativeEncoder getEncoder1() {
+    return intakeMotor1.getEncoder();
   }
 
-  public void resetEncoder() {
-    intakeMotor.getEncoder().setPosition(0);
+  public RelativeEncoder getEncoder2() {
+    return intakeMotor2.getEncoder();
+  }
+
+  public void resetEncoders() {
+    intakeMotor1.getEncoder().setPosition(0);
+    intakeMotor2.getEncoder().setPosition(0);
   }
 
   @Override
