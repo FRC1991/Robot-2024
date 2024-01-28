@@ -148,8 +148,8 @@ public class RobotContainer {
     
     new JoystickButton(driverJoytick, 6)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3))
-          ));
+          () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3)),
+        m_robotDrive));
   }
 
   /**
