@@ -24,7 +24,9 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drivetrain.TurnToAngle;
 import frc.robot.commands.drivetrain.TurnToTarget;
+import frc.robot.commands.intake.RunIntake;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -78,10 +80,11 @@ public class RobotContainer {
   
   // The robot's subsystems
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final Intake m_Intake = new Intake();
 
   // The driver's controller
-  //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
+  public final XboxController m_auxController = new XboxController(OIConstants.kAuxControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,6 +113,10 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(driverJoytick.getRawAxis(2), 0.1),
                 true, true, DriveConstants.kSpeedScale),
             m_robotDrive));
+
+    m_Intake.setDefaultCommand(
+        new RunCommand(() -> m_Intake.setIntakeSpeed(m_auxController.getLeftY()),
+            m_Intake));
   }
 
   /**
