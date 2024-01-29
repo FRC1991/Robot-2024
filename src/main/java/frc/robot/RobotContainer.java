@@ -83,8 +83,9 @@ public class RobotContainer {
   public final Intake m_Intake = new Intake();
 
   // The driver's controller
+  //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   public final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
-  public final XboxController m_auxController = new XboxController(OIConstants.kAuxControllerPort);
+  public final XboxController m_auxController = new XboxController(OIConstants.kDriverControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -153,12 +154,12 @@ public class RobotContainer {
         .onTrue(new TurnToTarget(() -> intaketx.get(), m_robotDrive));
 
     new JoystickButton(driverJoytick, 5)
-        .onTrue(new TurnToAngle(90, 5, m_robotDrive));
+        .onTrue(new TurnToAngle(90, 10, m_robotDrive));
     
     new JoystickButton(driverJoytick, 6)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3)),
-        m_robotDrive));
+          () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3))
+          ));
   }
 
   /**
@@ -188,8 +189,8 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(6, 0, new Rotation2d(180)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(4, 1), new Translation2d(2, -1)),
-        // End 6 meters straight ahead of where we started, facing forward
+        List.of(new Translation2d(2, 1), new Translation2d(1, -1)),
+        // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(0, 0, new Rotation2d(0)),
         config);
 
