@@ -22,8 +22,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.drivetrain.TurnToAngle;
-import frc.robot.commands.drivetrain.TurnToTarget;
+import frc.robot.commands.drivetrain.BangBang.TurnToAngle;
+import frc.robot.commands.drivetrain.BangBang.TurnToTarget;
+import frc.robot.commands.drivetrain.PID.TurnToAnglePID;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -154,7 +155,7 @@ public class RobotContainer {
         .onTrue(new TurnToTarget(() -> intaketx.get(), m_robotDrive));
 
     new JoystickButton(driverJoytick, 5)
-        .onTrue(new TurnToAngle(90, 10, m_robotDrive));
+        .whileTrue(new TurnToAnglePID(90, m_robotDrive));
     
     new JoystickButton(driverJoytick, 6)
         .whileTrue(new RunCommand(
