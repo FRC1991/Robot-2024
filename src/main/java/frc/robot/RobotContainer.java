@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.drivetrain.BangBang.RunToTarget;
 import frc.robot.commands.drivetrain.BangBang.TurnToAngle;
 import frc.robot.commands.drivetrain.BangBang.TurnToTarget;
 import frc.robot.commands.drivetrain.PID.TurnToAnglePID;
@@ -142,9 +143,7 @@ public class RobotContainer {
     
     //Forms a tank drivetrain while Button.kL1.value is held down
     new JoystickButton(driverJoytick, 3)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setTank(),
-            m_robotDrive));
+        .whileTrue(new RunToTarget(() -> intaketx.get(), 0.3, m_robotDrive));
 
     new JoystickButton(driverJoytick, 2)
         .whileTrue(new RunCommand(

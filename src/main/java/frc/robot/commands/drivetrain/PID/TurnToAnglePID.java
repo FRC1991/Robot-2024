@@ -12,8 +12,8 @@ import frc.robot.subsystems.DriveSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TurnToAnglePID extends PIDCommand {
-  DriveSubsystem m_DriveSubsystem;
-  double targetAngle;
+  private DriveSubsystem m_DriveSubsystem;
+  private double targetAngle;
   /** Creates a new TurnToAnglePID. */
   public TurnToAnglePID(double targetAngle, DriveSubsystem driveSubsystem) {
     super(
@@ -38,6 +38,10 @@ public class TurnToAnglePID extends PIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if(Math.abs(targetAngle - m_DriveSubsystem.getHeading()) <= 10) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
