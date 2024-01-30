@@ -18,13 +18,17 @@ public class TurnToAnglePID extends PIDCommand {
   public TurnToAnglePID(double targetAngle, DriveSubsystem driveSubsystem) {
     super(
         // The controller that the command will use
-        new PIDController(0.9, 0, 0),
+        new PIDController(0.01, 0, 0),
         // This should return the measurement
         () -> driveSubsystem.getHeading(),
         // This should return the setpoint (can also be a constant)
         () -> targetAngle,
         // This uses the output
         output -> {
+          System.out.println(output);
+          if(output > 1) {
+            output = 1;
+          }
           driveSubsystem.drive(0, 0, output, false, true);
         });
     
@@ -38,10 +42,13 @@ public class TurnToAnglePID extends PIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(targetAngle - m_DriveSubsystem.getHeading()) <= 10) {
-      return true;
-    } else {
-      return false;
-    }
+    // if(Math.abs(targetAngle - m_DriveSubsystem.getHeading()) <= 5) {
+    //   System.out.println("leaving TurnToAnglePID " + targetAngle);
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+
+    return false;
   }
 }
