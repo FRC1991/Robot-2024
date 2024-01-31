@@ -12,9 +12,16 @@ import frc.robot.subsystems.DriveSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TurnToAnglePID extends PIDCommand {
-  private DriveSubsystem m_DriveSubsystem;
-  private double targetAngle;
-  /** Creates a new TurnToAnglePID. */
+
+  // private DriveSubsystem m_DriveSubsystem;
+  // private double targetAngle;
+
+  /**
+   * Smoothly turns to the target angle via the shortest path. This command does not end and will continuously
+   * attempt to turn to the target angle even if disturbed or blocked.
+   * @param targetAngle Angle the robot will turn to. Must be between 0 and 360
+   * @param driveSubsystem The main drive train of the robot
+   */
   public TurnToAnglePID(double targetAngle, DriveSubsystem driveSubsystem) {
     super(
         // The controller that the command will use
@@ -31,8 +38,9 @@ public class TurnToAnglePID extends PIDCommand {
           driveSubsystem.drive(0, 0, output, false, false);
         });
     
-    this.targetAngle = targetAngle;
-    m_DriveSubsystem = driveSubsystem;
+    // this.targetAngle = targetAngle;
+    // m_DriveSubsystem = driveSubsystem;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSubsystem);
     // Configure additional PID options by calling `getController` here.
