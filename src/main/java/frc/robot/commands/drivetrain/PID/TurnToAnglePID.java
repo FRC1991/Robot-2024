@@ -18,18 +18,17 @@ public class TurnToAnglePID extends PIDCommand {
   public TurnToAnglePID(double targetAngle, DriveSubsystem driveSubsystem) {
     super(
         // The controller that the command will use
-        new PIDController(0.01, 0, 0),
+        new PIDController(0.009, 0, 0),
         // This should return the measurement
-        () -> driveSubsystem.getHeading(),
+        () -> driveSubsystem.getHeadingTurnToAngle(targetAngle),
         // This should return the setpoint (can also be a constant)
         () -> targetAngle,
         // This uses the output
         output -> {
-          System.out.println(output);
           if(output > 1) {
             output = 1;
           }
-          driveSubsystem.drive(0, 0, output, false, true);
+          driveSubsystem.drive(0, 0, output, false, false);
         });
     
     this.targetAngle = targetAngle;

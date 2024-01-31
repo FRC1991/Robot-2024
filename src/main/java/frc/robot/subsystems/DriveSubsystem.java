@@ -279,12 +279,28 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from (-180 to 180]
+   * @return the robot's heading in degrees, from (0, 360]
    */
   public double getHeading() {
     return Units.radiansToDegrees(SwerveUtils.WrapAngle(Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).getRadians()));
   }
 
+  /**
+   * Returns the heading of the robot optimized
+   *
+   * @return the robot's heading in degrees, optimized for the TurnToAngle PID command
+   */
+  public double getHeadingTurnToAngle(double target) {
+    double angle = Units.radiansToDegrees(SwerveUtils.WrapAngle(Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).getRadians()));
+    
+    if(angle > (target + 180)) {
+      angle -= 360;
+    } else if(angle < (target - 180)) {
+      angle += 360;
+    }
+
+    return angle;
+  }
   /**
    * Returns the turn rate of the robot.
    *
