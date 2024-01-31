@@ -57,7 +57,7 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
-  private double speedScale;
+  //private double speedScale;
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -82,13 +82,13 @@ public class DriveSubsystem extends SubsystemBase {
     };
     Shuffleboard.getTab("Main").addDouble("angle", angleForShuffleboard);
 
-    DoubleSupplier speedScaleForShuffleboard = new DoubleSupplier() {
-      @Override
-      public double getAsDouble() {
-        return speedScale;
-      }
-    };
-    Shuffleboard.getTab("Main").addDouble("speed scale", speedScaleForShuffleboard);
+    // DoubleSupplier speedScaleForShuffleboard = new DoubleSupplier() {
+    //   @Override
+    //   public double getAsDouble() {
+    //     return speedScale;
+    //   }
+    // };
+    // Shuffleboard.getTab("Main").addDouble("speed scale", speedScaleForShuffleboard);
   }
 
   @Override
@@ -288,7 +288,7 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Returns the heading of the robot optimized
    *
-   * @return the robot's heading in degrees, optimized for the TurnToAngle PID command
+   * @return the robot's heading in degrees (0, 360], optimized for the TurnToAngle PID command
    */
   public double getHeadingTurnToAngle(double target) {
     double angle = Units.radiansToDegrees(SwerveUtils.WrapAngle(Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).getRadians()));
@@ -310,18 +310,22 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
-  public void setSpeedScale(double newSpeed) {
-    if(newSpeed < 0) {
-      newSpeed = 0;
-    }
+  // /**
+  //  * Sets the speed of the drive train
+  //  * @param newSpeed The speed of the drive train, from 0 to 1
+  //  */
+  // public void setSpeedScale(double newSpeed) {
+  //   if(newSpeed < 0) {
+  //     newSpeed = 0;
+  //   }
 
-    if(newSpeed < 0 || newSpeed > 1) {
-      throw new InputMismatchException("speed scale must be between zero and one\n" + "speed scale:  " + newSpeed);
-    }
-    System.out.println(newSpeed);
-    System.out.println(Math.round(newSpeed*100));
-    System.out.println((double)(Math.round(newSpeed * 100) / 100));
-    newSpeed = (double) Math.round(newSpeed * 100) / 100;
-    speedScale = newSpeed;
-  }
+  //   if(newSpeed < 0 || newSpeed > 1) {
+  //     throw new InputMismatchException("speed scale must be between zero and one\n" + "speed scale:  " + newSpeed);
+  //   }
+  //   System.out.println(newSpeed);
+  //   System.out.println(Math.round(newSpeed*100));
+  //   System.out.println((double)(Math.round(newSpeed * 100) / 100));
+  //   newSpeed = (double) Math.round(newSpeed * 100) / 100;
+  //   speedScale = newSpeed;
+  // }
 }

@@ -158,10 +158,10 @@ public class RobotContainer {
     new JoystickButton(driverJoytick, 5)
         .whileTrue(new TurnToAnglePID(270, m_robotDrive));
     
-    new JoystickButton(driverJoytick, 6)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3))
-          ));
+    // new JoystickButton(driverJoytick, 6)
+    //     .whileTrue(new RunCommand(
+    //       () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3))
+    //       ));
   }
 
   /**
