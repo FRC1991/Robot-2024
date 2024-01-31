@@ -34,6 +34,8 @@ public class TurnToAnglePID extends PIDCommand {
         output -> {
           if(output > 1) {
             output = 1;
+          } else if (output < 0.01) {
+            output = 0;
           }
           driveSubsystem.drive(0, 0, output, false, false);
         });
