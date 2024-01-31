@@ -27,6 +27,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooterRMP(double rpm) {
+    //TODO test to find max rpm. 5000 max rpm is a guess 
     rpm = rpm / 5000;
 
     if(rpm > 1) {
