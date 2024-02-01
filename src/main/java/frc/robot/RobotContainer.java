@@ -53,17 +53,20 @@ public class RobotContainer {
   public static AtomicReference<Double> tx = new AtomicReference<Double>();
   public static AtomicReference<Double> ty = new AtomicReference<Double>();
   public static AtomicReference<Double> tid = new AtomicReference<Double>();
+  public static AtomicReference<Double> ta = new AtomicReference<Double>();
 
   private DoubleTopic dlbTopic_tv;
   private DoubleTopic dlbTopic_tx;
   private DoubleTopic dlbTopic_ty;
   private DoubleTopic dlbTopic_tid;
+  private DoubleTopic dlbTopic_ta;
 
 
   public double tvHandle; //Whether the limelight has any valid targets (0 or 1)
   public double txHandle; //Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
   public double tyHandle; //Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
   public double tidHandle; //ID of the primary in-view AprilTag
+  public double taHandle; //Target Area (0% of image to 100% of image)
 
   public static AtomicReference<Double> intaketv = new AtomicReference<Double>();
   public static AtomicReference<Double> intaketx = new AtomicReference<Double>();
@@ -272,6 +275,16 @@ public class RobotContainer {
     //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
     //   event -> {
     //     tid.set(event.valueData.value.getDouble());
+    //   }
+    //  );
+
+    //  dlbTopic_ta = aimingLime.getDoubleTopic("a");
+
+    //  aHandle = defaultNTinst.addListener(
+    //   dlbTopic_ta,
+    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+    //   event -> {
+    //     ta.set(event.valueData.value.getDouble());
     //   }
     //  );
 

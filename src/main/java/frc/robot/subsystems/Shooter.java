@@ -22,7 +22,7 @@ public class Shooter extends SubsystemBase {
     shooterNeo2.follow(shooterNeo1);
   }
 
-  private void setShooter(double speed) {
+  public void setShooter(double speed) {
     shooterNeo1.set(speed);
   }
 
