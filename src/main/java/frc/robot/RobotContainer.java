@@ -144,16 +144,16 @@ public class RobotContainer {
             m_robotDrive));
     
     //Forms a tank drivetrain while Button.kL1.value is held down
-    new JoystickButton(driverJoytick, 3)
-        .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.3, m_robotDrive));
+    // new JoystickButton(driverJoytick, 3)
+    //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.3, m_robotDrive));
 
     new JoystickButton(driverJoytick, 2)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
 
-    new JoystickButton(driverJoytick, 4)
-        .onTrue(new TurnToTarget(() -> intaketx.get(), m_robotDrive));
+    // new JoystickButton(driverJoytick, 4)
+    //     .onTrue(new TurnToTarget(() -> intaketx.get(), m_robotDrive));
 
     new JoystickButton(driverJoytick, 5)
         .whileTrue(new TurnToAnglePID(270, m_robotDrive));

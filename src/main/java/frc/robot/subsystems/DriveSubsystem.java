@@ -224,7 +224,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, double speedScale) {
     xSpeed *= speedScale;
     ySpeed *= speedScale;
-    rot *= (speedScale / 2);
+    rot *= speedScale + ((1 - speedScale) / 2);
 
     drive(xSpeed, ySpeed, rot, fieldRelative, rateLimit);
   }
