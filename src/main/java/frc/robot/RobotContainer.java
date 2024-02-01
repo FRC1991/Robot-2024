@@ -116,7 +116,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(driverJoytick.getRawAxis(1), 0.1),
                 -MathUtil.applyDeadband(driverJoytick.getRawAxis(0), 0.1),
                 -MathUtil.applyDeadband(driverJoytick.getRawAxis(2), 0.1),
-                true, true, 0.8),
+                true, false, 0.8),
             m_robotDrive));
 
     m_Intake.setDefaultCommand(new RunIntake(m_auxController.getLeftY(), m_Intake));
