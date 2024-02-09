@@ -18,12 +18,11 @@ public class Shooter extends SubsystemBase {
     //TODO change device IDs
     shooterNeo1 = new CANSparkMax(13, MotorType.kBrushless);
     shooterNeo2 = new CANSparkMax(14, MotorType.kBrushless);
-
-    shooterNeo2.follow(shooterNeo1);
   }
 
   public void setShooter(double speed) {
     shooterNeo1.set(speed);
+    shooterNeo2.set(-speed);
   }
 
   public void setShooterRMP(double rpm) {
