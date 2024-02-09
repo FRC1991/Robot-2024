@@ -28,6 +28,7 @@ import frc.robot.commands.drivetrain.PID.TurnToAnglePID;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -88,6 +89,7 @@ public class RobotContainer {
   // The robot's subsystems
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final Intake m_Intake = new Intake();
+  public final Shooter m_Shooter = new Shooter();
 
   // The driver's controller
   //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -147,8 +149,8 @@ public class RobotContainer {
             m_robotDrive));
     
     //Forms a tank drivetrain while Button.kL1.value is held down
-    new JoystickButton(driverJoytick, 3)
-        .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.3, m_robotDrive));
+    // new JoystickButton(driverJoytick, 3)
+    //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.3, m_robotDrive));
 
     new JoystickButton(driverJoytick, 2)
         .whileTrue(new RunCommand(
@@ -165,6 +167,8 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
           () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3))
           ));
+
+    new Trigger(() -> !m_auxController.getAButton()).whileTrue(new RunCommand(() -> m_Shooter.setShooter(-1), m_Shooter));
   }
 
   /**
