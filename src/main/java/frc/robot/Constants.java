@@ -146,4 +146,9 @@ public final class Constants {
     public static final int kIntakeMotor1Id = 11;
     public static final int kIntakeMotor2Id = 12;
   }
+
+  public static final class PivotConstants {
+    public static final int kPivotMotor1Id = 13;
+    public static final int kPivotMotor2Id = 14;
+  }
 }
