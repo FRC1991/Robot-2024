@@ -82,7 +82,7 @@ public class RobotContainer {
   //endregion
   
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem m_DriveTrain = new DriveSubsystem();
   private final Intake m_Intake = new Intake();
   private final Shooter m_Shooter = new Shooter();
   private final Pivot m_Pivot = new Pivot();
@@ -95,21 +95,24 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the button bindings
+    // Configures the button bindings
     configureButtonBindings();
+    // Configures network table listeners
     configureNetworkTables();
+    // Configures wigets for the driver station
+    configureShuffleBoard();
 
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
+    m_DriveTrain.setDefaultCommand(
         // The joystick controls translation of the robot.
         // Turning is controlled by rotating the joystick.
         new RunCommand(
-            () -> m_robotDrive.drive(
+            () -> m_DriveTrain.drive(
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), 0.1),
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), 0.1),
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(2), 0.1),
                 true, false, 0.8),
-            m_robotDrive));
+            m_DriveTrain));
 
     // m_Intake.setDefaultCommand(new RunIntake(oi.auxController.getLeftY(), m_Intake));
     // m_Intake.setDefaultCommand(
@@ -132,19 +135,22 @@ public class RobotContainer {
     //Stops movement while Button.kR1.value is held down
     new JoystickButton(oi.driverJoytick, 1)
         .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+            () -> m_DriveTrain.setX(),
+            m_DriveTrain));
 
     new JoystickButton(oi.driverJoytick, 2)
         .whileTrue(new RunCommand(
-            () -> m_robotDrive.zeroHeading(),
-            m_robotDrive));
+            () -> m_DriveTrain.zeroHeading(),
+            m_DriveTrain));
 
     oi.auxAButton.whileTrue(new RunShooter(() -> 0.3, m_Shooter));
-
-    Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.getAuxButton(1));
   }
 
+  public void configureShuffleBoard() {
+    Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.getAuxButton(1));
+
+    Shuffleboard.getTab("Main").addDouble("angle", () -> m_DriveTrain.getHeading());
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -186,21 +192,21 @@ public class RobotContainer {
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
         exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
+        m_DriveTrain::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
         // Position controllers
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
         thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
+        m_DriveTrain::setModuleStates,
+        m_DriveTrain);
 
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    m_DriveTrain.resetOdometry(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false, 0));
+    return swerveControllerCommand.andThen(() -> m_DriveTrain.drive(0, 0, 0, false, false, 0));
   }
 
   /**

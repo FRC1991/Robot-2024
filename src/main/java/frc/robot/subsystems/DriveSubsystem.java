@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -18,7 +16,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -72,22 +69,6 @@ public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     zeroHeading();
-
-    DoubleSupplier angleForShuffleboard = new DoubleSupplier() {
-      @Override
-      public double getAsDouble() {
-        return getHeading();
-      }
-    };
-    Shuffleboard.getTab("Main").addDouble("angle", angleForShuffleboard);
-
-    // DoubleSupplier speedScaleForShuffleboard = new DoubleSupplier() {
-    //   @Override
-    //   public double getAsDouble() {
-    //     return speedScale;
-    //   }
-    // };
-    // Shuffleboard.getTab("Main").addDouble("speed scale", speedScaleForShuffleboard);
   }
 
   @Override
