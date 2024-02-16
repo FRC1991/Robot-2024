@@ -137,10 +137,7 @@ public class RobotContainer {
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
 
-    // EventLoop shooterTesting = new EventLoop();
-    // shooterTesting.bind(() -> m_Shooter.setShooter(-0.3));
-    Trigger shooterTrigger = new Trigger(() -> oi.getAuxButton(1));
-    shooterTrigger.whileTrue(new RunShooter(() -> 0.2, m_Shooter));
+    oi.auxAButton.whileTrue(new RunShooter(() -> 0.3, m_Shooter));
 
     Shuffleboard.getTab("Main").addBoolean("running?", () -> oi.getAuxButton(1));
   }
