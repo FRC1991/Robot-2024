@@ -28,6 +28,7 @@ import frc.robot.commands.drivetrain.BangBang.RunToTarget;
 import frc.robot.commands.drivetrain.BangBang.TurnToTarget;
 import frc.robot.commands.drivetrain.PID.TurnToAnglePID;
 import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.shooter.RunShooter;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -156,7 +157,7 @@ public class RobotContainer {
     // EventLoop shooterTesting = new EventLoop();
     // shooterTesting.bind(() -> m_Shooter.setShooter(-0.3));
     Trigger shooterTrigger = new Trigger(() -> oi.getAuxButton(1));
-    shooterTrigger.whileTrue(new RunCommand(() -> {m_Shooter.setShooter(-0.3); System.out.println("running");}, m_Shooter));
+    shooterTrigger.whileTrue(new RunShooter(() -> 0.2, m_Shooter));
 
     Shuffleboard.getTab("Main").addBoolean("running?", () -> oi.getAuxButton(1));
   }
