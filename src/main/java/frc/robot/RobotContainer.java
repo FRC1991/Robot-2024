@@ -19,6 +19,8 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -91,10 +93,8 @@ public class RobotContainer {
   public final Intake m_Intake = new Intake();
   public final Shooter m_Shooter = new Shooter();
 
-  // The driver's controller
-  //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  public final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
-  public final XboxController m_auxController = new XboxController(OIConstants.kDriverControllerPort);
+  public final OperatingInterface oi = new OperatingInterface();
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -118,13 +118,13 @@ public class RobotContainer {
 
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(driverJoytick.getRawAxis(1), 0.1),
-                -MathUtil.applyDeadband(driverJoytick.getRawAxis(0), 0.1),
-                -MathUtil.applyDeadband(driverJoytick.getRawAxis(2), 0.1),
+                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), 0.1),
+                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), 0.1),
+                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(2), 0.1),
                 true, false, 0.8),
             m_robotDrive));
 
-    m_Intake.setDefaultCommand(new RunIntake(m_auxController.getLeftY(), m_Intake));
+    // m_Intake.setDefaultCommand(new RunIntake(oi.auxController.getLeftY(), m_Intake));
     // m_Intake.setDefaultCommand(
     //     new RunCommand(() -> m_Intake.setIntakeSpeed(m_auxController.getLeftY()),
     //         m_Intake));
@@ -143,32 +143,22 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Stops movement while Button.kR1.value is held down
-    new JoystickButton(driverJoytick, 1)
+    new JoystickButton(oi.driverJoytick, 1)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-    
-    //Forms a tank drivetrain while Button.kL1.value is held down
-    // new JoystickButton(driverJoytick, 3)
-    //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.3, m_robotDrive));
 
-    new JoystickButton(driverJoytick, 2)
+    new JoystickButton(oi.driverJoytick, 2)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
 
-    // new JoystickButton(driverJoytick, 4)
-    //     .onTrue(new TurnToTarget(() -> intaketx.get(), m_robotDrive));
+    // EventLoop shooterTesting = new EventLoop();
+    // shooterTesting.bind(() -> m_Shooter.setShooter(-0.3));
+    Trigger shooterTrigger = new Trigger(() -> oi.getAuxButton(1));
+    shooterTrigger.whileTrue(new RunCommand(() -> {m_Shooter.setShooter(-0.3); System.out.println("running");}, m_Shooter));
 
-    new JoystickButton(driverJoytick, 5)
-        .whileTrue(new TurnToAnglePID(270, m_robotDrive));
-    
-    // new JoystickButton(driverJoytick, 6)
-    //     .whileTrue(new RunCommand(
-    //       () -> m_robotDrive.setSpeedScale(driverJoytick.getRawAxis(3))
-    //       ));
-
-    new Trigger(() -> !m_auxController.getAButton()).whileTrue(new RunCommand(() -> m_Shooter.setShooter(-1), m_Shooter));
+    Shuffleboard.getTab("Main").addBoolean("running?", () -> oi.getAuxButton(1));
   }
 
   /**

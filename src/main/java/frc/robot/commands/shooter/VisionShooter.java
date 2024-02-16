@@ -9,15 +9,16 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
-public class RunShooter extends Command {
+public class VisionShooter extends Command {
 
-  Supplier<Double> speed;
+  Supplier<Double> ta, tid;
   Shooter m_Shooter;
 
   /** Creates a new RunShooter. */
-  public RunShooter(Supplier<Double> speed, Shooter shooter) {
+  public VisionShooter(Supplier<Double> ta, Supplier<Double> tid, Shooter shooter) {
 
-    this.speed = speed;
+    this.ta = ta;
+    this.tid = tid;
     m_Shooter = shooter;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -31,7 +32,9 @@ public class RunShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Shooter.setShooter(speed.get());
+    if(tid.get() == 1 || tid.get() ==2) {
+      m_Shooter.setShooter(ta.get());
+    }
   }
 
   // Called once the command ends or is interrupted.

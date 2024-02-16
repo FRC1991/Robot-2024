@@ -52,7 +52,10 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    //TODO remove this later because idk what side effects it has
+    CommandScheduler.getInstance().cancelAll();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -98,17 +101,17 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    m_robotContainer.m_robotDrive.setDefaultCommand(
+    // m_robotContainer.m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotContainer.m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(1), 0.1),
-                -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(0), 0.1),
-                -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
-                true, false, 0.8),
+        // new RunCommand(
+        //     () -> m_robotContainer.m_robotDrive.drive(
+        //         -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(1), 0.1),
+        //         -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(0), 0.1),
+        //         -MathUtil.applyDeadband(m_robotContainer.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
+        //         true, false, 0.8),
 
-            m_robotContainer.m_robotDrive));
+        //     m_robotContainer.m_robotDrive));
   }
 
   /** This function is called periodically during test mode. */
