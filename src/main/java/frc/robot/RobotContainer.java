@@ -139,7 +139,7 @@ public class RobotContainer {
 
     oi.auxAButton.whileTrue(new RunShooter(() -> 0.3, m_Shooter));
 
-    Shuffleboard.getTab("Main").addBoolean("running?", () -> oi.getAuxButton(1));
+    Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.getAuxButton(1));
   }
 
   /**

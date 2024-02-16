@@ -23,8 +23,12 @@ public class Pivot extends SubsystemBase {
 
     pivotEncoder = pivotMotor1.getAbsoluteEncoder(Type.kDutyCycle);
 
-    pivotMotor1.setSoftLimit(SoftLimitDirection.kForward, 2);
-    pivotMotor1.setSoftLimit(SoftLimitDirection.kForward, 2);
+    //TODO find the actual limit for these
+    pivotMotor1.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardLimit);
+    pivotMotor2.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardLimit);
+
+    pivotMotor1.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kBackLimit);
+    pivotMotor2.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kBackLimit);
   }
 
   public void setPivot(double speed) {

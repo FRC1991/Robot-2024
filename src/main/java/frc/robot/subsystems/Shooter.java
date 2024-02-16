@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -16,8 +17,8 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     //TODO change device IDs
-    shooterNeo1 = new CANSparkMax(13, MotorType.kBrushless);
-    shooterNeo2 = new CANSparkMax(14, MotorType.kBrushless);
+    shooterNeo1 = new CANSparkMax(ShooterConstants.kShooterMotor1Id, MotorType.kBrushless);
+    shooterNeo2 = new CANSparkMax(ShooterConstants.kShooterMotor2Id, MotorType.kBrushless);
   }
 
   public void setShooter(double speed) {

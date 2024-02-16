@@ -7,6 +7,7 @@ package frc.robot.commands.shooter;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 
 public class VisionShooter extends Command {
@@ -33,7 +34,7 @@ public class VisionShooter extends Command {
   @Override
   public void execute() {
     if(tid.get() == 1 || tid.get() ==2) {
-      m_Shooter.setShooter(ta.get());
+      m_Shooter.setShooter(ta.get() * ShooterConstants.kVisionCoefficient);
     }
   }
 
