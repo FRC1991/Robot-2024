@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.shooter.RunShooter;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -80,9 +82,11 @@ public class RobotContainer {
   //endregion
   
   // The robot's subsystems
-  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  public final Intake m_Intake = new Intake();
-  public final Shooter m_Shooter = new Shooter();
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final Intake m_Intake = new Intake();
+  private final Shooter m_Shooter = new Shooter();
+  private final Pivot m_Pivot = new Pivot();
+  private final Climber m_Climber = new Climber();
 
   public final OperatingInterface oi = new OperatingInterface();
 
