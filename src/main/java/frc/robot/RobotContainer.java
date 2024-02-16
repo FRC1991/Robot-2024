@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -209,59 +208,59 @@ public class RobotContainer {
    */
   public void configureNetworkTables() {
     NetworkTableInstance defaultNTinst = NetworkTableInstance.getDefault();
-    //NetworkTable aimingLime = defaultNTinst.getTable("limelight-aimming");
+    NetworkTable aimingLime = defaultNTinst.getTable("limelight-aimming");
 
     NetworkTable intakeLime = defaultNTinst.getTable("limelight-intake");
 
-    // dlbTopic_tv = aimingLime.getDoubleTopic("tv");
+    dlbTopic_tv = aimingLime.getDoubleTopic("tv");
 
-    //  tvHandle = defaultNTinst.addListener(
-    //   dlbTopic_tv,
-    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-    //   event -> {
-    //     tv.set(event.valueData.value.getDouble());
-    //   }
-    //  );
+     tvHandle = defaultNTinst.addListener(
+      dlbTopic_tv,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        tv.set(event.valueData.value.getDouble());
+      }
+     );
 
-    // dlbTopic_tx = aimingLime.getDoubleTopic("tx");
+    dlbTopic_tx = aimingLime.getDoubleTopic("tx");
 
-    //  txHandle = defaultNTinst.addListener(
-    //   dlbTopic_tx,
-    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-    //   event -> {
-    //     tx.set(event.valueData.value.getDouble());
-    //   }
-    //  );
+     txHandle = defaultNTinst.addListener(
+      dlbTopic_tx,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        tx.set(event.valueData.value.getDouble());
+      }
+     );
 
-    // dlbTopic_ty = aimingLime.getDoubleTopic("ty");
+    dlbTopic_ty = aimingLime.getDoubleTopic("ty");
 
-    //  tyHandle = defaultNTinst.addListener(
-    //   dlbTopic_ty,
-    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-    //   event -> {
-    //     ty.set(event.valueData.value.getDouble());
-    //   }
-    // );
+     tyHandle = defaultNTinst.addListener(
+      dlbTopic_ty,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        ty.set(event.valueData.value.getDouble());
+      }
+    );
 
-    //  dlbTopic_tid = aimingLime.getDoubleTopic("tid");
+     dlbTopic_tid = aimingLime.getDoubleTopic("tid");
 
-    //  tidHandle = defaultNTinst.addListener(
-    //   dlbTopic_tid,
-    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-    //   event -> {
-    //     tid.set(event.valueData.value.getDouble());
-    //   }
-    //  );
+     tidHandle = defaultNTinst.addListener(
+      dlbTopic_tid,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        tid.set(event.valueData.value.getDouble());
+      }
+     );
 
-    //  dlbTopic_ta = aimingLime.getDoubleTopic("a");
+     dlbTopic_ta = aimingLime.getDoubleTopic("a");
 
-    //  aHandle = defaultNTinst.addListener(
-    //   dlbTopic_ta,
-    //   EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
-    //   event -> {
-    //     ta.set(event.valueData.value.getDouble());
-    //   }
-    //  );
+     taHandle = defaultNTinst.addListener(
+      dlbTopic_ta,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      event -> {
+        ta.set(event.valueData.value.getDouble());
+      }
+     );
 
     intakeDlbTopic_tv = intakeLime.getDoubleTopic("tv");
 
