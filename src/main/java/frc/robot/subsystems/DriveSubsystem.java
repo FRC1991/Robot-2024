@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.InputMismatchException;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
