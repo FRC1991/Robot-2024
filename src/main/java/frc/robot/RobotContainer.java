@@ -21,7 +21,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.climber.RunClimber;
+import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.pivot.RunPivot;
 import frc.robot.commands.shooter.RunShooter;
+import frc.robot.commands.shooter.VisionShooter;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -80,7 +84,7 @@ public class RobotContainer {
   public double intakeTyHandle; //Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
   public double intakeTidHandle; //ID of the primary in-view AprilTag
   //endregion
-  
+
   // The robot's subsystems
   private final DriveSubsystem m_DriveTrain = new DriveSubsystem();
   private final Intake m_Intake = new Intake();
@@ -88,7 +92,7 @@ public class RobotContainer {
   private final Pivot m_Pivot = new Pivot();
   private final Climber m_Climber = new Climber();
 
-  public final OperatingInterface oi = new OperatingInterface();
+  private final OperatingInterface oi = new OperatingInterface();
 
 
   /**
@@ -114,10 +118,21 @@ public class RobotContainer {
                 true, false, 0.8),
             m_DriveTrain));
 
-    // m_Intake.setDefaultCommand(new RunIntake(oi.auxController.getLeftY(), m_Intake));
-    // m_Intake.setDefaultCommand(
-    //     new RunCommand(() -> m_Intake.setIntakeSpeed(m_auxController.getLeftY()),
-    //         m_Intake));
+    m_Intake.setDefaultCommand(new RunIntake(oi.auxController.getLeftY(), m_Intake));
+
+    m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
+
+    m_Pivot.setDefaultCommand(new RunPivot(() -> oi.auxController.getRightY(), m_Pivot));
+
+    m_Climber.setDefaultCommand(
+      new RunClimber(
+        () -> {if(oi.auxController.getXButton())
+                return 0.2;
+              else
+                return 0.0;
+              },
+        m_Climber)
+      );
 
   }
 
@@ -173,7 +188,7 @@ public class RobotContainer {
         // End 6 meters straight ahead of where we started, facing forward
         new Pose2d(6, 0, new Rotation2d(180)),
         config);
-    
+
     Trajectory exampleTrajectoryPt2 = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(6, 0, new Rotation2d(180)),
@@ -210,9 +225,9 @@ public class RobotContainer {
   }
 
   /**
-   * Configures the network tables for the robot. 
+   * Configures the network tables for the robot.
    * Also adds listeners to automatically update the network table values.
-   * 
+   *
    * Use the AtomicReference<Double> values when trying to reference
    * a value from a network table
    */
@@ -226,7 +241,7 @@ public class RobotContainer {
 
      tvHandle = defaultNTinst.addListener(
       dlbTopic_tv,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         tv.set(event.valueData.value.getDouble());
       }
@@ -236,7 +251,7 @@ public class RobotContainer {
 
      txHandle = defaultNTinst.addListener(
       dlbTopic_tx,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         tx.set(event.valueData.value.getDouble());
       }
@@ -246,7 +261,7 @@ public class RobotContainer {
 
      tyHandle = defaultNTinst.addListener(
       dlbTopic_ty,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         ty.set(event.valueData.value.getDouble());
       }
@@ -256,7 +271,7 @@ public class RobotContainer {
 
      tidHandle = defaultNTinst.addListener(
       dlbTopic_tid,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         tid.set(event.valueData.value.getDouble());
       }
@@ -266,7 +281,7 @@ public class RobotContainer {
 
      taHandle = defaultNTinst.addListener(
       dlbTopic_ta,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         ta.set(event.valueData.value.getDouble());
       }
@@ -276,7 +291,7 @@ public class RobotContainer {
 
      intakeTvHandle = defaultNTinst.addListener(
       intakeDlbTopic_tv,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         intaketv.set(event.valueData.value.getDouble());
       }
@@ -286,7 +301,7 @@ public class RobotContainer {
 
      intakeTxHandle = defaultNTinst.addListener(
       intakeDlbTopic_tx,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         intaketx.set(event.valueData.value.getDouble());
       }
@@ -296,7 +311,7 @@ public class RobotContainer {
 
      intakeTyHandle = defaultNTinst.addListener(
       intakeDlbTopic_ty,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         intakety.set(event.valueData.value.getDouble());
       }
@@ -306,7 +321,7 @@ public class RobotContainer {
 
      intakeTidHandle = defaultNTinst.addListener(
       intakeDlbTopic_tid,
-      EnumSet.of(NetworkTableEvent.Kind.kValueAll), 
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         intaketid.set(event.valueData.value.getDouble());
       }
