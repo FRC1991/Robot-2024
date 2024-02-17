@@ -4,7 +4,7 @@
 
 package frc.robot.commands.shooter;
 
-import java.util.function.Supplier;
+import java.util.concurrent.atomic.AtomicReference;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
@@ -12,11 +12,11 @@ import frc.robot.subsystems.Shooter;
 
 public class VisionShooter extends Command {
 
-  Supplier<Double> ta, tid;
+  AtomicReference<Double> ta, tid;
   Shooter m_Shooter;
 
   /** Creates a new RunShooter. */
-  public VisionShooter(Supplier<Double> ta, Supplier<Double> tid, Shooter shooter) {
+  public VisionShooter(AtomicReference<Double> ta, AtomicReference<Double> tid, Shooter shooter) {
 
     this.ta = ta;
     this.tid = tid;
