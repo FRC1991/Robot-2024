@@ -5,6 +5,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -66,9 +71,38 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       });
 
+  private ChassisSpeeds m_RobotChassisSpeeds = new ChassisSpeeds();
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     zeroHeading();
+
+    // Configure AutoBuilder last
+    AutoBuilder.configureHolonomic(
+            this::getPose, // Robot pose supplier
+            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                    4.5, // Max module speed, in m/s
+                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
   }
 
   @Override
@@ -111,6 +145,33 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Resets the odometry to 0 degrees and 0 velocity
+   */
+  public void resetOdometry() {
+    m_odometry.resetPosition(
+        Rotation2d.fromDegrees(getHeading()),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+        this.getPose());
+  }
+
+  private ChassisSpeeds getRobotRelativeSpeeds() {
+    return m_RobotChassisSpeeds;
+  }
+
+  private void drive(ChassisSpeeds t) {
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(t);
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_rearLeft.setDesiredState(swerveModuleStates[2]);
+    m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  /**
    * Method to drive the robot using joystick info.
    *
    * @param xSpeed        Speed of the robot in the x direction (forward).
@@ -121,7 +182,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
-    
+
     double xSpeedCommanded;
     double ySpeedCommanded;
 
@@ -137,7 +198,7 @@ public class DriveSubsystem extends SubsystemBase {
       } else {
         directionSlewRate = 500.0; //some high number that means the slew rate is effectively instantaneous
       }
-      
+
 
       double currentTime = WPIUtilJNI.now() * 1e-6;
       double elapsedTime = currentTime - m_prevTime;
@@ -161,7 +222,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_currentTranslationMag = m_magLimiter.calculate(0.0);
       }
       m_prevTime = currentTime;
-      
+
       xSpeedCommanded = m_currentTranslationMag * Math.cos(m_currentTranslationDir);
       ySpeedCommanded = m_currentTranslationMag * Math.sin(m_currentTranslationDir);
       m_currentRotation = m_rotLimiter.calculate(rot);
@@ -178,12 +239,15 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
+    m_RobotChassisSpeeds = new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered);
+
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getHeading()))
-            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+            : m_RobotChassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -208,7 +272,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     drive(xSpeed, ySpeed, rot, fieldRelative, rateLimit);
   }
-  
+
   /**
    * Sets the wheels into an X formation to prevent movement.
    */
@@ -266,13 +330,13 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Returns the heading of the robot optimized
+   * Returns the heading of the robot optimized around target angle
    *
    * @return the robot's heading in degrees (0, 360], optimized for the TurnToAngle PID command
    */
   public double getHeadingTurnToAngle(double target) {
     double angle = Units.radiansToDegrees(SwerveUtils.WrapAngle(Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).getRadians()));
-    
+
     if(angle > (target + 180)) {
       angle -= 360;
     } else if(angle < (target - 180)) {
