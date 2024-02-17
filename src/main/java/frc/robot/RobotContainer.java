@@ -17,6 +17,8 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
@@ -93,6 +95,8 @@ public class RobotContainer {
   private final Climber m_Climber = new Climber();
 
   private final OperatingInterface oi = new OperatingInterface();
+
+  private DigitalInput proximity = new DigitalInput(0);
 
 
   /**
