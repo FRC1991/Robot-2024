@@ -17,7 +17,6 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -96,7 +95,7 @@ public class RobotContainer {
 
   private final OperatingInterface oi = new OperatingInterface();
 
-  private DigitalInput proximity = new DigitalInput(0);
+  private DigitalInput proximity = new DigitalInput(8);
 
 
   /**
@@ -168,7 +167,9 @@ public class RobotContainer {
   public void configureShuffleBoard() {
     Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.getAuxButton(1));
 
-    Shuffleboard.getTab("Main").addDouble("angle", () -> m_DriveTrain.getHeading());
+    Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
+
+    Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
