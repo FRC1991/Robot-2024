@@ -13,10 +13,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
-  /** Creates a new Pivot. */
+  
   private CANSparkMax pivotMotor1, pivotMotor2;
   private AbsoluteEncoder pivotEncoder;
 
+  /** Creates a new Pivot. */
   public Pivot() {
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
     pivotMotor2 = new CANSparkMax(PivotConstants.kPivotMotor2Id, MotorType.kBrushless);
