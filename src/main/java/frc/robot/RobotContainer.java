@@ -165,7 +165,7 @@ public class RobotContainer {
   }
 
   public void configureShuffleBoard() {
-    Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.getAuxButton(1));
+    Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.auxController.getRawButton(1));
 
     Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
 
