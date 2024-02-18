@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.RunPivot;
@@ -115,9 +116,9 @@ public class RobotContainer {
         // Turning is controlled by rotating the joystick.
         new RunCommand(
             () -> m_DriveTrain.drive(
-                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), 0.1),
-                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), 0.1),
-                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(2), 0.1),
+                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
                 true, false, 0.8),
             m_DriveTrain));
 
