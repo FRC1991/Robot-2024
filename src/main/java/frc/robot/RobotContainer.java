@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -118,6 +119,7 @@ public class RobotContainer {
     configureShuffleBoard();
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    NamedCommands.registerCommand("RunShooter", new RunShooter(() -> 0.8, m_Shooter));
 
     // Configure default commands
     m_DriveTrain.setDefaultCommand(
@@ -174,7 +176,7 @@ public class RobotContainer {
 
     Shuffleboard.getTab("Main").add(autoChooser);
   }
-  
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -185,6 +187,8 @@ public class RobotContainer {
   }
 
   /**
+   * A great example of how to manually create autonomous commands.
+   * 
    * @return the figure eight command
    */
   public Command getFigureEightCommand() {
