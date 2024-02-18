@@ -96,8 +96,9 @@ public class RobotContainer {
 
   private final OperatingInterface oi = new OperatingInterface();
 
-  private DigitalInput proximity = new DigitalInput(8);
-
+  private final DigitalInput proximity = new DigitalInput(0);
+  private final DigitalInput upperPivotLimit = new DigitalInput(1);
+  private final DigitalInput lowerPivotLimit = new DigitalInput(2);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
