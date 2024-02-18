@@ -17,9 +17,11 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -41,6 +43,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -100,6 +104,8 @@ public class RobotContainer {
   private final DigitalInput upperPivotLimit = new DigitalInput(1);
   private final DigitalInput lowerPivotLimit = new DigitalInput(2);
 
+  private final SendableChooser<Command> autoChooser;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -110,6 +116,8 @@ public class RobotContainer {
     configureNetworkTables();
     // Configures wigets for the driver station
     configureShuffleBoard();
+
+    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
 
     // Configure default commands
     m_DriveTrain.setDefaultCommand(
@@ -163,13 +171,23 @@ public class RobotContainer {
     Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
 
     Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
+
+    Shuffleboard.getTab("Main").add(autoChooser);
   }
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
+
+  /**
+   * @return the figure eight command
+   */
+  public Command getFigureEightCommand() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
