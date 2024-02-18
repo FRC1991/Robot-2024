@@ -127,17 +127,6 @@ public class RobotContainer {
     m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
     m_Pivot.setDefaultCommand(new RunPivot(() -> oi.auxController.getRightY(), m_Pivot));
-
-    m_Climber.setDefaultCommand(
-      new RunClimber(
-        () -> {if(oi.auxController.getXButton())
-                return 0.2;
-              else
-                return 0.0;
-              },
-        m_Climber)
-      );
-
   }
 
   /**
@@ -162,7 +151,9 @@ public class RobotContainer {
             () -> m_DriveTrain.zeroHeading(),
             m_DriveTrain));
 
-    oi.auxAButton.whileTrue(new RunShooter(() -> 0.3, m_Shooter));
+    // oi.auxAButton.whileTrue(new RunShooter(() -> 0.3, m_Shooter));
+
+    oi.auxXButton.whileTrue(new RunClimber(() -> 0.6, m_Climber));
   }
 
   public void configureShuffleBoard() {
