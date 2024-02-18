@@ -27,7 +27,8 @@ public class Pivot extends SubsystemBase {
     //TODO find the actual limit for these
     pivotMotor1.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardLimit);
     pivotMotor2.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardLimit);
-
+    
+    //TODO find the actual limit for these
     pivotMotor1.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kBackLimit);
     pivotMotor2.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kBackLimit);
   }
