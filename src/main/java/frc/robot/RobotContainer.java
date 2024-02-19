@@ -17,11 +17,9 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -43,9 +41,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -99,13 +94,16 @@ public class RobotContainer {
   private final Pivot m_Pivot = new Pivot();
   private final Climber m_Climber = new Climber();
 
+  // The operating interface communicating with the user
   private final OperatingInterface oi = new OperatingInterface();
 
+  // The proximity sensor detecting the presence of a note in the Intake
   private final DigitalInput proximity = new DigitalInput(0);
+
+  // Limit switches stopping the Pivot from moving too far
+  //TODO are these even going to be used?
   private final DigitalInput upperPivotLimit = new DigitalInput(1);
   private final DigitalInput lowerPivotLimit = new DigitalInput(2);
-
-  private final SendableChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -117,9 +115,6 @@ public class RobotContainer {
     configureNetworkTables();
     // Configures wigets for the driver station
     configureShuffleBoard();
-
-    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    NamedCommands.registerCommand("RunShooter", new RunShooter(() -> 0.8, m_Shooter));
 
     // Configure default commands
     m_DriveTrain.setDefaultCommand(
@@ -151,12 +146,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    //Stops movement while Button.kR1.value is held down
+    // Stops movement while Button.kR1.value (the trigger) is held down
     new JoystickButton(oi.driverJoytick, 1)
         .whileTrue(new RunCommand(
             () -> m_DriveTrain.setX(),
             m_DriveTrain));
 
+    // Zeros out the gyro
+    //TODO remove before going to competition 
     new JoystickButton(oi.driverJoytick, 2)
         .whileTrue(new RunCommand(
             () -> m_DriveTrain.zeroHeading(),
@@ -168,13 +165,13 @@ public class RobotContainer {
   }
 
   public void configureShuffleBoard() {
+    // Booleans
     Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.auxController.getRawButton(1));
-
-    Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
-
     Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
 
-    Shuffleboard.getTab("Main").add(autoChooser);
+    // Doubles
+    Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
+
   }
 
   /**
@@ -183,15 +180,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-  }
-
-  /**
-   * A great example of how to manually create autonomous commands.
-   * 
-   * @return the figure eight command
-   */
-  public Command getFigureEightCommand() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
@@ -254,7 +242,6 @@ public class RobotContainer {
   public void configureNetworkTables() {
     NetworkTableInstance defaultNTinst = NetworkTableInstance.getDefault();
     NetworkTable aimingLime = defaultNTinst.getTable("limelight-aimming");
-
     NetworkTable intakeLime = defaultNTinst.getTable("limelight-intake");
 
     dlbTopic_tv = aimingLime.getDoubleTopic("tv");
