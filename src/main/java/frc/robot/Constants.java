@@ -138,6 +138,12 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
+  public static final class TeleopConstants {
+    public static final double kShooterSpeed = 1;
+    public static final double kClimberSpeed = 0.6;
+    public static final double kSwerveSpeed = 0.8;
+  } 
+
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
