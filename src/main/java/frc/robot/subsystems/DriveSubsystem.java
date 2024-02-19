@@ -148,15 +148,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Resets the odometry to 0 degrees and 0 velocity
    */
   public void resetOdometry() {
-    m_odometry.resetPosition(
-        Rotation2d.fromDegrees(getHeading()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-        this.getPose());
+    resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   /**
