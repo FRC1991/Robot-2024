@@ -17,7 +17,6 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -182,8 +181,6 @@ public class RobotContainer {
 
     // Doubles
     Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
-
-    Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
 
     Shuffleboard.getTab("Main").add(autoChooser);
   }
