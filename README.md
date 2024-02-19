@@ -6,7 +6,7 @@ You can find a complete guide to both the software and hardware on the robot in 
 Starting at kickoff our team has been diligent in documenting our season in an engineering notebook. Everyday we take attendance of students and mentors, take notes on what happened that day, and action items to finish. The engineering notebook acts almost like a git history, with each day being another commit. It's available for view in google docs [here](https://docs.google.com/document/d/1IYIvurchCGXITy4c3Y5kDGU6yW_Gognxy2Y8CyMoIX4/edit).
 
 ## Swerve
-This repository is based on the [MAXSwerve library](https://github.com/REVrobotics/MAXSwerve-Java-Template) made by REV Robotics.
+Our team has made our own swerve in the past with varying degrees of success. After 2018 we decided to stick with the kit of parts drivetrain for the simple and reliable design. This year we chose to use the MAXSwerve made by REV. This repository is based on the [MAXSwerve library](https://github.com/REVrobotics/MAXSwerve-Java-Template) made by REV Robotics.
 
 ## Link tree
  - [frc1991dragons@gmail.com](mailto:frc1991dragons@gmail.com)
@@ -14,4 +14,4 @@ This repository is based on the [MAXSwerve library](https://github.com/REVroboti
  - [Blue Alliance](https://www.thebluealliance.com/team/1991)
  - [Github](https://github.com/frc1991)
  - [Twitter](https://twitter.com/frcteam1991)
- - [Threads](about:blank)
+ - [Threads](https://about:blank)
