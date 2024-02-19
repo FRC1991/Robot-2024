@@ -12,6 +12,7 @@ public class OperatingInterface {
   // The Auxillary driver's controller
   public final XboxController auxController = new XboxController(OIConstants.kAuxControllerPort);
 
+  // Creating Triggers based off auxController's buttons for ease of use
   public Trigger auxXButton = new Trigger(() -> auxController.getXButton());
   public Trigger auxAButton = new Trigger(() -> auxController.getAButton());
   public Trigger auxBButton = new Trigger(() -> auxController.getBButton());

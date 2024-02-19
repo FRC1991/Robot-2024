@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
-  /** Creates a new Shooter. */
 
   private CANSparkMax shooterNeo1, shooterNeo2;
-
+  
+  /** Creates a new Shooter. */
   public Shooter() {
     //TODO change device IDs
     shooterNeo1 = new CANSparkMax(ShooterConstants.kShooterMotor1Id, MotorType.kBrushless);
