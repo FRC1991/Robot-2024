@@ -15,7 +15,7 @@ public class VisionShooter extends Command {
   AtomicReference<Double> ta, tid;
   Shooter m_Shooter;
 
-  /** Creates a new RunShooter. */
+  /** Creates a new VisionShooter. */
   public VisionShooter(AtomicReference<Double> ta, AtomicReference<Double> tid, Shooter shooter) {
 
     this.ta = ta;
@@ -33,6 +33,7 @@ public class VisionShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // If one of the Speaker's april tags is in view, set Shooter to the size of the april tag
     if(tid.get() == 1 || tid.get() ==2) {
       m_Shooter.setShooter(ta.get() * ShooterConstants.kVisionCoefficient);
     }

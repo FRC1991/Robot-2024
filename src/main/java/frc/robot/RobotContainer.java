@@ -99,9 +99,14 @@ public class RobotContainer {
   private final Pivot m_Pivot = new Pivot();
   private final Climber m_Climber = new Climber();
 
+  // The operating interface communicating with the user
   private final OperatingInterface oi = new OperatingInterface();
 
+  // The proximity sensor detecting the presence of a note in the Intake
   private final DigitalInput proximity = new DigitalInput(0);
+
+  // Limit switches stopping the Pivot from moving too far
+  //TODO are these even going to be used?
   private final DigitalInput upperPivotLimit = new DigitalInput(1);
   private final DigitalInput lowerPivotLimit = new DigitalInput(2);
 
@@ -152,11 +157,14 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Stops movement while Button.kR1.value is held down
+    // Stops movement while Button.kR1.value (the trigger) is held down
     new JoystickButton(oi.driverJoytick, 1)
         .whileTrue(new RunCommand(
             () -> m_DriveTrain.setX(),
             m_DriveTrain));
 
+    // Zeros out the gyro
+    //TODO remove before going to competition 
     new JoystickButton(oi.driverJoytick, 2)
         .whileTrue(new RunCommand(
             () -> m_DriveTrain.zeroHeading(),
@@ -168,8 +176,11 @@ public class RobotContainer {
   }
 
   public void configureShuffleBoard() {
+    // Booleans
     Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.auxController.getRawButton(1));
+    Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
 
+    // Doubles
     Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
 
     Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);

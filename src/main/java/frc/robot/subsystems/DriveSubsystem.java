@@ -149,21 +149,24 @@ public class DriveSubsystem extends SubsystemBase {
    * Resets the odometry to 0 degrees and 0 velocity
    */
   public void resetOdometry() {
-    m_odometry.resetPosition(
-        Rotation2d.fromDegrees(getHeading()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-        this.getPose());
+    resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
+  /**
+   * Used in the Pathplanner AutoBuilder.configureHolonomic
+   * 
+   * @return The ChassisSpeeds relative to the robot
+   */
   private ChassisSpeeds getRobotRelativeSpeeds() {
     return m_RobotChassisSpeeds;
   }
 
+  /**
+   * Drives the robot according to ChassisSpeeds provided
+   * by Pathplanner during auto
+   * 
+   * @param t ChassisSpeeds relative to the robot
+   */
   private void drive(ChassisSpeeds t) {
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(t);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -333,7 +336,7 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Returns the heading of the robot optimized around target angle
    *
-   * @return the robot's heading in degrees (0, 360], optimized for the TurnToAngle PID command
+   * @return the robot's heading in degrees (180, -180), optimized for the TurnToAngle PID command
    */
   public double getHeadingTurnToAngle(double target) {
     double angle = Units.radiansToDegrees(SwerveUtils.WrapAngle(Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).getRadians()));
@@ -354,23 +357,4 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
-
-  // /**
-  //  * Sets the speed of the drive train
-  //  * @param newSpeed The speed of the drive train, from 0 to 1
-  //  */
-  // public void setSpeedScale(double newSpeed) {
-  //   if(newSpeed < 0) {
-  //     newSpeed = 0;
-  //   }
-
-  //   if(newSpeed < 0 || newSpeed > 1) {
-  //     throw new InputMismatchException("speed scale must be between zero and one\n" + "speed scale:  " + newSpeed);
-  //   }
-  //   System.out.println(newSpeed);
-  //   System.out.println(Math.round(newSpeed*100));
-  //   System.out.println((double)(Math.round(newSpeed * 100) / 100));
-  //   newSpeed = (double) Math.round(newSpeed * 100) / 100;
-  //   speedScale = newSpeed;
-  // }
 }
