@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.TeleopConstants;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.RunPivot;
@@ -123,7 +124,7 @@ public class RobotContainer {
     configureShuffleBoard();
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    NamedCommands.registerCommand("RunShooter", new RunShooter(() -> 0.8, m_Shooter));
+    NamedCommands.registerCommand("RunShooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
 
     // Configure default commands
     m_DriveTrain.setDefaultCommand(
@@ -134,7 +135,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
-                true, false, 0.8),
+                true, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain));
 
     m_Intake.setDefaultCommand(new RunIntake(oi.auxController.getLeftY(), m_Intake));
@@ -169,9 +170,9 @@ public class RobotContainer {
             () -> m_DriveTrain.zeroHeading(),
             m_DriveTrain));
 
-    // oi.auxAButton.whileTrue(new RunShooter(() -> 0.3, m_Shooter));
+    // oi.auxAButton.whileTrue(new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
 
-    oi.auxXButton.whileTrue(new RunClimber(() -> 0.6, m_Climber));
+    oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
   }
 
   public void configureShuffleBoard() {
