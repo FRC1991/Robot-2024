@@ -147,11 +147,11 @@ public class RobotContainer {
                 true, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain));
 
-    m_Intake.setDefaultCommand(new RunIntake(oi.auxController.getLeftY(), m_Intake));
+    m_Intake.setDefaultCommand(new RunIntake(oi.auxController::getLeftY, m_Intake));
 
     m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    m_Pivot.setDefaultCommand(new RunPivot(() -> oi.auxController.getRightY(), m_Pivot));
+    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getRightY, m_Pivot));
   }
 
   /**
