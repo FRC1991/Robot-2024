@@ -11,8 +11,8 @@ import frc.robot.subsystems.Pivot;
 
 public class RunPivot extends Command {
 
-  double speed;
-  Pivot m_Pivot;
+  private double speed;
+  private Pivot m_Pivot;
 
   /** Creates a new RunPivot. */
   public RunPivot(Supplier<Double> speed, Pivot pivot) {

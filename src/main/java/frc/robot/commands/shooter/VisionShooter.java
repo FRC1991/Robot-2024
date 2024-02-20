@@ -12,8 +12,8 @@ import frc.robot.subsystems.Shooter;
 
 public class VisionShooter extends Command {
 
-  AtomicReference<Double> ta, tid;
-  Shooter m_Shooter;
+  private AtomicReference<Double> ta, tid;
+  private Shooter m_Shooter;
 
   /** Creates a new VisionShooter. */
   public VisionShooter(AtomicReference<Double> ta, AtomicReference<Double> tid, Shooter shooter) {

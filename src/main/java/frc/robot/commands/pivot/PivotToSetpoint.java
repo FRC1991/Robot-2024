@@ -11,8 +11,8 @@ import frc.robot.subsystems.Pivot;
 
 public class PivotToSetpoint extends Command {
 
-  double setpoint, tolerance;
-  Pivot m_Pivot;
+  private double setpoint, tolerance;
+  private Pivot m_Pivot;
 
   /** Creates a new PivotToAngle. */
   public PivotToSetpoint(Supplier<Double> setpoint, double tolerance, Pivot pivot) {
