@@ -6,6 +6,7 @@ package frc.robot.commands.climber;
 
 import java.util.function.Supplier;
 
+// import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 
@@ -30,6 +31,8 @@ public class RunClimber extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //TODO implement this if it works
+    // if(DriverStation.getMatchTime() < 60)
     m_Climber.setClimber(speed.get());
   }
 

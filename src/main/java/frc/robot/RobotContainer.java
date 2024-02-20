@@ -165,7 +165,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    //Stops movement while Button.kR1.value is held down
+    // Stops movement while Button.kR1.value is held down
     // Stops movement while Button.kR1.value (the trigger) is held down
     new JoystickButton(oi.driverJoytick, 1)
         .whileTrue(new RunCommand(
