@@ -7,6 +7,7 @@ package frc.robot.commands.pivot;
 import java.util.concurrent.atomic.AtomicReference;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.Pivot;
 
 public class VisionPivot extends Command {
@@ -29,7 +30,7 @@ public class VisionPivot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Pivot.setPivot(ta.get());
+    m_Pivot.setPivot(ta.get() * PivotConstants.kVisionCoefficient);
   }
 
   // Called once the command ends or is interrupted.

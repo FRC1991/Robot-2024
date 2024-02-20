@@ -169,6 +169,8 @@ public final class Constants {
     public static final int kPivotMotor1Id = 17;
     public static final int kPivotMotor2Id = 18;
 
+    public static final double kVisionCoefficient = 1;
+
     //TODO find actual limits
     public static final float kForwardLimit = 2;
     public static final float kBackLimit = -2;
