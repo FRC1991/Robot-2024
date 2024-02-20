@@ -69,27 +69,30 @@ public class RobotContainer {
   private DoubleTopic dlbTopic_ta;
 
 
-  public double tvHandle; //Whether the limelight has any valid targets (0 or 1)
-  public double txHandle; //Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
-  public double tyHandle; //Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
-  public double tidHandle; //ID of the primary in-view AprilTag
-  public double taHandle; //Target Area (0% of image to 100% of image)
+  public double tvHandle;// Whether the limelight has any valid targets (0 or 1)
+  public double txHandle;// Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
+  public double tyHandle;// Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
+  public double tidHandle;// ID of the primary in-view AprilTag
+  public double taHandle;// Target Area (0% of image to 100% of image)
 
   public static AtomicReference<Double> intaketv = new AtomicReference<Double>();
   public static AtomicReference<Double> intaketx = new AtomicReference<Double>();
   public static AtomicReference<Double> intakety = new AtomicReference<Double>();
   public static AtomicReference<Double> intaketid = new AtomicReference<Double>();
+  public static AtomicReference<Double> intaketa = new AtomicReference<Double>();
 
   private DoubleTopic intakeDlbTopic_tv;
   private DoubleTopic intakeDlbTopic_tx;
   private DoubleTopic intakeDlbTopic_ty;
   private DoubleTopic intakeDlbTopic_tid;
+  private DoubleTopic intakeDlbTopic_ta;
 
 
-  public double intakeTvHandle; //Whether the limelight has any valid targets (0 or 1)
-  public double intakeTxHandle; //Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
-  public double intakeTyHandle; //Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
-  public double intakeTidHandle; //ID of the primary in-view AprilTag
+  public double intakeTvHandle;// Whether the limelight has any valid targets (0 or 1)
+  public double intakeTxHandle;// Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
+  public double intakeTyHandle;// Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
+  public double intakeTidHandle;// ID of the primary in-view AprilTag
+  public double intakeTaHandle;// Target Area (0% of image to 100% of image)
   //endregion
 
   // The robot's subsystems
@@ -179,9 +182,16 @@ public class RobotContainer {
     // Booleans
     Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.auxController.getRawButton(1));
     Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
+    Shuffleboard.getTab("Main").addBoolean("lower limit switch", lowerPivotLimit::get);
+    Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);
 
     // Doubles
-    Shuffleboard.getTab("Main").addDouble("angle", m_DriveTrain::getHeading);
+    Shuffleboard.getTab("Main").addDouble("Heading", m_DriveTrain::getHeading);
+    Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getAbsoluteEncoderValue);
+    Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
+    Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
+    Shuffleboard.getTab("Main").addDouble("intake ta", intaketa::get);
+    Shuffleboard.getTab("Main").addDouble("intake tid", intaketid::get);
 
     Shuffleboard.getTab("Main").add(autoChooser);
   }
@@ -353,6 +363,16 @@ public class RobotContainer {
       EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         intaketid.set(event.valueData.value.getDouble());
+      }
+     );
+
+     intakeDlbTopic_ta = intakeLime.getDoubleTopic("ta");
+
+     intakeTaHandle = defaultNTinst.addListener(
+      intakeDlbTopic_ta,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
+      event -> {
+        intaketa.set(event.valueData.value.getDouble());
       }
      );
   }
