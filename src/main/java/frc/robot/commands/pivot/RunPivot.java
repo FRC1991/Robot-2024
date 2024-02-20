@@ -11,12 +11,12 @@ import frc.robot.subsystems.Pivot;
 
 public class RunPivot extends Command {
 
-  private double speed;
+  private Supplier<Double> speed;
   private Pivot m_Pivot;
 
   /** Creates a new RunPivot. */
   public RunPivot(Supplier<Double> speed, Pivot pivot) {
-    this.speed = speed.get();
+    this.speed = speed;
     m_Pivot = pivot;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -30,7 +30,7 @@ public class RunPivot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Pivot.setPivot(speed);
+    m_Pivot.setPivot(speed.get());
   }
 
   // Called once the command ends or is interrupted.

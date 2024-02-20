@@ -11,8 +11,8 @@ import frc.robot.subsystems.Shooter;
 
 public class RunShooter extends Command {
 
-  Supplier<Double> speed;
-  Shooter m_Shooter;
+  private Supplier<Double> speed;
+  private Shooter m_Shooter;
 
   /** Creates a new RunShooter. */
   public RunShooter(Supplier<Double> speed, Shooter shooter) {

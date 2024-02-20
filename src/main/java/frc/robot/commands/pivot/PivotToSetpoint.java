@@ -11,12 +11,13 @@ import frc.robot.subsystems.Pivot;
 
 public class PivotToSetpoint extends Command {
 
-  private double setpoint, tolerance;
+  private Supplier<Double> setpoint;
+  private double tolerance;
   private Pivot m_Pivot;
 
   /** Creates a new PivotToAngle. */
   public PivotToSetpoint(Supplier<Double> setpoint, double tolerance, Pivot pivot) {
-    this.setpoint = setpoint.get();
+    this.setpoint = setpoint;
     this.tolerance = tolerance;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -31,9 +32,9 @@ public class PivotToSetpoint extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_Pivot.getAbsoluteEncoderValue() < (setpoint - tolerance)) {
+    if(m_Pivot.getAbsoluteEncoderValue() < (setpoint.get() - tolerance)) {
       m_Pivot.setPivot(0.4);
-    } else if(m_Pivot.getAbsoluteEncoderValue() > (setpoint + tolerance)) {
+    } else if(m_Pivot.getAbsoluteEncoderValue() > (setpoint.get() + tolerance)) {
       m_Pivot.setPivot(-0.4);
     }
   }
@@ -45,7 +46,7 @@ public class PivotToSetpoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(setpoint - m_Pivot.getAbsoluteEncoderValue()) <= tolerance) {
+    if(Math.abs(setpoint.get() - m_Pivot.getAbsoluteEncoderValue()) <= tolerance) {
       return true;
     } else {
       return false;

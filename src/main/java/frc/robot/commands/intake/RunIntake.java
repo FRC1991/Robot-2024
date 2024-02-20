@@ -4,15 +4,17 @@
 
 package frc.robot.commands.intake;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
 public class RunIntake extends Command {
 
-  private double speed;
+  private Supplier<Double> speed;
   private Intake m_Intake;
   /** Creates a new RunIntake. */
-  public RunIntake(double speed, Intake intake) {
+  public RunIntake(Supplier<Double> speed, Intake intake) {
     this.speed = speed;
     m_Intake = intake;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,7 +28,7 @@ public class RunIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Intake.setIntakeSpeed(speed);
+    m_Intake.setIntakeSpeed(speed.get());
   }
 
   // Called once the command ends or is interrupted.
