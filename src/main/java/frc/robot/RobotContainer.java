@@ -61,12 +61,16 @@ public class RobotContainer {
   public static AtomicReference<Double> ty = new AtomicReference<Double>();
   public static AtomicReference<Double> tid = new AtomicReference<Double>();
   public static AtomicReference<Double> ta = new AtomicReference<Double>();
+  public static AtomicReference<Double> thor = new AtomicReference<Double>();
+  public static AtomicReference<Double> tvert = new AtomicReference<Double>();
 
   private DoubleTopic dlbTopic_tv;
   private DoubleTopic dlbTopic_tx;
   private DoubleTopic dlbTopic_ty;
   private DoubleTopic dlbTopic_tid;
   private DoubleTopic dlbTopic_ta;
+  private DoubleTopic dlbTopic_thor;
+  private DoubleTopic dlbTopic_tvert;
 
 
   public double tvHandle;// Whether the limelight has any valid targets (0 or 1)
@@ -74,7 +78,9 @@ public class RobotContainer {
   public double tyHandle;// Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
   public double tidHandle;// ID of the primary in-view AprilTag
   public double taHandle;// Target Area (0% of image to 100% of image)
-
+  public double thorHandle;// Horizontal sidelength of the rough bounding box (0 - 320 pixels)
+  public double tvertHandle;// Vertical sidelength of the rough bounding box (0 - 320 pixels)
+  
   public static AtomicReference<Double> intaketv = new AtomicReference<Double>();
   public static AtomicReference<Double> intaketx = new AtomicReference<Double>();
   public static AtomicReference<Double> intakety = new AtomicReference<Double>();
@@ -190,6 +196,8 @@ public class RobotContainer {
     Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getAbsoluteEncoderValue);
     Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
     Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
+    Shuffleboard.getTab("Main").addDouble("shooter thor", thor::get);
+    Shuffleboard.getTab("Main").addDouble("shooter tvert", tvert::get);
     Shuffleboard.getTab("Main").addDouble("intake ta", intaketa::get);
     Shuffleboard.getTab("Main").addDouble("intake tid", intaketid::get);
 
@@ -316,13 +324,33 @@ public class RobotContainer {
       }
      );
 
-     dlbTopic_ta = aimingLime.getDoubleTopic("a");
+     dlbTopic_ta = aimingLime.getDoubleTopic("ta");
 
      taHandle = defaultNTinst.addListener(
       dlbTopic_ta,
       EnumSet.of(NetworkTableEvent.Kind.kValueAll),
       event -> {
         ta.set(event.valueData.value.getDouble());
+      }
+     );
+
+     dlbTopic_thor = aimingLime.getDoubleTopic("thor");
+
+     thorHandle = defaultNTinst.addListener(
+      dlbTopic_thor,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
+      event -> {
+        thor.set(event.valueData.value.getDouble());
+      }
+     );
+
+     dlbTopic_tvert = aimingLime.getDoubleTopic("tvert");
+
+     tvertHandle = defaultNTinst.addListener(
+      dlbTopic_tvert,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
+      event -> {
+        tvert.set(event.valueData.value.getDouble());
       }
      );
 
