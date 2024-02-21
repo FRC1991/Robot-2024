@@ -44,7 +44,7 @@ public final class Constants {
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
- 
+
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
     public static final double kFrontRightChassisAngularOffset = 0;
@@ -142,7 +142,7 @@ public final class Constants {
     public static final double kShooterSpeed = 1;
     public static final double kClimberSpeed = 0.6;
     public static final double kSwerveSpeed = 0.8;
-  } 
+  }
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
@@ -169,7 +169,10 @@ public final class Constants {
     public static final int kPivotMotor1Id = 17;
     public static final int kPivotMotor2Id = 18;
 
-    public static final double kVisionCoefficient = 1;
+    public static final double kVisionA = 1;
+    public static final double kVisionB = 1;
+    public static final double kVisionC = 0;
+    public static final double kVisionD = 1;
 
     //TODO find actual limits
     public static final float kForwardLimit = 2;

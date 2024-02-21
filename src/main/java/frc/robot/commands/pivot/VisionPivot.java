@@ -30,7 +30,13 @@ public class VisionPivot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Pivot.setPivot(ta.get() * PivotConstants.kVisionCoefficient);
+    double speed = shooterFunction(ta.get(),
+        PivotConstants.kVisionA,
+        PivotConstants.kVisionB,
+        PivotConstants.kVisionC,
+        PivotConstants.kVisionD);
+
+    m_Pivot.setPivot(speed);
   }
 
   // Called once the command ends or is interrupted.
@@ -41,5 +47,18 @@ public class VisionPivot extends Command {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  /**
+   * Variable rational function
+   * @param x the input/independent variable
+   * @param a
+   * @param b
+   * @param c
+   * @param d
+   * @return the Y value for the given X value
+   */
+  private double shooterFunction(double x, double a, double b, double c, double d) {
+    return ((a*-x)+b)/((c*-x)+d);
   }
 }
