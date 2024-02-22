@@ -130,11 +130,13 @@ public class RobotContainer {
     configureButtonBindings();
     // Configures network table listeners
     configureNetworkTables();
+
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
+    autoChooser = AutoBuilder.buildAutoChooser("One Note"); // Default auto will be `Commands.none()`
+
+
     // Configures wigets for the driver station
     configureShuffleBoard();
-
-    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
 
     // Configure default commands
     m_DriveTrain.setDefaultCommand(
