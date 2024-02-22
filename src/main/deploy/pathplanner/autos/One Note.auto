@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2,
-      "y": 2
+      "x": 2.4270480621161745,
+      "y": 6.378150099658596
     },
     "rotation": 90.0
   },
@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "To Speaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "RunShooter"
+            "pathName": "Ampside to note"
           }
         }
       ]

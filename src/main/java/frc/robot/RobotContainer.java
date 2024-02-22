@@ -36,6 +36,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -80,7 +81,7 @@ public class RobotContainer {
   public double taHandle;// Target Area (0% of image to 100% of image)
   public double thorHandle;// Horizontal sidelength of the rough bounding box (0 - 320 pixels)
   public double tvertHandle;// Vertical sidelength of the rough bounding box (0 - 320 pixels)
-  
+
   public static AtomicReference<Double> intaketv = new AtomicReference<Double>();
   public static AtomicReference<Double> intaketx = new AtomicReference<Double>();
   public static AtomicReference<Double> intakety = new AtomicReference<Double>();
@@ -133,7 +134,7 @@ public class RobotContainer {
     configureShuffleBoard();
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    NamedCommands.registerCommand("RunShooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
 
     // Configure default commands
     m_DriveTrain.setDefaultCommand(
@@ -173,7 +174,7 @@ public class RobotContainer {
             m_DriveTrain));
 
     // Zeros out the gyro
-    //TODO remove before going to competition 
+    //TODO remove before going to competition
     new JoystickButton(oi.driverJoytick, 2)
         .whileTrue(new RunCommand(
             () -> m_DriveTrain.zeroHeading(),
@@ -215,7 +216,7 @@ public class RobotContainer {
 
   /**
    * A great example of how to manually create autonomous commands.
-   * 
+   *
    * @return the figure eight command
    */
   public Command getFigureEightCommand() {
