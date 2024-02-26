@@ -6,9 +6,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Ampside to note"
+            "name": "Run Shooter"
           }
         }
       ]

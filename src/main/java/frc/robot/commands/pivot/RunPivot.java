@@ -30,12 +30,14 @@ public class RunPivot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Pivot.setPivot(speed.get());
+    m_Pivot.setPivot(speed.get() * 0.1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_Pivot.setPivot(0);
+  }
 
   // Returns true when the command should end.
   @Override

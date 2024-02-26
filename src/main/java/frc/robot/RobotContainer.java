@@ -14,11 +14,13 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.AutoConstants;
@@ -41,8 +43,11 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -113,27 +118,26 @@ public class RobotContainer {
   private final OperatingInterface oi = new OperatingInterface();
 
   // The proximity sensor detecting the presence of a note in the Intake
-  private final DigitalInput proximity = new DigitalInput(0);
+  private final DigitalInput proximity = new DigitalInput(9);
 
   // Limit switches stopping the Pivot from moving too far
   //TODO are these even going to be used?
   private final DigitalInput upperPivotLimit = new DigitalInput(1);
   private final DigitalInput lowerPivotLimit = new DigitalInput(2);
 
-  private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+  private GenericEntry intakeSpeed;
+  private GenericEntry shooterSpeed;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configures the button bindings
-    configureButtonBindings();
     // Configures network table listeners
     configureNetworkTables();
 
     NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
-    autoChooser = AutoBuilder.buildAutoChooser("One Note"); // Default auto will be `Commands.none()`
-
+    //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
 
     // Configures wigets for the driver station
     configureShuffleBoard();
@@ -150,11 +154,14 @@ public class RobotContainer {
                 true, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain));
 
-    m_Intake.setDefaultCommand(new RunIntake(oi.auxController::getLeftY, m_Intake));
+    // m_Intake.setDefaultCommand(new RunIntake(oi.auxController::getLeftY, m_Intake));
 
-    m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
+    // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getRightY, m_Pivot));
+    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
+
+    // Configures the button bindings
+    configureButtonBindings();
   }
 
   /**
@@ -182,29 +189,41 @@ public class RobotContainer {
             () -> m_DriveTrain.zeroHeading(),
             m_DriveTrain));
 
-    // oi.auxAButton.whileTrue(new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
+    oi.auxAButton.whileTrue(new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
 
-    oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
+    // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
+
+    oi.auxBButton.whileTrue(new RunIntake(() -> intakeSpeed.get().getDouble(), m_Intake));
+    // oi.auxBButton.whileTrue(new RunCommand(() -> System.out.println("b button pressed")));
   }
 
   public void configureShuffleBoard() {
     // Booleans
-    Shuffleboard.getTab("Main").addBoolean("shooting?", () -> oi.auxController.getRawButton(1));
+    Shuffleboard.getTab("Main").addBoolean("intaking?", () -> oi.auxBButton.getAsBoolean());
     Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
-    Shuffleboard.getTab("Main").addBoolean("lower limit switch", lowerPivotLimit::get);
-    Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);
+    // Shuffleboard.getTab("Main").addBoolean("lower limit switch", lowerPivotLimit::get);
+    // Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);
 
-    // Doubles
+    // // Doubles
     Shuffleboard.getTab("Main").addDouble("Heading", m_DriveTrain::getHeading);
-    Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getAbsoluteEncoderValue);
-    Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
-    Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
-    Shuffleboard.getTab("Main").addDouble("shooter thor", thor::get);
-    Shuffleboard.getTab("Main").addDouble("shooter tvert", tvert::get);
-    Shuffleboard.getTab("Main").addDouble("intake ta", intaketa::get);
-    Shuffleboard.getTab("Main").addDouble("intake tid", intaketid::get);
+    intakeSpeed = Shuffleboard.getTab("Main").add("Intake speed", 0.8)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+        .getEntry();
 
-    Shuffleboard.getTab("Main").add(autoChooser);
+    shooterSpeed = Shuffleboard.getTab("Main").add("Shooter speed", 0.8)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+        .getEntry();
+    // Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getAbsoluteEncoderValue);
+    // Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
+    // Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
+    // Shuffleboard.getTab("Main").addDouble("shooter thor", thor::get);
+    // Shuffleboard.getTab("Main").addDouble("shooter tvert", tvert::get);
+    // Shuffleboard.getTab("Main").addDouble("intake ta", intaketa::get);
+    // Shuffleboard.getTab("Main").addDouble("intake tid", intaketid::get);
+
+    // Shuffleboard.getTab("Main").add(autoChooser);
   }
 
   /**

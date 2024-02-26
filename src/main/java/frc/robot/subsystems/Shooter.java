@@ -21,12 +21,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooter(double speed) {
-    shooterNeo1.set(speed);
-    shooterNeo2.set(-speed);
+    shooterNeo1.set(-speed);
+    shooterNeo2.set(speed);
   }
 
   public void setShooterRMP(double rpm) {
-    //TODO test to find max rpm. 5000 max rpm is a guess 
+    //TODO test to find max rpm. 5000 max rpm is a guess
     rpm = rpm / 5000;
 
     if(rpm > 1) {

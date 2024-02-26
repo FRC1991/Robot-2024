@@ -154,7 +154,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /**
    * Used in the Pathplanner AutoBuilder.configureHolonomic
-   * 
+   *
    * @return The ChassisSpeeds relative to the robot
    */
   private ChassisSpeeds getRobotRelativeSpeeds() {
@@ -164,7 +164,7 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Drives the robot according to ChassisSpeeds provided
    * by Pathplanner during auto
-   * 
+   *
    * @param t ChassisSpeeds relative to the robot
    */
   private void drive(ChassisSpeeds t) {
