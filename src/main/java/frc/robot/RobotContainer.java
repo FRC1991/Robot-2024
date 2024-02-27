@@ -29,6 +29,8 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.TeleopConstants;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.pivot.PIDPivotToSetpoint;
+import frc.robot.commands.pivot.PivotToSetpoint;
 import frc.robot.commands.pivot.RunPivot;
 import frc.robot.commands.shooter.RunShooter;
 import frc.robot.commands.shooter.VisionShooter;
@@ -128,6 +130,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   private GenericEntry intakeSpeed;
   private GenericEntry shooterSpeed;
+  private GenericEntry kpPivot;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -158,7 +161,7 @@ public class RobotContainer {
 
     // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
+    // m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
 
     // Configures the button bindings
     configureButtonBindings();
@@ -189,12 +192,16 @@ public class RobotContainer {
             () -> m_DriveTrain.zeroHeading(),
             m_DriveTrain));
 
-    oi.auxAButton.whileTrue(new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
+    oi.auxRightBumper.whileTrue(new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
     oi.auxBButton.whileTrue(new RunIntake(() -> intakeSpeed.get().getDouble(), m_Intake));
+    oi.auxAButton.whileTrue(new RunIntake(() -> -intakeSpeed.get().getDouble(), m_Intake));
     // oi.auxBButton.whileTrue(new RunCommand(() -> System.out.println("b button pressed")));
+
+    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> kpPivot.get().getDouble(), () -> -3.5, m_Pivot));
+    oi.auxXButton.whileTrue(new PivotToSetpoint(() -> -3.5, 0.5, m_Pivot));
   }
 
   public void configureShuffleBoard() {
@@ -215,7 +222,12 @@ public class RobotContainer {
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
         .getEntry();
-    // Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getAbsoluteEncoderValue);
+
+    kpPivot = Shuffleboard.getTab("Main").add("kp Pivot PID", 0.8)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+        .getEntry();
+    Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getEncoderPosition);
     // Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
     // Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
     // Shuffleboard.getTab("Main").addDouble("shooter thor", thor::get);

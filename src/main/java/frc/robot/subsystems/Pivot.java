@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
-  
+
   private CANSparkMax pivotMotor1, pivotMotor2;
   private AbsoluteEncoder pivotEncoder;
 
@@ -27,7 +27,7 @@ public class Pivot extends SubsystemBase {
     //TODO find the actual limit for these
     pivotMotor1.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardLimit);
     pivotMotor2.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardLimit);
-    
+
     //TODO find the actual limit for these
     pivotMotor1.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kBackLimit);
     pivotMotor2.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kBackLimit);
@@ -40,6 +40,11 @@ public class Pivot extends SubsystemBase {
 
   public double getAbsoluteEncoderValue() {
     return pivotEncoder.getPosition();
+  }
+
+  public double getEncoderPosition() {
+    // Pivot motor 2 is subtracted because it is run in reverse
+    return (pivotMotor1.getEncoder().getPosition() - pivotMotor2.getEncoder().getPosition()) / 2;
   }
 
   @Override
