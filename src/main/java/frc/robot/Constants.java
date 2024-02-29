@@ -176,6 +176,6 @@ public final class Constants {
 
     //TODO find actual limits
     public static final float kForwardLimit = 2;
-    public static final float kBackLimit = -2;
+    public static final float kBackLimit = (float) -14.2;
   }
 }

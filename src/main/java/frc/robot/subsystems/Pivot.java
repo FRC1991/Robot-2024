@@ -4,25 +4,20 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
 
   private CANSparkMax pivotMotor1, pivotMotor2;
-  private AbsoluteEncoder pivotEncoder;
 
   /** Creates a new Pivot. */
   public Pivot() {
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
     pivotMotor2 = new CANSparkMax(PivotConstants.kPivotMotor2Id, MotorType.kBrushless);
-
-    pivotEncoder = pivotMotor1.getAbsoluteEncoder(Type.kDutyCycle);
 
     //TODO find the actual limit for these
     pivotMotor1.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardLimit);
@@ -36,10 +31,6 @@ public class Pivot extends SubsystemBase {
   public void setPivot(double speed) {
     pivotMotor1.set(speed);
     pivotMotor2.set(-speed);
-  }
-
-  public double getAbsoluteEncoderValue() {
-    return pivotEncoder.getPosition();
   }
 
   public double getEncoderPosition() {
