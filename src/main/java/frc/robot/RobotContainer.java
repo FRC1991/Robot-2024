@@ -309,7 +309,7 @@ public class RobotContainer {
    */
   public void configureNetworkTables() {
     NetworkTableInstance defaultNTinst = NetworkTableInstance.getDefault();
-    NetworkTable aimingLime = defaultNTinst.getTable("limelight-aimming");
+    NetworkTable aimingLime = defaultNTinst.getTable("limelight-shooter");
 
     NetworkTable intakeLime = defaultNTinst.getTable("limelight-intake");
 
