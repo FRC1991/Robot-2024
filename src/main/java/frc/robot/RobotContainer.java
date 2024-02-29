@@ -139,7 +139,7 @@ public class RobotContainer {
     // Configures network table listeners
     configureNetworkTables();
 
-    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
+    // NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
     //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
 
     // Configures wigets for the driver station
@@ -225,12 +225,13 @@ public class RobotContainer {
         .getEntry();
 
     Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getEncoderPosition);
-    // Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
-    // Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
-    // Shuffleboard.getTab("Main").addDouble("shooter thor", thor::get);
-    // Shuffleboard.getTab("Main").addDouble("shooter tvert", tvert::get);
-    // Shuffleboard.getTab("Main").addDouble("intake ta", intaketa::get);
-    // Shuffleboard.getTab("Main").addDouble("intake tid", intaketid::get);
+    Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
+    Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
+    Shuffleboard.getTab("Main").addDouble("shooter thor", thor::get);
+    Shuffleboard.getTab("Main").addDouble("shooter tvert", tvert::get);
+    Shuffleboard.getTab("Main").addDouble("intake ta", intaketa::get);
+    Shuffleboard.getTab("Main").addDouble("intake tid", intaketid::get);
+    Shuffleboard.getTab("Main").addDouble("intake tx", intaketx::get);
 
     // Shuffleboard.getTab("Main").add(autoChooser);
   }
