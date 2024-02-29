@@ -6,20 +6,42 @@ package frc.robot.commands.drivetrain.BangBang;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class RunToTarget extends ParallelCommandGroup {
+public class RunToTarget extends Command {
+
+  private Supplier<Double> offset, speed;
+  private DriveSubsystem m_DriveSubsystem;
+
   /** Creates a new RunToTarget. */
-  public RunToTarget(Supplier<Double> targetOffset, Supplier<Double> speed, DriveSubsystem driveSubsystem) {
-    // Add the deadline command in the super() call. Add other commands using
-    // addCommands().
-    super(new TurnToTarget(targetOffset, driveSubsystem),
-        new RunCommand(() -> driveSubsystem.drive(0, speed.get(), 0, false, true), driveSubsystem));
-    // addCommands(new FooCommand(), new BarCommand());
+  public RunToTarget(Supplier<Double> offset, Supplier<Double> speed, DriveSubsystem drive) {
+    this.offset = offset;
+    this.speed = speed;
+    m_DriveSubsystem = drive;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drive);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    m_DriveSubsystem.drive(0, speed.get(), offset.get(), false, false);
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    m_DriveSubsystem.drive(0, 0, 0, false, false);
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }

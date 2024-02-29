@@ -32,24 +32,27 @@ public class PivotToSetpoint extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_Pivot.getAbsoluteEncoderValue() < (setpoint.get() - tolerance)) {
-      m_Pivot.setPivot(0.4);
-    } else if(m_Pivot.getAbsoluteEncoderValue() > (setpoint.get() + tolerance)) {
-      m_Pivot.setPivot(-0.4);
+    if(m_Pivot.getEncoderPosition() < (setpoint.get() - tolerance)) {
+      m_Pivot.setPivot(0.1);
+    } else if(m_Pivot.getEncoderPosition() > (setpoint.get() + tolerance)) {
+      m_Pivot.setPivot(-0.1);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_Pivot.setPivot(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(setpoint.get() - m_Pivot.getAbsoluteEncoderValue()) <= tolerance) {
-      return true;
-    } else {
-      return false;
-    }
+    // if(Math.abs(setpoint.get() - m_Pivot.getAbsoluteEncoderValue()) <= tolerance) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+    return false;
   }
 }
