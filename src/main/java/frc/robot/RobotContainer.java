@@ -193,7 +193,7 @@ public class RobotContainer {
             m_DriveTrain));
 
     new JoystickButton(oi.driverJoytick, 5)
-        .whileTrue(new RunToTarget(() -> tx.get(), () -> 0.1, m_DriveTrain));
+        .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));
 
     oi.auxRightBumper.whileTrue(new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
 
@@ -201,7 +201,6 @@ public class RobotContainer {
 
     oi.auxBButton.whileTrue(new RunIntake(() -> intakeSpeed.get().getDouble(), m_Intake));
     oi.auxAButton.whileTrue(new RunIntake(() -> -intakeSpeed.get().getDouble(), m_Intake));
-    // oi.auxBButton.whileTrue(new RunCommand(() -> System.out.println("b button pressed")));
 
     oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -5.2, m_Pivot));
   }
