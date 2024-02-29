@@ -129,7 +129,6 @@ public class RobotContainer {
   private final DigitalInput lowerPivotLimit = new DigitalInput(2);
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
-  private GenericEntry intakeSpeed;
   private GenericEntry shooterSpeed;
 
   /**
@@ -199,10 +198,11 @@ public class RobotContainer {
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
-    oi.auxBButton.whileTrue(new RunIntake(() -> intakeSpeed.get().getDouble(), m_Intake));
-    oi.auxAButton.whileTrue(new RunIntake(() -> -intakeSpeed.get().getDouble(), m_Intake));
+    oi.auxBButton.whileTrue(new RunIntake(() -> 0.4, m_Intake));
+    oi.auxAButton.whileTrue(new RunIntake(() -> -0.1, m_Intake));
 
-    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -5.2, m_Pivot));
+    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot));
+    oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -1.0, m_Pivot));
   }
 
   public void configureShuffleBoard() {
@@ -214,10 +214,7 @@ public class RobotContainer {
 
     // // Doubles
     Shuffleboard.getTab("Main").addDouble("Heading", m_DriveTrain::getHeading);
-    intakeSpeed = Shuffleboard.getTab("Main").add("Intake speed", 0.8)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
-        .getEntry();
+
 
     shooterSpeed = Shuffleboard.getTab("Main").add("Shooter speed", 0.8)
         .withWidget(BuiltInWidgets.kNumberSlider)
@@ -225,13 +222,13 @@ public class RobotContainer {
         .getEntry();
 
     Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getEncoderPosition);
-    Shuffleboard.getTab("Main").addDouble("shooter ta", ta::get);
-    Shuffleboard.getTab("Main").addDouble("shooter tid", tid::get);
-    Shuffleboard.getTab("Main").addDouble("shooter thor", thor::get);
-    Shuffleboard.getTab("Main").addDouble("shooter tvert", tvert::get);
-    Shuffleboard.getTab("Main").addDouble("intake ta", intaketa::get);
-    Shuffleboard.getTab("Main").addDouble("intake tid", intaketid::get);
-    Shuffleboard.getTab("Main").addDouble("intake tx", intaketx::get);
+    // Shuffleboard.getTab("Network Table Values").addDouble("shooter ta", ta::get);
+    // Shuffleboard.getTab("Network Table Values").addDouble("shooter tid", tid::get);
+    // Shuffleboard.getTab("Network Table Values").addDouble("shooter thor", thor::get);
+    // Shuffleboard.getTab("Network Table Values").addDouble("shooter tvert", tvert::get);
+    // Shuffleboard.getTab("Network Table Values").addDouble("intake ta", intaketa::get);
+    // Shuffleboard.getTab("Network Table Values").addDouble("intake tid", intaketid::get);
+    // Shuffleboard.getTab("Network Table Values").addDouble("intake tx", intaketx::get);
 
     // Shuffleboard.getTab("Main").add(autoChooser);
   }
