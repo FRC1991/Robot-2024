@@ -42,6 +42,7 @@ import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -194,7 +195,9 @@ public class RobotContainer {
     new JoystickButton(oi.driverJoytick, 5)
         .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));
 
-    oi.auxRightBumper.whileTrue(new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
+    oi.auxRightBumper.whileTrue(new ParallelCommandGroup(
+        new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+        new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot)));
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 

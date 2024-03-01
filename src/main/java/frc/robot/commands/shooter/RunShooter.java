@@ -16,7 +16,6 @@ public class RunShooter extends Command {
 
   /** Creates a new RunShooter. */
   public RunShooter(Supplier<Double> speed, Shooter shooter) {
-
     this.speed = speed;
     m_Shooter = shooter;
 
