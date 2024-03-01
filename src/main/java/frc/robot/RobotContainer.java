@@ -240,7 +240,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new RunShooter(() -> 1.0, m_Shooter).withTimeout(3);
+    return new ParallelCommandGroup(
+        new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+        new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot),
+        new RunIntake(() -> 0.8, m_Intake)).withTimeout(3);
     //return autoChooser.getSelected();
   }
 
