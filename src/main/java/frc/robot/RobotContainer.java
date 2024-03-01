@@ -43,7 +43,9 @@ import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -123,11 +125,6 @@ public class RobotContainer {
 
   // The proximity sensor detecting the presence of a note in the Intake
   private final DigitalInput proximity = new DigitalInput(9);
-
-  // Limit switches stopping the Pivot from moving too far
-  //TODO are these even going to be used?
-  private final DigitalInput upperPivotLimit = new DigitalInput(1);
-  private final DigitalInput lowerPivotLimit = new DigitalInput(2);
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   private GenericEntry shooterSpeed;
@@ -246,6 +243,79 @@ public class RobotContainer {
     return new RunShooter(() -> 1.0, m_Shooter).withTimeout(3);
     //return autoChooser.getSelected();
   }
+
+  public Command getTwoPieceAutoCommand() {
+    SequentialCommandGroup auto = new SequentialCommandGroup();
+
+    ParallelRaceGroup shootNote = new RunShooter(() -> 1.0, m_Shooter).withTimeout(3);
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+
+    // An example trajectory to follow. All units in meters.
+    Trajectory pickUpNote = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(1,1)),
+        // End 6 meters straight ahead of where we started, facing forward
+        new Pose2d(3, 1, new Rotation2d(180)),
+        config);
+
+    Trajectory fromNoteToSpeaker = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(3, 1, new Rotation2d(180)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(1, 1)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(0, 0, new Rotation2d(0)),
+        config);
+
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    SwerveControllerCommand pickUpNoteCommand = new SwerveControllerCommand(
+        pickUpNote,
+        m_DriveTrain::getPose, // Functional interface to feed supplier
+        DriveConstants.kDriveKinematics,
+
+        // Position controllers
+        new PIDController(AutoConstants.kPXController, 0, 0),
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        thetaController,
+        m_DriveTrain::setModuleStates,
+        m_DriveTrain);
+
+    SwerveControllerCommand scoreNoteCommand = new SwerveControllerCommand(
+        fromNoteToSpeaker,
+        m_DriveTrain::getPose, // Functional interface to feed supplier
+        DriveConstants.kDriveKinematics,
+
+        // Position controllers
+        new PIDController(AutoConstants.kPXController, 0, 0),
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        thetaController,
+        m_DriveTrain::setModuleStates,
+        m_DriveTrain);
+
+    auto.andThen(shootNote);
+    auto.andThen(new ParallelRaceGroup(pickUpNoteCommand, new RunIntake(() -> 0.8, m_Intake)));
+    auto.andThen(new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5));
+    auto.andThen(scoreNoteCommand);
+    auto.andThen(shootNote);
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_DriveTrain.resetOdometry(pickUpNote.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return auto.andThen(() -> m_DriveTrain.drive(0, 0, 0, false, false, 0));
+  }
+
 
   /**
    * A great example of how to manually create autonomous commands.
