@@ -192,20 +192,21 @@ public class RobotContainer {
             () -> m_DriveTrain.zeroHeading(),
             m_DriveTrain));
 
-    new JoystickButton(oi.driverJoytick, 5)
-        .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));
+    // new JoystickButton(oi.driverJoytick, 5)
+    //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));
 
     oi.auxRightBumper.whileTrue(new ParallelCommandGroup(
         new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-        new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot)));
+        new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot),
+        new RunIntake(() -> 0.8, m_Intake)));
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
-    oi.auxBButton.whileTrue(new RunIntake(() -> 0.4, m_Intake));
-    oi.auxAButton.whileTrue(new RunIntake(() -> -0.1, m_Intake));
+    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
+    oi.auxAButton.onTrue(new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5));
 
-    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot));
-    oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -1.0, m_Pivot));
+    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -1.0, m_Pivot));
+    // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot));
   }
 
   public void configureShuffleBoard() {
