@@ -240,17 +240,21 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return getOnePiceAutoCommand();
+    //return autoChooser.getSelected();
+  }
+
+  public Command getOnePiceAutoCommand() {
     return new ParallelCommandGroup(
         new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
         new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot),
         new RunIntake(() -> 0.8, m_Intake)).withTimeout(3);
-    //return autoChooser.getSelected();
   }
 
   public Command getTwoPieceAutoCommand() {
     SequentialCommandGroup auto = new SequentialCommandGroup();
 
-    ParallelRaceGroup shootNote = new RunShooter(() -> 1.0, m_Shooter).withTimeout(3);
+    Command shootNote = getOnePiceAutoCommand();
 
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
@@ -259,21 +263,23 @@ public class RobotContainer {
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
 
+    // X AND Y MIGHT BE SWITCHED
     // An example trajectory to follow. All units in meters.
     Trajectory pickUpNote = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1,1)),
+        List.of(new Translation2d(1,0)),
         // End 6 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 1, new Rotation2d(180)),
+        new Pose2d(2, 0, new Rotation2d(180)),
         config);
 
+    // X AND Y MIGHT BE SWITCHED
     Trajectory fromNoteToSpeaker = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(3, 1, new Rotation2d(180)),
+        new Pose2d(2, 0, new Rotation2d(180)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1)),
+        List.of(new Translation2d(1, 0)),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(0, 0, new Rotation2d(0)),
         config);
@@ -294,7 +300,7 @@ public class RobotContainer {
         m_DriveTrain::setModuleStates,
         m_DriveTrain);
 
-    SwerveControllerCommand scoreNoteCommand = new SwerveControllerCommand(
+    SwerveControllerCommand toSpeakerCommand = new SwerveControllerCommand(
         fromNoteToSpeaker,
         m_DriveTrain::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
@@ -309,7 +315,7 @@ public class RobotContainer {
     auto.andThen(shootNote);
     auto.andThen(new ParallelRaceGroup(pickUpNoteCommand, new RunIntake(() -> 0.8, m_Intake)));
     auto.andThen(new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5));
-    auto.andThen(scoreNoteCommand);
+    auto.andThen(toSpeakerCommand);
     auto.andThen(shootNote);
 
     // Reset odometry to the starting pose of the trajectory.
