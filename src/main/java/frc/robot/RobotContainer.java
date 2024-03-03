@@ -195,10 +195,10 @@ public class RobotContainer {
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> -10.24, m_Pivot)).withTimeout(0.4),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.4),
         new ParallelCommandGroup(
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> -10.24, m_Pivot),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
             new RunIntake(() -> 0.8, m_Intake))));
     // oi.auxRightBumper.whileTrue(getOnePieceAuto());
 
