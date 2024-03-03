@@ -137,7 +137,8 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    public static final double kSpeakerEncoderPosition = -13;
+    public static final double kSpeakerMidPosition = -12.25;
+    public static final double kSpeakerSidePosition = -13;
   }
 
   public static final class TeleopConstants {

@@ -200,7 +200,7 @@ public class RobotContainer {
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> -10.24, m_Pivot),
             new RunIntake(() -> 0.8, m_Intake))));
-    // oi.auxRightBumper.whileTrue(getOnePieceAutoCommand());
+    // oi.auxRightBumper.whileTrue(getOnePieceAuto());
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
@@ -236,8 +236,9 @@ public class RobotContainer {
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tid", intaketid::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tx", intaketx::get);
 
-    autoChooser.addOption("One note", getOnePieceAutoCommand());
-    autoChooser.addOption("One note + movement", getOnePieceAutoMovementCommand());
+    autoChooser.addOption("One note mid", getOnePieceAuto(true));
+    autoChooser.addOption("One note side", getOnePieceAuto(false));
+    autoChooser.addOption("One note mide + movement", getOnePieceAutoMovementCommand(true));
     autoChooser.addOption("Two note + movement", getTwoPieceAutoCommand());
     Shuffleboard.getTab("Main").add(autoChooser);
   }
@@ -251,19 +252,30 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public Command getOnePieceAutoCommand() {
+  public Command getOnePieceAuto(boolean mid) {
+    if(mid) {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             // new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerEncoderPosition, m_Pivot)).withTimeout(0.6),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.6),
         new ParallelCommandGroup(
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerEncoderPosition, m_Pivot),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
             new RunIntake(() -> 0.8, m_Intake)).withTimeout(1));
+    } else {
+      return new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            // new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot)).withTimeout(0.6),
+        new ParallelCommandGroup(
+            new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot),
+            new RunIntake(() -> 0.8, m_Intake)).withTimeout(1));
+    }
   }
 
-  public Command getOnePieceAutoMovementCommand() {
-    return getOnePieceAutoCommand().andThen(
+  public Command getOnePieceAutoMovementCommand(boolean mid) {
+    return getOnePieceAuto(mid).andThen(
               new RunCommand(
             () -> m_DriveTrain.drive(-0.1, 0, 0,
                 false, false, TeleopConstants.kSwerveSpeed),
@@ -329,7 +341,7 @@ public class RobotContainer {
     //     m_DriveTrain::setModuleStates,
     //     m_DriveTrain);
 
-    auto.addCommands(getOnePieceAutoCommand(),
+    auto.addCommands(getOnePieceAuto(true),
         new ParallelCommandGroup(
           new RunIntake(() -> 0.8, m_Intake).withTimeout(0.5),
           new RunCommand(
@@ -345,7 +357,7 @@ public class RobotContainer {
                   false, false, TeleopConstants.kSwerveSpeed),
               m_DriveTrain).withTimeout(2)
         ),
-        getOnePieceAutoCommand());
+        getOnePieceAuto(true));
 
     // Reset odometry to the starting pose of the trajectory.
     // m_DriveTrain.resetOdometry(pickUpNote.getInitialPose());
