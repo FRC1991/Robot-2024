@@ -118,7 +118,7 @@ public class RobotContainer {
   private final Intake m_Intake = new Intake();
   private final Shooter m_Shooter = new Shooter();
   private final Pivot m_Pivot = new Pivot();
-  private final Climber m_Climber = new Climber();
+  // private final Climber m_Climber = new Climber();
 
   // The operating interface communicating with the user
   private final OperatingInterface oi = new OperatingInterface();
@@ -192,24 +192,29 @@ public class RobotContainer {
     // new JoystickButton(oi.driverJoytick, 5)
     //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));
 
-    oi.auxRightBumper.whileTrue(new ParallelCommandGroup(
-        new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-        new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot),
-        new RunIntake(() -> 0.8, m_Intake)));
+    oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+            new PIDPivotToSetpoint(() -> 0.1, () -> -10.24, m_Pivot)).withTimeout(0.4),
+        new ParallelCommandGroup(
+            new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+            new PIDPivotToSetpoint(() -> 0.1, () -> -10.24, m_Pivot),
+            new RunIntake(() -> 0.8, m_Intake))));
+    // oi.auxRightBumper.whileTrue(getOnePieceAutoCommand());
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
     oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
-    oi.auxAButton.onTrue(new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5));
+    oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake).withTimeout(0.4));
 
     oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -1.0, m_Pivot));
-    // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot));
+    // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, m_Pivot));
   }
 
   public void configureShuffleBoard() {
     // Booleans
-    Shuffleboard.getTab("Main").addBoolean("intaking?", () -> oi.auxBButton.getAsBoolean());
-    Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
+    // Shuffleboard.getTab("Main").addBoolean("intaking?", () -> oi.auxBButton.getAsBoolean());
+    // Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
     // Shuffleboard.getTab("Main").addBoolean("lower limit switch", lowerPivotLimit::get);
     // Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);
 
@@ -231,7 +236,10 @@ public class RobotContainer {
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tid", intaketid::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tx", intaketx::get);
 
-    // Shuffleboard.getTab("Main").add(autoChooser);
+    autoChooser.addOption("One note", getOnePieceAutoCommand());
+    autoChooser.addOption("One note + movement", getOnePieceAutoMovementCommand());
+    autoChooser.addOption("Two note + movement", getTwoPieceAutoCommand());
+    Shuffleboard.getTab("Main").add(autoChooser);
   }
 
   /**
@@ -240,86 +248,107 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return getOnePiceAutoCommand();
-    //return autoChooser.getSelected();
+    return autoChooser.getSelected();
   }
 
-  public Command getOnePiceAutoCommand() {
-    return new ParallelCommandGroup(
-        new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-        new PIDPivotToSetpoint(() -> 0.1, () -> -12.15, m_Pivot),
-        new RunIntake(() -> 0.8, m_Intake)).withTimeout(3);
+  public Command getOnePieceAutoCommand() {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            // new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerEncoderPosition, m_Pivot)).withTimeout(0.6),
+        new ParallelCommandGroup(
+            new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerEncoderPosition, m_Pivot),
+            new RunIntake(() -> 0.8, m_Intake)).withTimeout(1));
+  }
+
+  public Command getOnePieceAutoMovementCommand() {
+    return getOnePieceAutoCommand().andThen(
+              new RunCommand(
+            () -> m_DriveTrain.drive(-0.1, 0, 0,
+                false, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(3));
   }
 
   public Command getTwoPieceAutoCommand() {
     SequentialCommandGroup auto = new SequentialCommandGroup();
 
-    Command shootNote = getOnePiceAutoCommand();
+    // // Create config for trajectory
+    // TrajectoryConfig config = new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond,
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    //     // Add kinematics to ensure max speed is actually obeyed
+    //     .setKinematics(DriveConstants.kDriveKinematics);
 
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
+    // // X AND Y MIGHT BE SWITCHED
+    // // An example trajectory to follow. All units in meters.
+    // Trajectory pickUpNote = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1,0)),
+    //     // End 6 meters straight ahead of where we started, facing forward
+    //     new Pose2d(2, 0, new Rotation2d(180)),
+    //     config);
 
-    // X AND Y MIGHT BE SWITCHED
-    // An example trajectory to follow. All units in meters.
-    Trajectory pickUpNote = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1,0)),
-        // End 6 meters straight ahead of where we started, facing forward
-        new Pose2d(2, 0, new Rotation2d(180)),
-        config);
+    // // X AND Y MIGHT BE SWITCHED
+    // Trajectory fromNoteToSpeaker = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(2, 0, new Rotation2d(180)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1, 0)),
+    //     // End 3 meters straight ahead of where we started, facing forward
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     config);
 
-    // X AND Y MIGHT BE SWITCHED
-    Trajectory fromNoteToSpeaker = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(2, 0, new Rotation2d(180)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 0)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(0, 0, new Rotation2d(0)),
-        config);
+    // var thetaController = new ProfiledPIDController(
+    //     AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    // SwerveControllerCommand pickUpNoteCommand = new SwerveControllerCommand(
+    //     pickUpNote,
+    //     m_DriveTrain::getPose, // Functional interface to feed supplier
+    //     DriveConstants.kDriveKinematics,
 
-    SwerveControllerCommand pickUpNoteCommand = new SwerveControllerCommand(
-        pickUpNote,
-        m_DriveTrain::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
+    //     // Position controllers
+    //     new PIDController(AutoConstants.kPXController, 0, 0),
+    //     new PIDController(AutoConstants.kPYController, 0, 0),
+    //     thetaController,
+    //     m_DriveTrain::setModuleStates,
+    //     m_DriveTrain);
 
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_DriveTrain::setModuleStates,
-        m_DriveTrain);
+    // SwerveControllerCommand toSpeakerCommand = new SwerveControllerCommand(
+    //     fromNoteToSpeaker,
+    //     m_DriveTrain::getPose, // Functional interface to feed supplier
+    //     DriveConstants.kDriveKinematics,
 
-    SwerveControllerCommand toSpeakerCommand = new SwerveControllerCommand(
-        fromNoteToSpeaker,
-        m_DriveTrain::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
+    //     // Position controllers
+    //     new PIDController(AutoConstants.kPXController, 0, 0),
+    //     new PIDController(AutoConstants.kPYController, 0, 0),
+    //     thetaController,
+    //     m_DriveTrain::setModuleStates,
+    //     m_DriveTrain);
 
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_DriveTrain::setModuleStates,
-        m_DriveTrain);
+    auto.addCommands(getOnePieceAutoCommand(),
+        new ParallelCommandGroup(
+          new RunIntake(() -> 0.8, m_Intake).withTimeout(0.5),
+          new RunCommand(
+            () -> m_DriveTrain.drive(-0.3, 0, 0,
+                false, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain)
+        ).withTimeout(2),
 
-    auto.andThen(shootNote);
-    auto.andThen(new ParallelRaceGroup(pickUpNoteCommand, new RunIntake(() -> 0.8, m_Intake)));
-    auto.andThen(new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5));
-    auto.andThen(toSpeakerCommand);
-    auto.andThen(shootNote);
+        new ParallelCommandGroup(
+          new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5),
+          new RunCommand(
+              () -> m_DriveTrain.drive(0.3, 0, 0,
+                  false, false, TeleopConstants.kSwerveSpeed),
+              m_DriveTrain).withTimeout(2)
+        ),
+        getOnePieceAutoCommand());
 
     // Reset odometry to the starting pose of the trajectory.
-    m_DriveTrain.resetOdometry(pickUpNote.getInitialPose());
+    // m_DriveTrain.resetOdometry(pickUpNote.getInitialPose());
 
     // Run path following command, then stop at the end.
     return auto.andThen(() -> m_DriveTrain.drive(0, 0, 0, false, false, 0));
