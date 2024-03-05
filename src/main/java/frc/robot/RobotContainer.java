@@ -20,6 +20,7 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -49,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -125,7 +127,8 @@ public class RobotContainer {
   private final OperatingInterface oi = new OperatingInterface();
 
   // The proximity sensor detecting the presence of a note in the Intake
-  private final DigitalInput proximity = new DigitalInput(9);
+  private final DigitalInput proximitySensor = new DigitalInput(9);
+  private final Trigger proximityTrigger = new Trigger(proximitySensor::get);
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   private GenericEntry shooterSpeed;
@@ -205,7 +208,8 @@ public class RobotContainer {
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
-    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
+    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
+    proximityTrigger.onFalse(new RunCommand(oi::rumbleAuxController));
     oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake).withTimeout(0.4));
 
     oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -1.0, m_Pivot));
