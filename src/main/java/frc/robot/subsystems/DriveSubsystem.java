@@ -48,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  private final Pigeon2 m_gyro = new Pigeon2(DriveConstants.kGyroId);
+  public final Pigeon2 m_gyro = new Pigeon2(DriveConstants.kGyroId);
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -75,8 +75,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-    // zeroHeading();
-    // m_gyro.setYaw(180);
+    zeroHeading();
+    m_gyro.setYaw(180);
 
     // Configure AutoBuilder last
     AutoBuilder.configureHolonomic(

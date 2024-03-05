@@ -42,6 +42,7 @@ import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -114,7 +115,7 @@ public class RobotContainer {
   //endregion
 
   // The robot's subsystems
-  private final DriveSubsystem m_DriveTrain = new DriveSubsystem();
+  public final DriveSubsystem m_DriveTrain = new DriveSubsystem();
   private final Intake m_Intake = new Intake();
   private final Shooter m_Shooter = new Shooter();
   private final Pivot m_Pivot = new Pivot();
@@ -236,6 +237,7 @@ public class RobotContainer {
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tid", intaketid::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tx", intaketx::get);
 
+    autoChooser.addOption("Nothing", new InstantCommand());
     autoChooser.addOption("One note mid", getOnePieceAuto(true));
     autoChooser.addOption("One note side", getOnePieceAuto(false));
     autoChooser.addOption("One note mide + movement", getOnePieceAutoMovementCommand(true));
@@ -252,7 +254,7 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public Command getOnePieceAuto(boolean mid) {
+  public SequentialCommandGroup getOnePieceAuto(boolean mid) {
     if(mid) {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
@@ -275,11 +277,16 @@ public class RobotContainer {
   }
 
   public Command getOnePieceAutoMovementCommand(boolean mid) {
-    return getOnePieceAuto(mid).andThen(
+    SequentialCommandGroup auto = getOnePieceAuto(mid);
+
+    auto.addCommands(
+              new RunCommand(() -> {}, m_DriveTrain).withTimeout(10),
               new RunCommand(
-            () -> m_DriveTrain.drive(-0.1, 0, 0,
+            () -> m_DriveTrain.drive(-0.3, -0.1, 0,
                 false, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain).withTimeout(3));
+
+    return auto;
   }
 
   public Command getTwoPieceAutoCommand() {
