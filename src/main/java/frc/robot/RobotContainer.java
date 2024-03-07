@@ -127,10 +127,10 @@ public class RobotContainer {
   private final OperatingInterface oi = new OperatingInterface();
 
   // The proximity sensor detecting the presence of a note in the Intake
-  private final DigitalInput proximitySensor = new DigitalInput(9);
+  private final DigitalInput proximitySensor = new DigitalInput(0);
   private final Trigger proximityTrigger = new Trigger(proximitySensor::get);
 
-  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+  private final SendableChooser<Command> autoChooser;
   private GenericEntry shooterSpeed;
 
   /**
@@ -140,8 +140,15 @@ public class RobotContainer {
     // Configures network table listeners
     configureNetworkTables();
 
-    // NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> TeleopConstants.kShooterSpeed, m_Shooter));
-    //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter).withTimeout(2));
+    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
+    NamedCommands.registerCommand("Intake Note", new RunIntake(() -> 0.8, m_Intake));
+    Command auto = AutoBuilder.buildAuto("One Note");
+    Command twoAuto = AutoBuilder.buildAuto("Two Note");
+    // autoChooser = AutoBuilder.buildAutoChooser("One Note"); // Default auto will be `Commands.none()`
+    autoChooser = new SendableChooser<Command>();
+    autoChooser.addOption("test", auto);
+    autoChooser.addOption("test 2", twoAuto);
 
     // Configures wigets for the driver station
     configureShuffleBoard();
