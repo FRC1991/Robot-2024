@@ -140,9 +140,12 @@ public class RobotContainer {
     // Configures network table listeners
     configureNetworkTables();
 
-    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter).withTimeout(2));
+    NamedCommands.registerCommand("Run Shooter - 2 seconds", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter).withTimeout(2));
     NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
-    NamedCommands.registerCommand("Intake Note", new RunIntake(() -> 0.8, m_Intake));
+    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
+    NamedCommands.registerCommand("Run Intake - 2 seconds", new RunIntake(() -> 0.8, m_Intake).withTimeout(2));
+    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
+    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
     Command auto = AutoBuilder.buildAuto("One Note");
     Command twoAuto = AutoBuilder.buildAuto("Two Note");
     // autoChooser = AutoBuilder.buildAutoChooser("One Note"); // Default auto will be `Commands.none()`
