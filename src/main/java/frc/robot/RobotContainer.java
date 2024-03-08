@@ -146,6 +146,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Run Intake - 2 seconds", new RunIntake(() -> 0.8, m_Intake).withTimeout(2));
     NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
     NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
+
     Command auto = AutoBuilder.buildAuto("One Note");
     Command twoAuto = AutoBuilder.buildAuto("Two Note");
     // autoChooser = AutoBuilder.buildAutoChooser("One Note"); // Default auto will be `Commands.none()`
@@ -229,7 +230,7 @@ public class RobotContainer {
   public void configureShuffleBoard() {
     // Booleans
     // Shuffleboard.getTab("Main").addBoolean("intaking?", () -> oi.auxBButton.getAsBoolean());
-    // Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximity::get);
+    Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximitySensor::get);
     // Shuffleboard.getTab("Main").addBoolean("lower limit switch", lowerPivotLimit::get);
     // Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);
 

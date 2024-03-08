@@ -6,9 +6,28 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Run Shooter"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Run Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pivot to Setpoint"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Run Intake"
+                }
+              }
+            ]
           }
         }
       ]
