@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3674521584632144,
-        "y": 6.686770265771108
+        "x": 15.749151899306305,
+        "y": 4.423555714279349
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7790742849295962,
-        "y": 6.686770265771108
+        "x": 15.699151899306305,
+        "y": 4.423555714279349
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.2110139458374163,
-        "y": 6.686770265771108
+        "x": 14.720418012264597,
+        "y": 2.7055701229196947
       },
       "prevControl": {
-        "x": 1.7579036705097635,
-        "y": 6.686770265771108
+        "x": 14.770418012264598,
+        "y": 2.7055701229196947
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 0.0,
-    "rotateFast": true
+    "rotation": 180.0,
+    "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "red alliance taxi",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -120.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

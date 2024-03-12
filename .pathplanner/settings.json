@@ -3,10 +3,14 @@
   "robotLength": 0.92,
   "holonomicMode": true,
   "pathFolders": [
-    "red alliance",
-    "blue alliance"
+    "blue alliance pickup",
+    "blue alliance taxi",
+    "red alliance taxi"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "One Note Blue",
+    "One Note Red"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

@@ -3,32 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3983141750744656,
-        "y": 5.555162990025228
+        "x": 0.7193498096269378,
+        "y": 4.38240635879768
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3983141750744656,
-        "y": 5.555162990025228
+        "x": 1.0999813478323706,
+        "y": 2.9730409335505392
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.9002656501553608,
-        "y": 5.555162990025228
+        "x": 2.540208789690763,
+        "y": 2.4689613289001016
       },
       "prevControl": {
-        "x": 1.9002656501553608,
-        "y": 5.555162990025228
+        "x": 1.758371035539064,
+        "y": 2.5512600398634375
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -43,9 +49,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "blue alliance",
+  "folder": "blue alliance taxi",
   "previewStartingState": {
-    "rotation": 0.0,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

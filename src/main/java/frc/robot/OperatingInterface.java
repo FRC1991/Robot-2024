@@ -26,7 +26,7 @@ public class OperatingInterface {
 
   public void rumbleAuxController() {
     auxController.setRumble(RumbleType.kBothRumble, 1);
-    Timer.delay(0.25);
+    Timer.delay(0.5);
     auxController.setRumble(RumbleType.kBothRumble, 0);
   }
 

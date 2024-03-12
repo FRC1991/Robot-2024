@@ -45,10 +45,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -132,6 +134,7 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
   private GenericEntry shooterSpeed;
+  public GenericEntry gyroStartConfig;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -140,19 +143,37 @@ public class RobotContainer {
     // Configures network table listeners
     configureNetworkTables();
 
-    NamedCommands.registerCommand("Run Shooter - 2 seconds", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter).withTimeout(2));
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
     NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
     NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
-    NamedCommands.registerCommand("Run Intake - 2 seconds", new RunIntake(() -> 0.8, m_Intake).withTimeout(2));
+    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
     NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
     NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
+    NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
+    NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
+    NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
 
-    Command auto = AutoBuilder.buildAuto("One Note");
-    Command twoAuto = AutoBuilder.buildAuto("Two Note");
+    Command oneAutoBlue = AutoBuilder.buildAuto("One Note Blue");
+    Command openOneAutoBlue = AutoBuilder.buildAuto("open One Note Blue");
+    Command midOneAutoBlue = AutoBuilder.buildAuto("mid One Note Blue");
+    Command ampOneAutoBlue = AutoBuilder.buildAuto("amp One Note Blue");
+    Command oneAutoRed = AutoBuilder.buildAuto("One Note Red");
+    Command openOneAutoRed = AutoBuilder.buildAuto("open One Note Red");
+    Command midOneAutoRed = AutoBuilder.buildAuto("mid One Note Red");
+    Command ampOneAutoRed = AutoBuilder.buildAuto("amp One Note Red");
+    Command twoAutoBlue = AutoBuilder.buildAuto("Two Note");
+
     // autoChooser = AutoBuilder.buildAutoChooser("One Note"); // Default auto will be `Commands.none()`
     autoChooser = new SendableChooser<Command>();
-    autoChooser.addOption("test", auto);
-    autoChooser.addOption("test 2", twoAuto);
+    // autoChooser.addOption("Blue One Note", oneAutoBlue);
+    // autoChooser.addOption("Blue Openside One note + movement", openOneAutoBlue);
+    // autoChooser.addOption("Blue Midside One note + movement", midOneAutoBlue);
+    // autoChooser.addOption("Blue Ampside One note + movement", ampOneAutoBlue);
+    // autoChooser.addOption("Red One Note", oneAutoRed);
+    // autoChooser.addOption("Red Openside One note + movement", openOneAutoRed);
+    // autoChooser.addOption("Red Midside One note + movement", midOneAutoRed);
+    // autoChooser.addOption("Red Ampside One note + movement", ampOneAutoRed);
+    // autoChooser.addOption("test 2", twoAutoBlue);
 
     // Configures wigets for the driver station
     configureShuffleBoard();
@@ -210,7 +231,7 @@ public class RobotContainer {
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.4),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.8),
         new ParallelCommandGroup(
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
@@ -219,9 +240,10 @@ public class RobotContainer {
 
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
-    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
-    proximityTrigger.onFalse(new RunCommand(oi::rumbleAuxController));
-    oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake).withTimeout(0.4));
+    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
+    oi.auxXButton.onTrue(new RunIntake(() -> 0.0, m_Intake));
+    proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
+    oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake));
 
     oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -1.0, m_Pivot));
     // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, m_Pivot));
@@ -238,9 +260,14 @@ public class RobotContainer {
     Shuffleboard.getTab("Main").addDouble("Heading", m_DriveTrain::getHeading);
 
 
-    shooterSpeed = Shuffleboard.getTab("Main").add("Shooter speed", 0.8)
+    shooterSpeed = Shuffleboard.getTab("Main").add("Shooter speed", 1)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+        .getEntry();
+
+    gyroStartConfig = Shuffleboard.getTab("Main").add("gyro start config", 180)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 360)) // specify widget properties here
         .getEntry();
 
     Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getEncoderPosition);
@@ -274,7 +301,7 @@ public class RobotContainer {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             // new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.6),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(1.5),
         new ParallelCommandGroup(
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
@@ -283,7 +310,7 @@ public class RobotContainer {
       return new SequentialCommandGroup(
         new ParallelCommandGroup(
             // new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot)).withTimeout(0.6),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot)).withTimeout(1.5),
         new ParallelCommandGroup(
             new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot),
@@ -365,19 +392,19 @@ public class RobotContainer {
 
     auto.addCommands(getOnePieceAuto(true),
         new ParallelCommandGroup(
-          new RunIntake(() -> 0.8, m_Intake).withTimeout(0.5),
+          new RunIntake(() -> 0.8, m_Intake),
           new RunCommand(
             () -> m_DriveTrain.drive(-0.3, 0, 0,
                 false, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain)
-        ).withTimeout(2),
+        ).withTimeout(1.5),
 
         new ParallelCommandGroup(
           new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5),
           new RunCommand(
               () -> m_DriveTrain.drive(0.3, 0, 0,
                   false, false, TeleopConstants.kSwerveSpeed),
-              m_DriveTrain).withTimeout(2)
+              m_DriveTrain).withTimeout(1.5)
         ),
         getOnePieceAuto(true));
 

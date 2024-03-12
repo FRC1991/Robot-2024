@@ -6,15 +6,28 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Run Shooter"
+                  "name": "Pivot to Setpoint"
                 }
               },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.8
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
@@ -24,7 +37,19 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "Run Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "Run Intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
                 }
               }
             ]
@@ -33,6 +58,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "One Note Blue",
   "choreoAuto": false
 }
