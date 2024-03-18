@@ -219,11 +219,15 @@ public class RobotContainer {
             m_DriveTrain));
 
     // Zeros out the gyro
-    //TODO remove before going to competition
     new JoystickButton(oi.driverJoytick, 2)
         .whileTrue(new RunCommand(
             () -> m_DriveTrain.zeroHeading(),
             m_DriveTrain));
+
+    new JoystickButton(oi.driverJoytick, 5)
+        .whileTrue(new RunCommand(
+            () -> m_Pivot.zeroEncoders(),
+            m_Pivot));
 
     // new JoystickButton(oi.driverJoytick, 5)
     //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));

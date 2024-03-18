@@ -41,6 +41,11 @@ public class Pivot extends SubsystemBase {
     return (pivotMotor1.getEncoder().getPosition() - pivotMotor2.getEncoder().getPosition()) / 2;
   }
 
+  public void zeroEncoders() {
+    pivotMotor1.getEncoder().setPosition(0);
+    pivotMotor2.getEncoder().setPosition(0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
