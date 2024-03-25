@@ -63,6 +63,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -162,8 +163,10 @@ public class RobotContainer {
     Command midOneAutoRed = AutoBuilder.buildAuto("mid One Note Red");
     Command ampOneAutoRed = AutoBuilder.buildAuto("amp One Note Red");
     Command twoAutoBlue = AutoBuilder.buildAuto("Two Note");
+    Command interferenceBlue = AutoBuilder.followPath(PathPlannerPath.fromPathFile("InterferenceBlue"));
+    Command interferenceRed = AutoBuilder.followPath(PathPlannerPath.fromPathFile("InterferenceRed"));
 
-    // autoChooser = AutoBuilder.buildAutoChooser("One Note"); // Default auto will be `Commands.none()`
+    // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     autoChooser = new SendableChooser<Command>();
     // autoChooser.addOption("Blue One Note", oneAutoBlue);
     // autoChooser.addOption("Blue Openside One note + movement", openOneAutoBlue);
@@ -173,6 +176,8 @@ public class RobotContainer {
     // autoChooser.addOption("Red Openside One note + movement", openOneAutoRed);
     // autoChooser.addOption("Red Midside One note + movement", midOneAutoRed);
     // autoChooser.addOption("Red Ampside One note + movement", ampOneAutoRed);
+    // autoChooser.addOption("Interference Blue", interferenceBlue);
+    // autoChooser.addOption("Interference Red", interferenceRed);
     // autoChooser.addOption("test 2", twoAutoBlue);
 
     // Configures wigets for the driver station
