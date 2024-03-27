@@ -199,7 +199,7 @@ public class RobotContainer {
 
     // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    // m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
+    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
 
     // Configures the button bindings
     configureButtonBindings();
@@ -250,11 +250,12 @@ public class RobotContainer {
     // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
     oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
-    oi.auxXButton.onTrue(new RunIntake(() -> 0.0, m_Intake));
-    proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
+    // oi.auxXButton.onTrue(new RunIntake(() -> 0.0, m_Intake));
+    oi.auxXButton.whileTrue(new RunShooter(() -> 1.0, m_Shooter));
+    // proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
     oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake));
 
-    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -1.0, m_Pivot));
+    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
     // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, m_Pivot));
   }
 

@@ -137,8 +137,12 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    public static final double kSpeakerMidPosition = -12.15;
-    public static final double kSpeakerSidePosition = -12.25;
+    // old numbers, idk why they changed. gear ratio, motors, mounting is all same
+    // public static final double kSpeakerMidPosition = -12.15;
+    // public static final double kSpeakerSidePosition = -12.25;
+    public static final double kSpeakerMidPosition = -6.87;
+    public static final double kSpeakerSidePosition = -6.87;
+    public static final double kLowShotPosition = -2.8;
   }
 
   public static final class TeleopConstants {
