@@ -6,6 +6,7 @@ package frc.robot.commands.drivetrain.PID;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import frc.robot.OperatingInterface;
 import frc.robot.subsystems.DriveSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -22,7 +23,7 @@ public class TurnToAnglePID extends PIDCommand {
    * @param targetAngle Angle the robot will turn to. Must be between 0 and 360
    * @param driveSubsystem The main drive train of the robot
    */
-  public TurnToAnglePID(double targetAngle, DriveSubsystem driveSubsystem) {
+  public TurnToAnglePID(double targetAngle, OperatingInterface oi, DriveSubsystem driveSubsystem) {
     super(
         // The controller that the command will use
         new PIDController(0.009, 0, 0),
@@ -34,12 +35,14 @@ public class TurnToAnglePID extends PIDCommand {
         output -> {
           if(output > 1) {
             output = 1;
-          } else if (output < 0.01) {
+          } else if(output < -1) {
+            output = -1;
+          } else if (Math.abs(output) < 0.01) {
             output = 0;
           }
-          driveSubsystem.drive(0, 0, output, false, false);
+          driveSubsystem.drive(oi.driverJoytick.getRawAxis(1), oi.driverJoytick.getRawAxis(0), output, false, false, .5);
         });
-    
+
     // this.targetAngle = targetAngle;
     // m_DriveSubsystem = driveSubsystem;
 
