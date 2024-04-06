@@ -65,6 +65,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 /*
@@ -152,6 +153,8 @@ public class RobotContainer {
     angleChooser.addOption("180", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
     angleChooser.addOption("120", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
     angleChooser.addOption("240", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
+    angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
+    angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
 
     // NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
     // NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
@@ -180,7 +183,7 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     autoChooser = new SendableChooser<Command>();
     // autoChooser.addOption("Blue One Note", oneAutoBlue);
-    // autoChooser.addOption("Blue Openside One note + movement", openOneAutoBlue);
+    // autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
     // autoChooser.addOption("Blue Midside One note + movement", midOneAutoBlue);
     // autoChooser.addOption("Blue Ampside One note + movement", ampOneAutoBlue);
     // autoChooser.addOption("Red One Note", oneAutoRed);
@@ -190,11 +193,17 @@ public class RobotContainer {
     // autoChooser.addOption("Interference Blue", interferenceBlue);
     // autoChooser.addOption("Interference Red", interferenceRed);
     // autoChooser.addOption("compound interference blue", new SequentialCommandGroup(interferenceBluePt1, interferenceBluePt2));
-    autoChooser.addOption("interference auto", new SequentialCommandGroup(
+    autoChooser.addOption("blue interference auto", new SequentialCommandGroup(
         new RunCommand(
-            () -> m_DriveTrain.drive(0.8,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(5),
-        new Interference(m_DriveTrain).withTimeout(2)
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+        new Interference(true, m_DriveTrain).withTimeout(1.9)
+    ));
+    autoChooser.addOption("red interference auto", new SequentialCommandGroup(
+        new RunCommand(
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+        new Interference(false, m_DriveTrain).withTimeout(1.9)
     ));
 
     // Configures wigets for the driver station
@@ -216,7 +225,7 @@ public class RobotContainer {
 
     // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    // m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
+    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
 
     // Configures the button bindings
     configureButtonBindings();
@@ -321,7 +330,7 @@ public class RobotContainer {
     autoChooser.addOption("Nothing", new InstantCommand());
     autoChooser.addOption("One note mid", getOnePieceAuto(true));
     autoChooser.addOption("One note side", getOnePieceAuto(false));
-    autoChooser.addOption("One note mide + movement", getOnePieceAutoMovementCommand(true));
+    autoChooser.addOption("One note mid + movement", getOnePieceAutoMovementCommand(true));
     autoChooser.addOption("Two note + movement", getTwoPieceAutoCommand());
     Shuffleboard.getTab("Main").add("auto chooser", autoChooser);
     Shuffleboard.getTab("Main").add("angle chooser", angleChooser);
@@ -364,9 +373,9 @@ public class RobotContainer {
     auto.addCommands(
               new RunCommand(() -> {}, m_DriveTrain).withTimeout(10),
               new RunCommand(
-            () -> m_DriveTrain.drive(-0.3, -0.1, 0,
-                false, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(3));
+            () -> m_DriveTrain.drive(0.3, 0, 0,
+                true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2));
 
     return auto;
   }

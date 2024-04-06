@@ -5,6 +5,7 @@
 package frc.robot.commands.drivetrain.PID;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.OperatingInterface;
 import frc.robot.subsystems.DriveSubsystem;
@@ -30,7 +31,9 @@ public class TurnToAnglePID extends PIDCommand {
         // This should return the measurement
         () -> driveSubsystem.getHeadingTurnToAngle(targetAngle),
         // This should return the setpoint (can also be a constant)
-        () -> targetAngle,
+        () -> {
+            if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {return targetAngle;}
+            else {return ((180 - targetAngle) + 180);}},
         // This uses the output
         output -> {
           if(output > 1) {
@@ -40,7 +43,7 @@ public class TurnToAnglePID extends PIDCommand {
           } else if (Math.abs(output) < 0.01) {
             output = 0;
           }
-          driveSubsystem.drive(oi.driverJoytick.getRawAxis(1), oi.driverJoytick.getRawAxis(0), output, false, false, .5);
+          driveSubsystem.drive(oi.driverJoytick.getRawAxis(1), oi.driverJoytick.getRawAxis(0), output, false, false, .6);
         });
 
     // this.targetAngle = targetAngle;

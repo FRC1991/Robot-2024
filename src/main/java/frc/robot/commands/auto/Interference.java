@@ -14,8 +14,9 @@ public class Interference extends Command {
   private DriveSubsystem driveTrain;
 
   /** Creates a new Interference. */
-  public Interference(DriveSubsystem driveTrain) {
+  public Interference(boolean blueSide, DriveSubsystem driveTrain) {
     this.driveTrain = driveTrain;
+    this.blueSide = blueSide;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveTrain);
@@ -23,17 +24,15 @@ public class Interference extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    blueSide = DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     if(blueSide) {
-      driveTrain.drive(0, 0.3, 0, true, false);
+      driveTrain.drive(0, 0.76257, -0.7, true, false);
     } else {
-      driveTrain.drive(0, -0.3, 0, true, false);
+      driveTrain.drive(0, -0.76257, -0.7, true, false);
     }
   }
 
