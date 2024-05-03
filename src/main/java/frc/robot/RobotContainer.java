@@ -31,7 +31,7 @@ import frc.robot.Constants.TeleopConstants;
 import frc.robot.commands.auto.Interference;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivetrain.BangBang.RunToTarget;
-import frc.robot.commands.drivetrain.PID.TurnToAnglePID;
+import frc.robot.commands.drivetrain.PID.TurnToSource;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.PIDPivotToSetpoint;
 import frc.robot.commands.pivot.PivotToSetpoint;
@@ -156,15 +156,15 @@ public class RobotContainer {
     angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
     angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
 
-    // NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
-    // NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
-    // NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
-    // NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
-    // NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
-    // NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
+    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
+    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
+    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
+    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
+    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
+    NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
+    NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
+    NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
 
     // Command oneAutoBlue = AutoBuilder.buildAuto("One Note Blue");
     // Command openOneAutoBlue = AutoBuilder.buildAuto("open One Note Blue");
@@ -183,7 +183,7 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     autoChooser = new SendableChooser<Command>();
     // autoChooser.addOption("Blue One Note", oneAutoBlue);
-    // autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
+    autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
     // autoChooser.addOption("Blue Midside One note + movement", midOneAutoBlue);
     // autoChooser.addOption("Blue Ampside One note + movement", ampOneAutoBlue);
     // autoChooser.addOption("Red One Note", oneAutoRed);
@@ -225,7 +225,7 @@ public class RobotContainer {
 
     // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
+    // m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
 
     // Configures the button bindings
     configureButtonBindings();
@@ -261,7 +261,7 @@ public class RobotContainer {
             m_Pivot));
 
     new JoystickButton(oi.driverJoytick, 8)
-        .whileTrue(new TurnToAnglePID(145, oi, m_DriveTrain));
+        .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
 
     // new JoystickButton(oi.driverJoytick, 5)
     //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));

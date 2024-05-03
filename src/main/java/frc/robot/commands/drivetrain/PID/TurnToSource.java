@@ -13,7 +13,7 @@ import frc.robot.subsystems.DriveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TurnToAnglePID extends PIDCommand {
+public class TurnToSource extends PIDCommand {
 
   // private DriveSubsystem m_DriveSubsystem;
   // private double targetAngle;
@@ -24,7 +24,7 @@ public class TurnToAnglePID extends PIDCommand {
    * @param targetAngle Angle the robot will turn to. Must be between 0 and 360
    * @param driveSubsystem The main drive train of the robot
    */
-  public TurnToAnglePID(double targetAngle, OperatingInterface oi, DriveSubsystem driveSubsystem) {
+  public TurnToSource(double targetAngle, OperatingInterface oi, DriveSubsystem driveSubsystem) {
     super(
         // The controller that the command will use
         new PIDController(0.009, 0, 0),
