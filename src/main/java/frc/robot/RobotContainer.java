@@ -137,7 +137,7 @@ public class RobotContainer {
   private final Trigger proximityTrigger = new Trigger(proximitySensor::get);
 
   private final SendableChooser<Command> autoChooser;
-  private final SendableChooser<Command> angleChooser;
+  private final SendableChooser<InstantCommand> angleChooser;
   private GenericEntry shooterSpeed;
   public GenericEntry gyroStartConfig;
 
@@ -148,7 +148,7 @@ public class RobotContainer {
     // Configures network table listeners
     configureNetworkTables();
 
-    angleChooser = new SendableChooser<Command>();
+    angleChooser = new SendableChooser<InstantCommand>();
     angleChooser.addOption("0", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(0), m_DriveTrain));
     angleChooser.addOption("180", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
     angleChooser.addOption("120", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
@@ -156,12 +156,12 @@ public class RobotContainer {
     angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
     angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
 
-    // NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
-    // NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
-    // NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
-    // NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
-    // NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
-    // NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
+    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
+    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
+    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
+    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
+    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
     // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
     // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
     // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
@@ -183,11 +183,11 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     autoChooser = new SendableChooser<Command>();
     // autoChooser.addOption("Blue One Note", oneAutoBlue);
-    // autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
+    autoChooser.addOption("Interference red", new PathPlannerAuto("InterferenceAutoRed"));
     // autoChooser.addOption("Blue Midside One note + movement", midOneAutoBlue);
     // autoChooser.addOption("Blue Ampside One note + movement", ampOneAutoBlue);
     // autoChooser.addOption("Red One Note", oneAutoRed);
-    // autoChooser.addOption("Red Openside One note + movement", openOneAutoRed);
+    autoChooser.addOption("Red Openside One note + movement", new PathPlannerAuto("open One Note Red"));
     // autoChooser.addOption("Red Midside One note + movement", midOneAutoRed);
     // autoChooser.addOption("Red Ampside One note + movement", ampOneAutoRed);
     // autoChooser.addOption("Interference Blue", interferenceBlue);
