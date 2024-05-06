@@ -6,12 +6,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "gyro to 240"
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
@@ -70,6 +64,6 @@
       ]
     }
   },
-  "folder": "One Note Red",
+  "folder": null,
   "choreoAuto": false
 }
