@@ -8,27 +8,31 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.Pivot;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PIDVisionPivot extends PIDCommand {
-  /** Creates a new PIDPivottoSetpoint. */
-  public PIDVisionPivot(Supplier<Double> kp, Supplier<Double> ty, Pivot pivot) {
+  /** Creates a new PIDVisionPivot. */
+  public PIDVisionPivot(Supplier<Double> yDiff, double kp, Supplier<Double> setpoint, Pivot pivot) {
     super(
         // The controller that the command will use
-        new PIDController(kp.get(), 0, 0),
+        new PIDController(0.009, 0, 0),
         // This should return the measurement
-        pivot::getEncoderPosition,
+        yDiff::get,
         // This should return the setpoint (can also be a constant)
-        ty::get,
+        setpoint::get,
         // This uses the output
         output -> {
-          double setpoint = ((PivotConstants.kVisionA * -output) + PivotConstants.kVisionB) / ((PivotConstants.kVisionC * -output) + PivotConstants.kVisionD);
-          // Use the output here
-          pivot.setPivot(setpoint);
+          if(output > 1) {
+            output = 1;
+          } else if(output < -1) {
+            output = -1;
+          } else if (Math.abs(output) < .01) {
+            output = 0;
+          }
+          pivot.setPivot(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(pivot);

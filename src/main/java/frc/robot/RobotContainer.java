@@ -36,6 +36,7 @@ import frc.robot.commands.drivetrain.PID.PIDTurnToTarget;
 import frc.robot.commands.drivetrain.PID.TurnToSource;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.PIDPivotToSetpoint;
+import frc.robot.commands.pivot.PIDVisionPivot;
 import frc.robot.commands.pivot.PivotToSetpoint;
 import frc.robot.commands.pivot.RunPivot;
 import frc.robot.commands.shooter.RunShooter;
@@ -227,7 +228,7 @@ public class RobotContainer {
 
     // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    // m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
+    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
 
     // Configures the button bindings
     configureButtonBindings();
@@ -268,13 +269,24 @@ public class RobotContainer {
     new JoystickButton(oi.driverJoytick, 14)
         .whileTrue(new PIDTurnToTarget(() -> tx.get(), oi, m_DriveTrain));
 
+    // oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
+    //     new ParallelCommandGroup(
+    //         new RunShooter(() -> 1.0, m_Shooter),
+    //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.8),
+    //     new ParallelCommandGroup(
+    //         new RunShooter(() -> 1.0, m_Shooter),
+    //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
+    //         new RunIntake(() -> 0.8, m_Intake))));
+
+    oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), 1, () -> 0.0, m_Pivot));
+
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.8),
+            new PIDVisionPivot(() -> ty.get(), 1, () -> 0.0, m_Pivot).withTimeout(0.8)),
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
+            new PIDVisionPivot(() -> ty.get(), 1, () -> 0.0, m_Pivot),
             new RunIntake(() -> 0.8, m_Intake))));
 
     oi.auxStartButton.whileTrue(new SequentialCommandGroup(
