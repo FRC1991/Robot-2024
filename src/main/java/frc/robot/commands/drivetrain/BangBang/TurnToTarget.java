@@ -13,9 +13,9 @@ public class TurnToTarget extends Command {
 
   private Supplier<Double> xDiff;
   private DriveSubsystem m_DriveSubsystem;
-  /** 
+  /**
    * Creates a command that minimizes the xDiff and doesn't end
-   * 
+   *
    * @param xDiff The angle between the target and the current heading of the robot
    * @param driveSubsystem The drive subsystem of the robot
   */
@@ -33,10 +33,12 @@ public class TurnToTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(xDiff.get() < 0.5) {
-      m_DriveSubsystem.drive(0, 0, 0.2, false, true);
-    } else if(xDiff.get() > -0.5) {
-      m_DriveSubsystem.drive(0, 0, -0.2, false, true);
+    if(!xDiff.get().equals(null)) {
+      if(xDiff.get() > 0.2) {
+        m_DriveSubsystem.drive(0, 0, -0.2, false, false);
+      } else if(xDiff.get() < -0.2) {
+        m_DriveSubsystem.drive(0, 0, 0.2, false, false);
+      }
     }
   }
 

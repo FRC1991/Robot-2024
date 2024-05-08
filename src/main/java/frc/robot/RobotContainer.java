@@ -31,6 +31,8 @@ import frc.robot.Constants.TeleopConstants;
 import frc.robot.commands.auto.Interference;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivetrain.BangBang.RunToTarget;
+import frc.robot.commands.drivetrain.BangBang.TurnToTarget;
+import frc.robot.commands.drivetrain.PID.PIDTurnToTarget;
 import frc.robot.commands.drivetrain.PID.TurnToSource;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.PIDPivotToSetpoint;
@@ -249,7 +251,7 @@ public class RobotContainer {
             () -> m_DriveTrain.setX(),
             m_DriveTrain));
 
-    // Zeros out the gyro
+    // Zeros out the gyro (bottom thumb button)
     new JoystickButton(oi.driverJoytick, 2)
         .onTrue(new InstantCommand(
             () -> m_DriveTrain.zeroHeading(),
@@ -263,8 +265,8 @@ public class RobotContainer {
     new JoystickButton(oi.driverJoytick, 8)
         .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
 
-    // new JoystickButton(oi.driverJoytick, 5)
-    //     .whileTrue(new RunToTarget(() -> intaketx.get(), () -> 0.1, m_DriveTrain));
+    new JoystickButton(oi.driverJoytick, 14)
+        .whileTrue(new PIDTurnToTarget(() -> tx.get(), oi, m_DriveTrain));
 
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
