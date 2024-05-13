@@ -39,7 +39,7 @@ public class PIDTurnToTarget extends PIDCommand {
           driveSubsystem.drive(
               -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
               -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
-              output, false, false, .6);
+              output, true, false, .6);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.

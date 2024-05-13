@@ -18,7 +18,7 @@ public class PIDPivotToSetpoint extends PIDCommand {
   public PIDPivotToSetpoint(Supplier<Double> kp, Supplier<Double> setpoint, Pivot pivot) {
     super(
         // The controller that the command will use
-        new PIDController(0.009, 0, 0),
+        new PIDController(0.1, 0, 0),
         // This should return the measurement
         pivot::getEncoderPosition,
         // This should return the setpoint (can also be a constant)

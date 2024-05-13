@@ -266,8 +266,11 @@ public class RobotContainer {
     new JoystickButton(oi.driverJoytick, 8)
         .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
 
+    new JoystickButton(oi.driverJoytick, 9)
+        .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
+
     new JoystickButton(oi.driverJoytick, 14)
-        .whileTrue(new PIDTurnToTarget(() -> tx.get(), oi, m_DriveTrain));
+        .whileTrue(new PIDTurnToTarget(tx::get, oi, m_DriveTrain));
 
     // oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
     //     new ParallelCommandGroup(
@@ -283,10 +286,10 @@ public class RobotContainer {
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDVisionPivot(() -> ty.get(), 1, () -> 0.0, m_Pivot).withTimeout(0.8)),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.8),
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDVisionPivot(() -> ty.get(), 1, () -> 0.0, m_Pivot),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
             new RunIntake(() -> 0.8, m_Intake))));
 
     oi.auxStartButton.whileTrue(new SequentialCommandGroup(
