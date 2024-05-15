@@ -15,10 +15,10 @@ import frc.robot.subsystems.Pivot;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PIDVisionPivot extends PIDCommand {
   /** Creates a new PIDVisionPivot. */
-  public PIDVisionPivot(Supplier<Double> yDiff, double kp, Supplier<Double> setpoint, Pivot pivot) {
+  public PIDVisionPivot(Supplier<Double> yDiff, Supplier<Double> setpoint, Pivot pivot) {
     super(
         // The controller that the command will use
-        new PIDController(0.009, 0, 0),
+        new PIDController(0.1, 0, 0),
         // This should return the measurement
         yDiff::get,
         // This should return the setpoint (can also be a constant)

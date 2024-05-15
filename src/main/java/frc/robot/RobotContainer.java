@@ -282,7 +282,7 @@ public class RobotContainer {
     //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
     //         new RunIntake(() -> 0.8, m_Intake))));
 
-    oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), 1, () -> 0.0, m_Pivot));
+    oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), () -> 0.0, m_Pivot));
 
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
