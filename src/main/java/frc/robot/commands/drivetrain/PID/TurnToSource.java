@@ -45,10 +45,18 @@ public class TurnToSource extends PIDCommand {
           } else if (Math.abs(output) < 0.01) {
             output = 0;
           }
-          driveSubsystem.drive(
+          if(oi.driverJoytick.getRawButton(9)) {
+            driveSubsystem.drive(
+              MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+              MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+              output, false, false, .6);
+          } else {
+            driveSubsystem.drive(
               -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
               -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
               output, true, false, .6);
+          }
+
         });
 
     // this.targetAngle = targetAngle;
