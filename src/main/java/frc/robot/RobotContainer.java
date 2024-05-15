@@ -142,7 +142,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   private final SendableChooser<InstantCommand> angleChooser;
   private GenericEntry shooterSpeed;
-  public GenericEntry gyroStartConfig;
+  private GenericEntry gyroStartConfig;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -267,8 +267,8 @@ public class RobotContainer {
     new JoystickButton(oi.driverJoytick, 8)
         .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
 
-    new JoystickButton(oi.driverJoytick, 9)
-        .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
+    // new JoystickButton(oi.driverJoytick, 9)
+    //     .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
 
     new JoystickButton(oi.driverJoytick, 14)
         .whileTrue(new PIDTurnToTarget(tx::get, oi, m_DriveTrain));
@@ -541,8 +541,8 @@ public class RobotContainer {
     return swerveControllerCommand.andThen(() -> m_DriveTrain.drive(0, 0, 0, false, false, 0));
   }
 
-  public Command configureGyroCommand() {
-    return angleChooser.getSelected();
+  public void configureGyro() {
+    angleChooser.getSelected().schedule();
   }
 
   /**
