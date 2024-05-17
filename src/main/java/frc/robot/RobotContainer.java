@@ -141,8 +141,6 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
   private final SendableChooser<InstantCommand> angleChooser;
-  private GenericEntry shooterSpeed;
-  private GenericEntry gyroStartConfig;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -159,7 +157,7 @@ public class RobotContainer {
     angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
     angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
 
-    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter));
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, m_Shooter));
     NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
     NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
     NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
@@ -264,11 +262,11 @@ public class RobotContainer {
             () -> m_Pivot.zeroEncoders(),
             m_Pivot));
 
-    new JoystickButton(oi.driverJoytick, 8)
-        .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
+    // new JoystickButton(oi.driverJoytick, 8)
+    //     .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
 
-    // new JoystickButton(oi.driverJoytick, 9)
-    //     .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
+    new JoystickButton(oi.driverJoytick, 9)
+        .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
 
     new JoystickButton(oi.driverJoytick, 14)
         .whileTrue(new PIDTurnToTarget(tx::get, oi, m_DriveTrain));
@@ -325,17 +323,6 @@ public class RobotContainer {
     // // Doubles
     Shuffleboard.getTab("Main").addDouble("Heading", m_DriveTrain::getHeading);
 
-
-    shooterSpeed = Shuffleboard.getTab("Main").add("Shooter speed", 1)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
-        .getEntry();
-
-    gyroStartConfig = Shuffleboard.getTab("Main").add("gyro start config", 180)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 360)) // specify widget properties here
-        .getEntry();
-
     Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getEncoderPosition);
     // Shuffleboard.getTab("Network Table Values").addDouble("shooter ta", ta::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("shooter tid", tid::get);
@@ -379,7 +366,7 @@ public class RobotContainer {
             // new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot)).withTimeout(1.5),
         new ParallelCommandGroup(
-            new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
+            new RunShooter(() -> 1.0, m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot),
             new RunIntake(() -> 0.8, m_Intake)).withTimeout(1));
     }
