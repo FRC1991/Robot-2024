@@ -140,8 +140,8 @@ public final class Constants {
     // old numbers, idk why they changed. gear ratio, motors, mounting is all same
     // public static final double kSpeakerMidPosition = -12.15;
     // public static final double kSpeakerSidePosition = -12.25;
-    public static final double kSpeakerMidPosition = -6.87;
-    public static final double kSpeakerSidePosition = -6.87;
+    public static final double kSpeakerMidPosition = -6.66;
+    public static final double kSpeakerSidePosition = -6.66;
     public static final double kLowShotPosition = -4.6;
   }
 
