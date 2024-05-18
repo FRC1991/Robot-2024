@@ -1,9 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 
@@ -25,9 +25,12 @@ public class OperatingInterface {
   public Trigger auxBackButton = new Trigger(() -> auxController.getBackButton());
 
   public void rumbleAuxController() {
-    auxController.setRumble(RumbleType.kBothRumble, 1);
-    Timer.delay(0.5);
-    auxController.setRumble(RumbleType.kBothRumble, 0);
+    Thread rumble = new Thread(() -> {
+      auxController.setRumble(RumbleType.kBothRumble, .9);
+      Timer.delay(0.5);
+      auxController.setRumble(RumbleType.kBothRumble, 0);
+    });
+    rumble.start();
   }
 
   public OperatingInterface() {}

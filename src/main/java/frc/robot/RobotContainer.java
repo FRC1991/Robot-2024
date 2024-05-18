@@ -287,7 +287,7 @@ public class RobotContainer {
     oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
     // oi.auxXButton.onTrue(new RunIntake(() -> 0.0, m_Intake));
     oi.auxXButton.whileTrue(new RunShooter(() -> 1.0, m_Shooter));
-    // proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
+    proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
     oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake));
 
     oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
