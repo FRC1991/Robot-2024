@@ -23,7 +23,13 @@ public class PIDTurnToTarget extends PIDCommand {
         // The controller that the command will use
         new PIDController(0.009, 0, 0),
         // This should return the measurement
-        xDiff::get,
+        () -> {
+          try {
+            return xDiff.get();
+          } catch (Exception e) {
+            return 0;
+          }
+        },
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // This uses the output

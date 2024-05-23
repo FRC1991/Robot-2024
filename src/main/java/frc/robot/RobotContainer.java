@@ -27,6 +27,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.TeleopConstants;
 import frc.robot.commands.auto.Interference;
 import frc.robot.commands.drivetrain.PID.PIDTurnToTarget;
+import frc.robot.commands.drivetrain.PID.TurnToSource;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.PIDPivotToSetpoint;
 import frc.robot.commands.pivot.PIDVisionPivot;
@@ -45,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -149,40 +151,25 @@ public class RobotContainer {
     // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
     // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
 
-    // Command oneAutoBlue = AutoBuilder.buildAuto("One Note Blue");
-    // Command openOneAutoBlue = AutoBuilder.buildAuto("open One Note Blue");
-    // Command midOneAutoBlue = AutoBuilder.buildAuto("mid One Note Blue");
-    // Command ampOneAutoBlue = AutoBuilder.buildAuto("amp One Note Blue");
-    // Command oneAutoRed = AutoBuilder.buildAuto("One Note Red");
-    // Command openOneAutoRed = AutoBuilder.buildAuto("open One Note Red");
-    // Command midOneAutoRed = AutoBuilder.buildAuto("mid One Note Red");
-    // Command ampOneAutoRed = AutoBuilder.buildAuto("amp One Note Red");
-    // Command twoAutoBlue = AutoBuilder.buildAuto("Two Note");
-    // Command interferenceBlue = AutoBuilder.followPath(PathPlannerPath.fromPathFile("InterferenceBlue"));
-    // Command interferenceRed = AutoBuilder.followPath(PathPlannerPath.fromPathFile("InterferenceRed"));
-    // Command interferenceBluePt1 = AutoBuilder.followPath(PathPlannerPath.fromPathFile("InterferenceBluePt1"));
-    // Command interferenceBluePt2 = AutoBuilder.followPath(PathPlannerPath.fromPathFile("InterferenceBluePt2"));
-
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     autoChooser = new SendableChooser<Command>();
-    // autoChooser.addOption("Blue One Note", oneAutoBlue);
-    autoChooser.addOption("Interference red", new PathPlannerAuto("InterferenceAutoRed"));
-    // autoChooser.addOption("Blue Midside One note + movement", midOneAutoBlue);
-    // autoChooser.addOption("Blue Ampside One note + movement", ampOneAutoBlue);
-    // autoChooser.addOption("Red One Note", oneAutoRed);
+    autoChooser.addOption("Blue Midside One note + movement", new PathPlannerAuto("mid One Note Blue"));
+    autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
+    autoChooser.addOption("Blue Ampside One note + movement", new PathPlannerAuto("amp One Note Blue"));
     autoChooser.addOption("Red Openside One note + movement", new PathPlannerAuto("open One Note Red"));
-    // autoChooser.addOption("Red Midside One note + movement", midOneAutoRed);
-    // autoChooser.addOption("Red Ampside One note + movement", ampOneAutoRed);
-    // autoChooser.addOption("Interference Blue", interferenceBlue);
-    // autoChooser.addOption("Interference Red", interferenceRed);
-    // autoChooser.addOption("compound interference blue", new SequentialCommandGroup(interferenceBluePt1, interferenceBluePt2));
-    autoChooser.addOption("blue interference auto", new SequentialCommandGroup(
+    autoChooser.addOption("Red Midside One note + movement", new PathPlannerAuto("mid One Note Red"));
+    autoChooser.addOption("Red Ampside One note + movement", new PathPlannerAuto("amp One Note Red"));
+    autoChooser.addOption("Interference Blue", new PathPlannerAuto("InterferenceAutoBlue"));
+    autoChooser.addOption("Interference Red", new PathPlannerAuto("InterferenceAutoRed"));
+    autoChooser.addOption("Two Note Blue", new PathPlannerAuto("Two Note Blue"));
+    autoChooser.addOption("Two Note Red", new PathPlannerAuto("Two Note Red"));
+    autoChooser.addOption("manual blue interference auto", new SequentialCommandGroup(
         new RunCommand(
             () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain).withTimeout(2),
         new Interference(true, m_DriveTrain).withTimeout(1.9)
     ));
-    autoChooser.addOption("red interference auto", new SequentialCommandGroup(
+    autoChooser.addOption("manual red interference auto", new SequentialCommandGroup(
         new RunCommand(
             () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain).withTimeout(2),
@@ -243,14 +230,14 @@ public class RobotContainer {
             () -> m_Pivot.zeroEncoders(),
             m_Pivot));
 
-    // new JoystickButton(oi.driverJoytick, 8)
-    //     .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
+    new JoystickButton(oi.driverJoytick, 8)
+        .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
 
-    new JoystickButton(oi.driverJoytick, 9)
-        .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
+    // new JoystickButton(oi.driverJoytick, 9)
+    //     .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
 
-    new JoystickButton(oi.driverJoytick, 14)
-        .whileTrue(new PIDTurnToTarget(tx::get, oi, m_DriveTrain));
+    // new JoystickButton(oi.driverJoytick, 14)
+    //     .whileTrue(new PIDTurnToTarget(tx::get, oi, m_DriveTrain));
 
     // oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
     //     new ParallelCommandGroup(
