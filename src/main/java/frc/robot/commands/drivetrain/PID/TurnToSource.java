@@ -38,13 +38,16 @@ public class TurnToSource extends PIDCommand {
             else {return ((180 - targetAngle) + 180);}},
         // This uses the output
         output -> {
+          // Normalizing the output between [-1, 1]
           if(output > 1) {
             output = 1;
           } else if(output < -1) {
             output = -1;
+            // Creating a deadband for negligble outputs (below 1%)
           } else if (Math.abs(output) < 0.01) {
             output = 0;
           }
+          //Robot centric drive - DON'T USE because we took off the intake limelight
           if(oi.driverJoytick.getRawButton(9)) {
             driveSubsystem.drive(
               MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
@@ -56,7 +59,6 @@ public class TurnToSource extends PIDCommand {
               -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
               output, true, false, .6);
           }
-
         });
 
     // this.targetAngle = targetAngle;

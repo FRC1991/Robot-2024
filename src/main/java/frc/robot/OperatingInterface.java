@@ -24,6 +24,7 @@ public class OperatingInterface {
   public Trigger auxStartButton = new Trigger(() -> auxController.getStartButton());
   public Trigger auxBackButton = new Trigger(() -> auxController.getBackButton());
 
+  // A half second rumble on the Xbox controller
   public void rumbleAuxController() {
     Thread rumble = new Thread(() -> {
       auxController.setRumble(RumbleType.kBothRumble, .9);

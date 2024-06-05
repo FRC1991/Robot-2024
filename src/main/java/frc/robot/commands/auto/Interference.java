@@ -28,6 +28,7 @@ public class Interference extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Goes the opposite direction depending on what alliance we are
     if(blueSide) {
       driveTrain.drive(0, 0.76257, -0.7, true, false);
     } else {

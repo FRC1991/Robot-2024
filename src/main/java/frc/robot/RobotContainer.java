@@ -211,6 +211,7 @@ public class RobotContainer {
 
     oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), () -> 0.0, m_Pivot));
 
+    // Shooting
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
@@ -243,6 +244,7 @@ public class RobotContainer {
   }
 
   public void configureShuffleBoard() {
+    // For easy configuration of the gyro at the start of every match
     angleChooser.addOption("0", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(0), m_DriveTrain));
     angleChooser.addOption("180", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
     angleChooser.addOption("120", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
@@ -250,6 +252,7 @@ public class RobotContainer {
     angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
     angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
 
+    // To use in the Path Planner GUI
     NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, m_Shooter));
     NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
     NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
@@ -262,6 +265,7 @@ public class RobotContainer {
     // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
 
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    // All from PathPlanner and don't work
     autoChooser.addOption("Blue Midside One note + movement", new PathPlannerAuto("mid One Note Blue"));
     autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
     autoChooser.addOption("Blue Ampside One note + movement", new PathPlannerAuto("amp One Note Blue"));
@@ -272,19 +276,8 @@ public class RobotContainer {
     autoChooser.addOption("Interference Red", new PathPlannerAuto("InterferenceAutoRed"));
     autoChooser.addOption("Two Note Blue", new PathPlannerAuto("Two Note Blue"));
     autoChooser.addOption("Two Note Red", new PathPlannerAuto("Two Note Red"));
-    autoChooser.addOption("manual blue interference auto", new SequentialCommandGroup(
-        new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-        new Interference(true, m_DriveTrain).withTimeout(1.9)
-    ));
-    autoChooser.addOption("manual red interference auto", new SequentialCommandGroup(
-        new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-        new Interference(false, m_DriveTrain).withTimeout(1.9)
-    ));
 
+    // Untested
     autoChooser.addOption("BangBang Defense", new SequentialCommandGroup(
           new RunCommand(
             () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
@@ -298,11 +291,24 @@ public class RobotContainer {
           new PIDDefense(() -> tx.get(), m_DriveTrain)
         ));
 
+    // Hard coded autos
     autoChooser.addOption("Nothing", new InstantCommand());
-    autoChooser.addOption("One note mid", getOnePieceAuto(true));
-    autoChooser.addOption("One note side", getOnePieceAuto(false));
-    autoChooser.addOption("One note mid + movement", getOnePieceAutoMovementCommand(true));
+    autoChooser.addOption("One note mid", getOnePieceAuto());
+    autoChooser.addOption("One note side", getOnePieceAuto());
+    autoChooser.addOption("One note mid + movement", getOnePieceAutoMovementCommand());
     autoChooser.addOption("Two note + movement", getTwoPieceAutoCommand());
+    autoChooser.addOption("manual blue interference auto", new SequentialCommandGroup(
+        new RunCommand(
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+        new Interference(true, m_DriveTrain).withTimeout(1.9)
+    ));
+    autoChooser.addOption("manual red interference auto", new SequentialCommandGroup(
+        new RunCommand(
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+        new Interference(false, m_DriveTrain).withTimeout(1.9)
+    ));
 
     // Booleans
     // Shuffleboard.getTab("Main").addBoolean("intaking?", () -> oi.auxBButton.getAsBoolean());
@@ -334,8 +340,11 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public ParallelRaceGroup getOnePieceAuto(boolean mid) {
-    if(mid) {
+  /**
+   *
+   * @return A new ParallelRaceGroup which shoots the preloaded note and does not move
+   */
+  public ParallelRaceGroup getOnePieceAuto() {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
@@ -344,20 +353,15 @@ public class RobotContainer {
             new RunShooter(() -> 1.0, m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
             new RunIntake(() -> 0.8, m_Intake))).withTimeout(7);
-    } else {
-      return new SequentialCommandGroup(
-        new ParallelCommandGroup(
-            // new RunShooter(() -> shooterSpeed.get().getDouble(), m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot)).withTimeout(1.5),
-        new ParallelCommandGroup(
-            new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot),
-            new RunIntake(() -> 0.8, m_Intake)).withTimeout(1)).withTimeout(7);
-    }
+
   }
 
-  public Command getOnePieceAutoMovementCommand(boolean mid) {
-    ParallelRaceGroup auto = getOnePieceAuto(mid);
+  /**
+   *
+   * @return A one piece auto with a run command which moves the robot at the end
+   */
+  public Command getOnePieceAutoMovementCommand() {
+    ParallelRaceGroup auto = getOnePieceAuto();
 
     auto.addCommands(
               new RunCommand(() -> {}, m_DriveTrain).withTimeout(10),
@@ -369,6 +373,10 @@ public class RobotContainer {
     return auto;
   }
 
+  /**
+   * DON'T USE UNTIL FURTHER TESTING HAS BEEN CONDUCTED
+   * @return
+   */
   public Command getTwoPieceAutoCommand() {
     SequentialCommandGroup auto = new SequentialCommandGroup();
 
@@ -428,7 +436,7 @@ public class RobotContainer {
     //     m_DriveTrain::setModuleStates,
     //     m_DriveTrain);
 
-    auto.addCommands(getOnePieceAuto(true),
+    auto.addCommands(getOnePieceAuto(),
         new ParallelCommandGroup(
           new RunIntake(() -> 0.8, m_Intake),
           new RunCommand(
@@ -444,7 +452,7 @@ public class RobotContainer {
                   false, false, TeleopConstants.kSwerveSpeed),
               m_DriveTrain).withTimeout(1.5)
         ),
-        getOnePieceAuto(true));
+        getOnePieceAuto());
 
     // Reset odometry to the starting pose of the trajectory.
     // m_DriveTrain.resetOdometry(pickUpNote.getInitialPose());
@@ -517,6 +525,9 @@ public class RobotContainer {
   }
 
   /**
+   * Make sure to tune your pipelines at every event. This is to ensure you get accurate readings
+   * under varying lighting conditions.
+   *
    * Automatically configures the intake limelight to pipeline zero.
    *
    * Automatically configures the shooter limelight to pipeline zero if
