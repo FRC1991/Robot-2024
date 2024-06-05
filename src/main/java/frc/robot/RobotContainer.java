@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -156,6 +157,9 @@ public class RobotContainer {
 
     // Configures the button bindings
     configureButtonBindings();
+
+    // Configures the limelights for the match
+    configureLimelights();
   }
 
   /**
@@ -510,6 +514,22 @@ public class RobotContainer {
 
   public void configureGyro() {
     angleChooser.getSelected().schedule();
+  }
+
+  /**
+   * Automatically configures the intake limelight to pipeline zero.
+   *
+   * Automatically configures the shooter limelight to pipeline zero if
+   * on the blue alliance and pipeline one if on the red alliance.
+   */
+  public void configureLimelights() {
+    if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+      LimelightHelpers.setPipelineIndex("limelight-shooter", 0);
+    } else {
+      LimelightHelpers.setPipelineIndex("limelight-shooter", 1);
+    }
+
+    LimelightHelpers.setPipelineIndex("limelight-intake", 0);
   }
 
   /**
