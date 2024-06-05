@@ -4,18 +4,20 @@
 
 package frc.robot.commands.auto;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class Interference extends Command {
+public class Defense extends Command {
 
-  private boolean blueSide;
+  private Supplier<Double> tx;
   private DriveSubsystem driveTrain;
 
-  /** Creates a new Interference. */
-  public Interference(boolean blueSide, DriveSubsystem driveTrain) {
+  /** Creates a new Defense. */
+  public Defense(Supplier<Double> tx, DriveSubsystem driveTrain) {
+    this.tx = tx;
     this.driveTrain = driveTrain;
-    this.blueSide = blueSide;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveTrain);
@@ -28,16 +30,18 @@ public class Interference extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(blueSide) {
-      driveTrain.drive(0, 0.76257, -0.7, true, false);
-    } else {
-      driveTrain.drive(0, -0.76257, -0.7, true, false);
+    if(tx.get() > 0.1) {
+      driveTrain.drive(0.5, 0, 0, true, true);
+    } else if(tx.get() < -0.1) {
+      driveTrain.drive(-0.5, 0, 0, true, true);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    driveTrain.drive(0, 0, 0, false, false);
+  }
 
   // Returns true when the command should end.
   @Override

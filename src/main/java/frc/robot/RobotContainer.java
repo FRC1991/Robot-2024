@@ -25,8 +25,9 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.TeleopConstants;
+import frc.robot.commands.auto.Defense;
 import frc.robot.commands.auto.Interference;
-import frc.robot.commands.drivetrain.PID.PIDTurnToTarget;
+import frc.robot.commands.auto.PIDDefense;
 import frc.robot.commands.drivetrain.PID.TurnToSource;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.PIDPivotToSetpoint;
@@ -40,13 +41,13 @@ import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -122,8 +123,8 @@ public class RobotContainer {
   private final DigitalInput proximitySensor = new DigitalInput(0);
   private final Trigger proximityTrigger = new Trigger(proximitySensor::get);
 
-  private final SendableChooser<Command> autoChooser;
-  private final SendableChooser<InstantCommand> angleChooser;
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+  private final SendableChooser<InstantCommand> angleChooser = new SendableChooser<InstantCommand>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -131,50 +132,6 @@ public class RobotContainer {
   public RobotContainer() {
     // Configures network table listeners
     configureNetworkTables();
-
-    angleChooser = new SendableChooser<InstantCommand>();
-    angleChooser.addOption("0", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(0), m_DriveTrain));
-    angleChooser.addOption("180", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
-    angleChooser.addOption("120", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
-    angleChooser.addOption("240", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
-    angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
-    angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
-
-    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, m_Shooter));
-    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
-    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
-    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
-    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> m_Intake.setIntakeSpeed(0), m_Intake));
-    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
-    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
-
-    // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    autoChooser = new SendableChooser<Command>();
-    autoChooser.addOption("Blue Midside One note + movement", new PathPlannerAuto("mid One Note Blue"));
-    autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
-    autoChooser.addOption("Blue Ampside One note + movement", new PathPlannerAuto("amp One Note Blue"));
-    autoChooser.addOption("Red Openside One note + movement", new PathPlannerAuto("open One Note Red"));
-    autoChooser.addOption("Red Midside One note + movement", new PathPlannerAuto("mid One Note Red"));
-    autoChooser.addOption("Red Ampside One note + movement", new PathPlannerAuto("amp One Note Red"));
-    autoChooser.addOption("Interference Blue", new PathPlannerAuto("InterferenceAutoBlue"));
-    autoChooser.addOption("Interference Red", new PathPlannerAuto("InterferenceAutoRed"));
-    autoChooser.addOption("Two Note Blue", new PathPlannerAuto("Two Note Blue"));
-    autoChooser.addOption("Two Note Red", new PathPlannerAuto("Two Note Red"));
-    autoChooser.addOption("manual blue interference auto", new SequentialCommandGroup(
-        new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-        new Interference(true, m_DriveTrain).withTimeout(1.9)
-    ));
-    autoChooser.addOption("manual red interference auto", new SequentialCommandGroup(
-        new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-        new Interference(false, m_DriveTrain).withTimeout(1.9)
-    ));
 
     // Configures wigets for the driver station
     configureShuffleBoard();
@@ -282,6 +239,67 @@ public class RobotContainer {
   }
 
   public void configureShuffleBoard() {
+    angleChooser.addOption("0", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(0), m_DriveTrain));
+    angleChooser.addOption("180", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
+    angleChooser.addOption("120", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
+    angleChooser.addOption("240", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
+    angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
+    angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
+
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, m_Shooter));
+    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
+    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
+    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
+    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> m_Intake.setIntakeSpeed(0), m_Intake));
+    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
+    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
+    // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
+    // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
+    // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
+
+    // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    autoChooser.addOption("Blue Midside One note + movement", new PathPlannerAuto("mid One Note Blue"));
+    autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
+    autoChooser.addOption("Blue Ampside One note + movement", new PathPlannerAuto("amp One Note Blue"));
+    autoChooser.addOption("Red Openside One note + movement", new PathPlannerAuto("open One Note Red"));
+    autoChooser.addOption("Red Midside One note + movement", new PathPlannerAuto("mid One Note Red"));
+    autoChooser.addOption("Red Ampside One note + movement", new PathPlannerAuto("amp One Note Red"));
+    autoChooser.addOption("Interference Blue", new PathPlannerAuto("InterferenceAutoBlue"));
+    autoChooser.addOption("Interference Red", new PathPlannerAuto("InterferenceAutoRed"));
+    autoChooser.addOption("Two Note Blue", new PathPlannerAuto("Two Note Blue"));
+    autoChooser.addOption("Two Note Red", new PathPlannerAuto("Two Note Red"));
+    autoChooser.addOption("manual blue interference auto", new SequentialCommandGroup(
+        new RunCommand(
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+        new Interference(true, m_DriveTrain).withTimeout(1.9)
+    ));
+    autoChooser.addOption("manual red interference auto", new SequentialCommandGroup(
+        new RunCommand(
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+        new Interference(false, m_DriveTrain).withTimeout(1.9)
+    ));
+
+    autoChooser.addOption("BangBang Defense", new SequentialCommandGroup(
+          new RunCommand(
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+          new Defense(() -> tx.get(), m_DriveTrain)
+        ));
+    autoChooser.addOption("PID Defense", new SequentialCommandGroup(
+          new RunCommand(
+            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            m_DriveTrain).withTimeout(2),
+          new PIDDefense(() -> tx.get(), m_DriveTrain)
+        ));
+
+    autoChooser.addOption("Nothing", new InstantCommand());
+    autoChooser.addOption("One note mid", getOnePieceAuto(true));
+    autoChooser.addOption("One note side", getOnePieceAuto(false));
+    autoChooser.addOption("One note mid + movement", getOnePieceAutoMovementCommand(true));
+    autoChooser.addOption("Two note + movement", getTwoPieceAutoCommand());
+
     // Booleans
     // Shuffleboard.getTab("Main").addBoolean("intaking?", () -> oi.auxBButton.getAsBoolean());
     Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximitySensor::get);
@@ -299,12 +317,6 @@ public class RobotContainer {
     // Shuffleboard.getTab("Network Table Values").addDouble("intake ta", intaketa::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tid", intaketid::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("intake tx", intaketx::get);
-
-    autoChooser.addOption("Nothing", new InstantCommand());
-    autoChooser.addOption("One note mid", getOnePieceAuto(true));
-    autoChooser.addOption("One note side", getOnePieceAuto(false));
-    autoChooser.addOption("One note mid + movement", getOnePieceAutoMovementCommand(true));
-    autoChooser.addOption("Two note + movement", getTwoPieceAutoCommand());
     Shuffleboard.getTab("Main").add("auto chooser", autoChooser);
     Shuffleboard.getTab("Main").add("angle chooser", angleChooser);
   }
@@ -318,7 +330,7 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public SequentialCommandGroup getOnePieceAuto(boolean mid) {
+  public ParallelRaceGroup getOnePieceAuto(boolean mid) {
     if(mid) {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
@@ -327,7 +339,7 @@ public class RobotContainer {
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
-            new RunIntake(() -> 0.8, m_Intake)));
+            new RunIntake(() -> 0.8, m_Intake))).withTimeout(7);
     } else {
       return new SequentialCommandGroup(
         new ParallelCommandGroup(
@@ -336,12 +348,12 @@ public class RobotContainer {
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerSidePosition, m_Pivot),
-            new RunIntake(() -> 0.8, m_Intake)).withTimeout(1));
+            new RunIntake(() -> 0.8, m_Intake)).withTimeout(1)).withTimeout(7);
     }
   }
 
   public Command getOnePieceAutoMovementCommand(boolean mid) {
-    SequentialCommandGroup auto = getOnePieceAuto(mid);
+    ParallelRaceGroup auto = getOnePieceAuto(mid);
 
     auto.addCommands(
               new RunCommand(() -> {}, m_DriveTrain).withTimeout(10),
@@ -510,7 +522,6 @@ public class RobotContainer {
   public void configureNetworkTables() {
     NetworkTableInstance defaultNTinst = NetworkTableInstance.getDefault();
     NetworkTable aimingLime = defaultNTinst.getTable("limelight-shooter");
-
     NetworkTable intakeLime = defaultNTinst.getTable("limelight-intake");
 
     dlbTopic_tv = aimingLime.getDoubleTopic("tv");
