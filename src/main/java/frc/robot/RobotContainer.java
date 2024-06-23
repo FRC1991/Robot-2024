@@ -114,7 +114,6 @@ public class RobotContainer {
   public final DriveSubsystem m_DriveTrain = new DriveSubsystem();
   private final Intake m_Intake = new Intake();
   private final Shooter m_Shooter = new Shooter();
-  private final Pivot m_Pivot = new Pivot();
   // private final Climber m_Climber = new Climber();
 
   // The operating interface communicating with the user
@@ -153,7 +152,7 @@ public class RobotContainer {
 
     // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
 
-    m_Pivot.setDefaultCommand(new RunPivot(oi.auxController::getLeftY, m_Pivot));
+    Pivot.getInstance().setDefaultCommand(new RunPivot(oi.auxController::getLeftY, Pivot.getInstance()));
 
     // Configures the button bindings
     configureButtonBindings();
@@ -188,8 +187,8 @@ public class RobotContainer {
 
     new JoystickButton(oi.driverJoytick, 5)
         .onTrue(new InstantCommand(
-            () -> m_Pivot.zeroEncoders(),
-            m_Pivot));
+            () -> Pivot.getInstance().zeroMotorEncoders(),
+            Pivot.getInstance()));
 
     new JoystickButton(oi.driverJoytick, 8)
         .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
@@ -203,31 +202,31 @@ public class RobotContainer {
     // oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
     //     new ParallelCommandGroup(
     //         new RunShooter(() -> 1.0, m_Shooter),
-    //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.8),
+    //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
     //     new ParallelCommandGroup(
     //         new RunShooter(() -> 1.0, m_Shooter),
-    //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
+    //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
     //         new RunIntake(() -> 0.8, m_Intake))));
 
-    oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), () -> 0.0, m_Pivot));
+    oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), () -> 0.0, Pivot.getInstance()));
 
     // Shooting
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.8),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, m_Intake))));
 
     oi.auxStartButton.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, m_Pivot)).withTimeout(0.6),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance())).withTimeout(0.6),
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, m_Pivot),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, m_Intake))));
     // oi.auxRightBumper.whileTrue(getOnePieceAuto());
 
@@ -239,8 +238,8 @@ public class RobotContainer {
     proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
     oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake));
 
-    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
-    // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, m_Pivot));
+    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
+    // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, Pivot.getInstance()));
   }
 
   public void configureShuffleBoard() {
@@ -254,8 +253,8 @@ public class RobotContainer {
 
     // To use in the Path Planner GUI
     NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, m_Shooter));
-    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot));
-    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, m_Pivot));
+    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()));
+    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
     NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
     NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> m_Intake.setIntakeSpeed(0), m_Intake));
     NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
@@ -319,7 +318,7 @@ public class RobotContainer {
     // // Doubles
     Shuffleboard.getTab("Main").addDouble("Heading", m_DriveTrain::getHeading);
 
-    Shuffleboard.getTab("Main").addDouble("pivot encoder", m_Pivot::getEncoderPosition);
+    Shuffleboard.getTab("Main").addDouble("pivot encoder", Pivot.getInstance()::getEncoderPosition);
     // Shuffleboard.getTab("Network Table Values").addDouble("shooter ta", ta::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("shooter tid", tid::get);
     // Shuffleboard.getTab("Network Table Values").addDouble("shooter thor", thor::get);
@@ -348,10 +347,10 @@ public class RobotContainer {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot)).withTimeout(0.8),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, m_Shooter),
-            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, m_Pivot),
+            new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, m_Intake))).withTimeout(7);
 
   }
