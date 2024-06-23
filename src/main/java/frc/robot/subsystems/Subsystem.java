@@ -7,13 +7,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class Subsystem extends SubsystemBase {
-  private Subsystem() {}
+  public Subsystem() {}
 
   public abstract void stop();
-  
-  public abstract void zeroMotorEncoders();
 
-  public abstract void zeroSensors();
+  public abstract void zeroMotorEncoders();
 
   public boolean checkSubsystem() {
     return false;
