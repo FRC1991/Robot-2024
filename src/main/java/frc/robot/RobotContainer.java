@@ -114,7 +114,6 @@ public class RobotContainer {
   public final DriveSubsystem m_DriveTrain = new DriveSubsystem();
   private final Intake m_Intake = new Intake();
   private final Shooter m_Shooter = new Shooter();
-  // private final Climber m_Climber = new Climber();
 
   // The operating interface communicating with the user
   private final OperatingInterface oi = new OperatingInterface();
@@ -229,8 +228,6 @@ public class RobotContainer {
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, m_Intake))));
     // oi.auxRightBumper.whileTrue(getOnePieceAuto());
-
-    // oi.auxXButton.whileTrue(new RunClimber(() -> TeleopConstants.kClimberSpeed, m_Climber));
 
     oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
     // oi.auxXButton.onTrue(new RunIntake(() -> 0.0, m_Intake));

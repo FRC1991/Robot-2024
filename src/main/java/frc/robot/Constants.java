@@ -147,7 +147,6 @@ public final class Constants {
 
   public static final class TeleopConstants {
     public static final double kShooterSpeed = 1;
-    public static final double kClimberSpeed = 0.6;
     public static final double kSwerveSpeed = 1.0;
   }
 
@@ -165,11 +164,6 @@ public final class Constants {
     public static final int kShooterMotor2Id = 14;
 
     public static final double kVisionCoefficient = 1;
-  }
-
-  public static final class ClimberConstants {
-    public static final int kClimberMotor1Id = 15;
-    public static final int kClimberMotor2Id = 16;
   }
 
   public static final class PivotConstants {
