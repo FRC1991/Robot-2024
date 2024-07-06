@@ -112,8 +112,6 @@ public class RobotContainer {
 
   // The robot's subsystems
   public final DriveSubsystem m_DriveTrain = new DriveSubsystem();
-  private final Intake m_Intake = new Intake();
-  private final Shooter m_Shooter = new Shooter();
 
   // The operating interface communicating with the user
   private final OperatingInterface oi = new OperatingInterface();
@@ -149,7 +147,7 @@ public class RobotContainer {
 
     // m_Intake.setDefaultCommand(new RunIntake(oi.auxController::getLeftY, m_Intake));
 
-    // m_Shooter.setDefaultCommand(new VisionShooter(ta, tid, m_Shooter));
+    // Shooter.getInstance().setDefaultCommand(new VisionShooter(ta, tid, Shooter.getInstance()));
 
     Pivot.getInstance().setDefaultCommand(new RunPivot(oi.auxController::getLeftY, Pivot.getInstance()));
 
@@ -200,10 +198,10 @@ public class RobotContainer {
 
     // oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
     //     new ParallelCommandGroup(
-    //         new RunShooter(() -> 1.0, m_Shooter),
+    //         new RunShooter(() -> 1.0, Shooter.getInstance()),
     //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
     //     new ParallelCommandGroup(
-    //         new RunShooter(() -> 1.0, m_Shooter),
+    //         new RunShooter(() -> 1.0, Shooter.getInstance()),
     //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
     //         new RunIntake(() -> 0.8, m_Intake))));
 
@@ -212,26 +210,26 @@ public class RobotContainer {
     // Shooting
     oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
-            new RunShooter(() -> 1.0, m_Shooter),
+            new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
         new ParallelCommandGroup(
-            new RunShooter(() -> 1.0, m_Shooter),
+            new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, m_Intake))));
 
     oi.auxStartButton.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
-            new RunShooter(() -> 1.0, m_Shooter),
+            new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance())).withTimeout(0.6),
         new ParallelCommandGroup(
-            new RunShooter(() -> 1.0, m_Shooter),
+            new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, m_Intake))));
     // oi.auxRightBumper.whileTrue(getOnePieceAuto());
 
     oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
     // oi.auxXButton.onTrue(new RunIntake(() -> 0.0, m_Intake));
-    oi.auxXButton.whileTrue(new RunShooter(() -> 1.0, m_Shooter));
+    oi.auxXButton.whileTrue(new RunShooter(() -> 1.0, Shooter.getInstance()));
     proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
     oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake));
 
@@ -249,7 +247,7 @@ public class RobotContainer {
     angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
 
     // To use in the Path Planner GUI
-    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, m_Shooter));
+    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, Shooter.getInstance()));
     NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()));
     NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
     NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
@@ -343,10 +341,10 @@ public class RobotContainer {
   public ParallelRaceGroup getOnePieceAuto() {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
-            new RunShooter(() -> 1.0, m_Shooter),
+            new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
         new ParallelCommandGroup(
-            new RunShooter(() -> 1.0, m_Shooter),
+            new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, m_Intake))).withTimeout(7);
 

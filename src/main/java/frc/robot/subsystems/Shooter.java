@@ -5,37 +5,96 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.utils.Utils;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends Subsystem {
 
-  private CANSparkMax shooterNeo1, shooterNeo2;
+  private CANSparkMax shooterMotor1, shooterMotor2;
+  private static Shooter m_Instance;
 
-  /** Creates a new Shooter. */
-  public Shooter() {
-    shooterNeo1 = new CANSparkMax(ShooterConstants.kShooterMotor1Id, MotorType.kBrushless);
-    shooterNeo2 = new CANSparkMax(ShooterConstants.kShooterMotor2Id, MotorType.kBrushless);
+  // Constructor is private to prevent multiple Shooters from being made
+  private Shooter() {
+    shooterMotor1 = new CANSparkMax(ShooterConstants.kShooterMotor1Id, MotorType.kBrushless);
+    shooterMotor2 = new CANSparkMax(ShooterConstants.kShooterMotor2Id, MotorType.kBrushless);
+
+    // Motor is inverted because it faces the opposite direction of motor 2
+    shooterMotor1.setInverted(true);
+
+    // Setting idle mode to coast so the motors don't waste power stopping the fly wheels
+    shooterMotor1.setIdleMode(IdleMode.kCoast);
+    shooterMotor2.setIdleMode(IdleMode.kCoast);
+
+    // Saving the desired settings
+    shooterMotor1.burnFlash();
+    shooterMotor2.burnFlash();
+
+    zeroMotorEncoders();
   }
 
+  /**
+   *
+   * @return The main Shooter object
+   */
+  public static Shooter getInstance() {
+    if(m_Instance == null) {
+      m_Instance = new Shooter();
+    }
+    return m_Instance;
+  }
+
+  /**
+   *This should only be used through a {@link Command}, not directly accessed.
+   * @param speed The desired speed to run the motors at.
+   */
   public void setShooter(double speed) {
-    shooterNeo1.set(-speed);
-    shooterNeo2.set(speed);
+    speed = Utils.normalize(speed);
+    shooterMotor1.set(speed);
+    shooterMotor2.set(speed);
   }
 
   public void setShooterRMP(double rpm) {
     //TODO test to find max rpm. 5000 max rpm is a guess
     rpm = rpm / 5000;
-
-    if(rpm > 1) {
-      rpm = 1;
-    } else if(rpm < 0) {
-      rpm = 0;
-    }
-
+    rpm = Utils.normalize(rpm);
     setShooter(rpm);
+  }
+
+  /**
+   * Stops movement in both motors
+   */
+  @Override
+  public void stop() {
+    shooterMotor1.stopMotor();
+    shooterMotor2.stopMotor();
+  }
+
+  /**
+   * Resets the relative encoder in both motors
+   */
+  public void zeroMotorEncoders() {
+    shooterMotor1.getEncoder().setPosition(0);
+    shooterMotor2.getEncoder().setPosition(0);
+  }
+
+  /**
+   *
+   * @return Is the subsystem is okay to operate
+   */
+
+  @Override
+  public boolean checkSubsystem() {
+    boolean status = false;
+    status = Subsystem.checkMotor(shooterMotor1, ShooterConstants.kShooterMotor1Id);
+    status &= Subsystem.checkMotor(shooterMotor2, ShooterConstants.kShooterMotor2Id);
+
+    return status;
   }
 
   @Override

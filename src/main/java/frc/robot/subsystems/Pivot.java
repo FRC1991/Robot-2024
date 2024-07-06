@@ -5,9 +5,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import frc.robot.Constants.PivotConstants;
 import frc.utils.Utils;
 
@@ -36,7 +39,7 @@ public class Pivot extends Subsystem {
   }
 
   /**
-   * 
+   *
    * @return The main Pivot object
    */
   public static Pivot getInstance() {
@@ -47,8 +50,8 @@ public class Pivot extends Subsystem {
   }
 
   /**
-   * 
-   * @param speed The desired speed to run both motors at.
+   *This should only be used through a {@link Command}, not directly accessed.
+   * @param speed The desired speed to run the motors at.
    */
   public void setPivot(double speed) {
     speed = Utils.normalize(speed);
@@ -57,7 +60,7 @@ public class Pivot extends Subsystem {
   }
 
   /**
-   * 
+   *
    * @return The average encoder value between both motors internal relative encoders
    */
   public double getEncoderPosition() {
@@ -76,38 +79,23 @@ public class Pivot extends Subsystem {
   /**
    * Stops movement in both motors
    */
+  @Override
   public void stop() {
     pivotMotor1.stopMotor();
     pivotMotor2.stopMotor();
   }
 
   /**
-   * 
+   *
    * @return Is the subsystem is okay to operate
    */
+  @Override
   public boolean checkSubsystem() {
-    // Check CAN Id
-    if(pivotMotor1.getDeviceId() != PivotConstants.kPivotMotor1Id) {
-      return false;
-    } else if(pivotMotor2.getDeviceId() != PivotConstants.kPivotMotor2Id) {
-      return false;
-    }
+    boolean status = false;
+    status = Subsystem.checkMotor(pivotMotor1, PivotConstants.kPivotMotor1Id);
+    status &= Subsystem.checkMotor(pivotMotor2, PivotConstants.kPivotMotor2Id);
 
-    // Check motor temp.
-    if(pivotMotor1.getMotorTemperature() >= 25) {
-      return false;
-    } else if(pivotMotor2.getMotorTemperature() >= 25) {
-      return false;
-    }
-
-    // Check last error/fault
-    if(pivotMotor1.getLastError() != REVLibError.kOk) {
-      return false;
-    } else if(pivotMotor2.getLastError() != REVLibError.kOk) {
-      return false;
-    }
-
-    return true;
+    return status;
   }
 
   @Override
