@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -14,7 +15,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.PivotConstants;
 import frc.utils.Utils;
 
-public class Pivot extends Subsystem {
+public class Pivot extends SubsystemBase implements Subsystem {
 
   private CANSparkMax pivotMotor1, pivotMotor2;
   private static Pivot m_Instance;

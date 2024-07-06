@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -14,7 +15,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.Utils;
 
-public class Shooter extends Subsystem {
+public class Shooter extends SubsystemBase implements Subsystem {
 
   private CANSparkMax shooterMotor1, shooterMotor2;
   private static Shooter m_Instance;
