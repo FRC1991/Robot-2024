@@ -91,8 +91,8 @@ public class Shooter extends Subsystem {
   @Override
   public boolean checkSubsystem() {
     boolean status = false;
-    status = Subsystem.checkMotor(shooterMotor1, ShooterConstants.kShooterMotor1Id);
-    status &= Subsystem.checkMotor(shooterMotor2, ShooterConstants.kShooterMotor2Id);
+    status = Utils.checkMotor(shooterMotor1, ShooterConstants.kShooterMotor1Id);
+    status &= Utils.checkMotor(shooterMotor2, ShooterConstants.kShooterMotor2Id);
 
     return status;
   }

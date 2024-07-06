@@ -92,8 +92,8 @@ public class Pivot extends Subsystem {
   @Override
   public boolean checkSubsystem() {
     boolean status = false;
-    status = Subsystem.checkMotor(pivotMotor1, PivotConstants.kPivotMotor1Id);
-    status &= Subsystem.checkMotor(pivotMotor2, PivotConstants.kPivotMotor2Id);
+    status = Utils.checkMotor(pivotMotor1, PivotConstants.kPivotMotor1Id);
+    status &= Utils.checkMotor(pivotMotor2, PivotConstants.kPivotMotor2Id);
 
     return status;
   }

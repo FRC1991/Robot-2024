@@ -82,8 +82,8 @@ public class Intake extends Subsystem {
   @Override
   public boolean checkSubsystem() {
     boolean status = false;
-    status = Subsystem.checkMotor(intakeMotor1, IntakeConstants.kIntakeMotor1Id);
-    status &= Subsystem.checkMotor(intakeMotor2, IntakeConstants.kIntakeMotor2Id);
+    status = Utils.checkMotor(intakeMotor1, IntakeConstants.kIntakeMotor1Id);
+    status &= Utils.checkMotor(intakeMotor2, IntakeConstants.kIntakeMotor2Id);
 
     return status;
   }
