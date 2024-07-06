@@ -145,7 +145,7 @@ public class RobotContainer {
                 true, false, TeleopConstants.kSwerveSpeed),
             m_DriveTrain));
 
-    // m_Intake.setDefaultCommand(new RunIntake(oi.auxController::getLeftY, m_Intake));
+    // Intake.getInstance().setDefaultCommand(new RunIntake(oi.auxController::getLeftY, Intake.getInstance()));
 
     // Shooter.getInstance().setDefaultCommand(new VisionShooter(ta, tid, Shooter.getInstance()));
 
@@ -203,7 +203,7 @@ public class RobotContainer {
     //     new ParallelCommandGroup(
     //         new RunShooter(() -> 1.0, Shooter.getInstance()),
     //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
-    //         new RunIntake(() -> 0.8, m_Intake))));
+    //         new RunIntake(() -> 0.8, Intake.getInstance()))));
 
     oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), () -> 0.0, Pivot.getInstance()));
 
@@ -215,7 +215,7 @@ public class RobotContainer {
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
-            new RunIntake(() -> 0.8, m_Intake))));
+            new RunIntake(() -> 0.8, Intake.getInstance()))));
 
     oi.auxStartButton.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
@@ -224,14 +224,14 @@ public class RobotContainer {
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance()),
-            new RunIntake(() -> 0.8, m_Intake))));
+            new RunIntake(() -> 0.8, Intake.getInstance()))));
     // oi.auxRightBumper.whileTrue(getOnePieceAuto());
 
-    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, m_Intake));
-    // oi.auxXButton.onTrue(new RunIntake(() -> 0.0, m_Intake));
+    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, Intake.getInstance()));
+    // oi.auxXButton.onTrue(new RunIntake(() -> 0.0, Intake.getInstance()));
     oi.auxXButton.whileTrue(new RunShooter(() -> 1.0, Shooter.getInstance()));
     proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
-    oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, m_Intake));
+    oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, Intake.getInstance()));
 
     oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
     // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, Pivot.getInstance()));
@@ -250,9 +250,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, Shooter.getInstance()));
     NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()));
     NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
-    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, m_Intake));
-    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> m_Intake.setIntakeSpeed(0), m_Intake));
-    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, m_Intake).onlyWhile(proximityTrigger));
+    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, Intake.getInstance()));
+    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> Intake.getInstance().setIntakeSpeed(0), Intake.getInstance()));
+    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, Intake.getInstance()).onlyWhile(proximityTrigger));
     NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
     // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
     // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
@@ -346,7 +346,7 @@ public class RobotContainer {
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
-            new RunIntake(() -> 0.8, m_Intake))).withTimeout(7);
+            new RunIntake(() -> 0.8, Intake.getInstance()))).withTimeout(7);
 
   }
 
@@ -432,7 +432,7 @@ public class RobotContainer {
 
     auto.addCommands(getOnePieceAuto(),
         new ParallelCommandGroup(
-          new RunIntake(() -> 0.8, m_Intake),
+          new RunIntake(() -> 0.8, Intake.getInstance()),
           new RunCommand(
             () -> m_DriveTrain.drive(-0.3, 0, 0,
                 false, false, TeleopConstants.kSwerveSpeed),
@@ -440,7 +440,7 @@ public class RobotContainer {
         ).withTimeout(1.5),
 
         new ParallelCommandGroup(
-          new RunIntake(() -> -0.1, m_Intake).withTimeout(0.5),
+          new RunIntake(() -> -0.1, Intake.getInstance()).withTimeout(0.5),
           new RunCommand(
               () -> m_DriveTrain.drive(0.3, 0, 0,
                   false, false, TeleopConstants.kSwerveSpeed),
