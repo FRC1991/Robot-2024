@@ -6,7 +6,9 @@ package frc.robot.subsystems;
 
 public interface Subsystem {
 
-  public abstract void stop();
+  void stop();
 
-  public abstract boolean checkSubsystem();
+  boolean checkSubsystem();
+
+  boolean getInitialized();
 }

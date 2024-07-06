@@ -17,6 +17,8 @@ import frc.utils.Utils;
 
 public class Shooter extends SubsystemBase implements Subsystem {
 
+  private boolean status = false;
+  private boolean initialized = false;
   private CANSparkMax shooterMotor1, shooterMotor2;
   private static Shooter m_Instance;
 
@@ -24,6 +26,12 @@ public class Shooter extends SubsystemBase implements Subsystem {
   private Shooter() {
     shooterMotor1 = new CANSparkMax(ShooterConstants.kShooterMotor1Id, MotorType.kBrushless);
     shooterMotor2 = new CANSparkMax(ShooterConstants.kShooterMotor2Id, MotorType.kBrushless);
+
+    // Ensures consistent setting whether or not I replaced a motor controller
+    // mid competition *cough* *cough* getting all the wires caught
+    // in a module's gears during a match at Waterbury *cough*
+    shooterMotor1.restoreFactoryDefaults();
+    shooterMotor2.restoreFactoryDefaults();
 
     // Motor is inverted because it faces the opposite direction of motor 2
     shooterMotor1.setInverted(true);
@@ -37,6 +45,16 @@ public class Shooter extends SubsystemBase implements Subsystem {
     shooterMotor2.burnFlash();
 
     zeroMotorEncoders();
+
+    initialized = true;
+  }
+
+  /**
+   * 
+   * @return Has the constructor been executed
+   */
+  public boolean getInitialized() {
+    return initialized;
   }
 
   /**
@@ -91,9 +109,9 @@ public class Shooter extends SubsystemBase implements Subsystem {
 
   @Override
   public boolean checkSubsystem() {
-    boolean status = false;
     status = Utils.checkMotor(shooterMotor1, ShooterConstants.kShooterMotor1Id);
     status &= Utils.checkMotor(shooterMotor2, ShooterConstants.kShooterMotor2Id);
+    status &= getInitialized();
 
     return status;
   }

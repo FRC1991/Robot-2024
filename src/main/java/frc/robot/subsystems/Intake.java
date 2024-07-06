@@ -15,6 +15,8 @@ import frc.utils.Utils;
 
 public class Intake extends SubsystemBase implements Subsystem {
 
+  private boolean status = false;
+  private boolean initialized = false;
   private CANSparkMax intakeMotor1, intakeMotor2;
   private static Intake m_Instance;
 
@@ -22,6 +24,12 @@ public class Intake extends SubsystemBase implements Subsystem {
   private Intake() {
     intakeMotor1 = new CANSparkMax(IntakeConstants.kIntakeMotor1Id, MotorType.kBrushless);
     intakeMotor2 = new CANSparkMax(IntakeConstants.kIntakeMotor2Id, MotorType.kBrushless);
+
+    // Ensures consistent setting whether or not I replaced a motor controller
+    // mid competition *cough* *cough* getting all the wires caught
+    // in a module's gears during a match at Waterbury *cough*
+    intakeMotor1.restoreFactoryDefaults();
+    intakeMotor2.restoreFactoryDefaults();
 
     // Motor is inverted because it faces the opposite direction of motor 1
     intakeMotor2.setInverted(true);
@@ -35,6 +43,16 @@ public class Intake extends SubsystemBase implements Subsystem {
     intakeMotor2.burnFlash();
 
     zeroMotorEncoders();
+
+    initialized = true;
+  }
+
+  /**
+   * 
+   * @return Has the constructor been executed
+   */
+  public boolean getInitialized() {
+    return initialized;
   }
 
   /**
@@ -82,9 +100,9 @@ public class Intake extends SubsystemBase implements Subsystem {
 
   @Override
   public boolean checkSubsystem() {
-    boolean status = false;
     status = Utils.checkMotor(intakeMotor1, IntakeConstants.kIntakeMotor1Id);
     status &= Utils.checkMotor(intakeMotor2, IntakeConstants.kIntakeMotor2Id);
+    status &= getInitialized();
 
     return status;
   }

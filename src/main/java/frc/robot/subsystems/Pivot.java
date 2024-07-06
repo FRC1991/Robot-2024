@@ -17,6 +17,8 @@ import frc.utils.Utils;
 
 public class Pivot extends SubsystemBase implements Subsystem {
 
+  private boolean status = false;
+  private boolean initialized = false;
   private CANSparkMax pivotMotor1, pivotMotor2;
   private static Pivot m_Instance;
 
@@ -24,6 +26,12 @@ public class Pivot extends SubsystemBase implements Subsystem {
   private Pivot() {
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
     pivotMotor2 = new CANSparkMax(PivotConstants.kPivotMotor2Id, MotorType.kBrushless);
+
+    // Ensures consistent setting whether or not I replaced a motor controller
+    // mid competition *cough* *cough* getting all the wires caught
+    // in a module's gears during a match at Waterbury *cough*
+    pivotMotor1.restoreFactoryDefaults();
+    pivotMotor2.restoreFactoryDefaults();
 
     // Motor is inverted because it faces the opposite direction of motor 1
     pivotMotor2.setInverted(true);
@@ -37,6 +45,16 @@ public class Pivot extends SubsystemBase implements Subsystem {
     pivotMotor2.burnFlash();
 
     zeroMotorEncoders();
+
+    initialized = true;
+  }
+
+  /**
+   * 
+   * @return Has the constructor been executed
+   */
+  public boolean getInitialized() {
+    return initialized;
   }
 
   /**
@@ -92,9 +110,9 @@ public class Pivot extends SubsystemBase implements Subsystem {
    */
   @Override
   public boolean checkSubsystem() {
-    boolean status = false;
     status = Utils.checkMotor(pivotMotor1, PivotConstants.kPivotMotor1Id);
     status &= Utils.checkMotor(pivotMotor2, PivotConstants.kPivotMotor2Id);
+    status &= getInitialized();
 
     return status;
   }
