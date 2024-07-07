@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.utils.Utils;
 
-public class Intake extends SubsystemBase implements Subsystem {
+public class Intake extends SubsystemBase implements CheckableSubsystem {
 
   private boolean status = false;
   private boolean initialized = false;
@@ -48,7 +48,7 @@ public class Intake extends SubsystemBase implements Subsystem {
   }
 
   /**
-   * 
+   *
    * @return Has the constructor been executed
    */
   public boolean getInitialized() {

@@ -15,7 +15,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.PivotConstants;
 import frc.utils.Utils;
 
-public class Pivot extends SubsystemBase implements Subsystem {
+public class Pivot extends SubsystemBase implements CheckableSubsystem {
 
   private boolean status = false;
   private boolean initialized = false;
@@ -50,7 +50,7 @@ public class Pivot extends SubsystemBase implements Subsystem {
   }
 
   /**
-   * 
+   *
    * @return Has the constructor been executed
    */
   public boolean getInitialized() {

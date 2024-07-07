@@ -15,7 +15,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.Utils;
 
-public class Shooter extends SubsystemBase implements Subsystem {
+public class Shooter extends SubsystemBase implements CheckableSubsystem {
 
   private boolean status = false;
   private boolean initialized = false;
@@ -50,7 +50,7 @@ public class Shooter extends SubsystemBase implements Subsystem {
   }
 
   /**
-   * 
+   *
    * @return Has the constructor been executed
    */
   public boolean getInitialized() {

@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-public interface Subsystem {
+public interface CheckableSubsystem {
 
   void stop();
 
