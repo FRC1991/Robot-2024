@@ -22,7 +22,7 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem {
   private CANSparkMax shooterMotor1, shooterMotor2;
   private static Shooter m_Instance;
 
-  // Constructor is private to prevent multiple Shooters from being made
+  // Constructor is private to prevent multiple instances from being made
   private Shooter() {
     shooterMotor1 = new CANSparkMax(ShooterConstants.kShooterMotor1Id, MotorType.kBrushless);
     shooterMotor2 = new CANSparkMax(ShooterConstants.kShooterMotor2Id, MotorType.kBrushless);
@@ -53,6 +53,7 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem {
    *
    * @return Has the constructor been executed
    */
+  @Override
   public boolean getInitialized() {
     return initialized;
   }
@@ -86,7 +87,7 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem {
   }
 
   /**
-   * Stops movement in both motors
+   * Stops movement in all motors
    */
   @Override
   public void stop() {

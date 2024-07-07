@@ -16,8 +16,12 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants.ModuleConstants;
+import frc.utils.Utils;
 
-public class MAXSwerveModule {
+public class MAXSwerveModule implements CheckableSubsystem {
+  private boolean status = false;
+  private boolean initialized = false;
+
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;
 
@@ -108,6 +112,8 @@ public class MAXSwerveModule {
     m_chassisAngularOffset = chassisAngularOffset;
     m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
     m_drivingEncoder.setPosition(0);
+
+    initialized = true;
   }
 
   /**
@@ -160,5 +166,36 @@ public class MAXSwerveModule {
   /** Zeroes all the SwerveModule encoders. */
   public void resetEncoders() {
     m_drivingEncoder.setPosition(0);
+  }
+
+  /**
+   * Stops movement in all motors
+   */
+  @Override
+  public void stop() {
+    m_drivingSparkMax.stopMotor();
+    m_turningSparkMax.stopMotor();
+  }
+
+  /**
+   *
+   * @return Is the subsystem is okay to operate
+   */
+  @Override
+  public boolean checkSubsystem() {
+    status = Utils.checkMotor(m_drivingSparkMax, m_drivingSparkMax.getDeviceId());
+    status &= Utils.checkMotor(m_turningSparkMax, m_turningSparkMax.getDeviceId());
+    status &= getInitialized();
+
+    return status;
+  }
+
+  /**
+   *
+   * @return Has the constructor been executed
+   */
+  @Override
+  public boolean getInitialized() {
+    return initialized;
   }
 }

@@ -22,7 +22,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem {
   private CANSparkMax pivotMotor1, pivotMotor2;
   private static Pivot m_Instance;
 
-  // Constructor is private to prevent multiple Pivots from being made
+  // Constructor is private to prevent multiple instances from being made
   private Pivot() {
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
     pivotMotor2 = new CANSparkMax(PivotConstants.kPivotMotor2Id, MotorType.kBrushless);
@@ -53,6 +53,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem {
    *
    * @return Has the constructor been executed
    */
+  @Override
   public boolean getInitialized() {
     return initialized;
   }
@@ -96,7 +97,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem {
   }
 
   /**
-   * Stops movement in both motors
+   * Stops movement in all motors
    */
   @Override
   public void stop() {

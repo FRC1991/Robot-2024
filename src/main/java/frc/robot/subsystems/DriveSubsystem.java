@@ -25,7 +25,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem{
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -46,6 +46,9 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kRearRightDrivingCanId,
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightChassisAngularOffset);
+
+  private boolean status = false;
+  private boolean initialized = false;
 
   // The gyro sensor
   public final Pigeon2 m_gyro = new Pigeon2(DriveConstants.kGyroId);
@@ -73,8 +76,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   private ChassisSpeeds m_RobotChassisSpeeds = new ChassisSpeeds();
 
-  /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
+  // Constructor is private to prevent multiple instances from being made
+  private DriveSubsystem() {
     zeroHeading();
 
     // Configure AutoBuilder last
@@ -104,6 +107,8 @@ public class DriveSubsystem extends SubsystemBase {
             },
             this // Reference to this subsystem to set requirements
     );
+
+    initialized = true;
   }
 
   @Override
@@ -356,5 +361,40 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  /**
+   * Stops movement in all motors
+   */
+  @Override
+  public void stop() {
+    m_frontLeft.stop();
+    m_frontRight.stop();
+    m_rearLeft.stop();
+    m_rearRight.stop();
+  }
+
+  /**
+   *
+   * @return Is the subsystem is okay to operate
+   */
+  @Override
+  public boolean checkSubsystem() {
+    status = m_frontLeft.checkSubsystem();
+    status &= m_frontRight.checkSubsystem();
+    status &= m_rearLeft.checkSubsystem();
+    status &= m_rearRight.checkSubsystem();
+    status &= getInitialized();
+
+    return status;
+  }
+
+  /**
+   *
+   * @return Has the constructor been executed
+   */
+  @Override
+  public boolean getInitialized() {
+    return initialized;
   }
 }

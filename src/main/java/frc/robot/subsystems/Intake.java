@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem {
   private CANSparkMax intakeMotor1, intakeMotor2;
   private static Intake m_Instance;
 
-  // Constructor is private to prevent multiple Shooters from being made
+  // Constructor is private to prevent multiple instances from being made
   private Intake() {
     intakeMotor1 = new CANSparkMax(IntakeConstants.kIntakeMotor1Id, MotorType.kBrushless);
     intakeMotor2 = new CANSparkMax(IntakeConstants.kIntakeMotor2Id, MotorType.kBrushless);
@@ -51,6 +51,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem {
    *
    * @return Has the constructor been executed
    */
+  @Override
   public boolean getInitialized() {
     return initialized;
   }
@@ -77,7 +78,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem {
   }
 
   /**
-   * Stops movement in both motors
+   * Stops movement in all motors
    */
   @Override
   public void stop() {
