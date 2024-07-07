@@ -76,6 +76,8 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem{
 
   private ChassisSpeeds m_RobotChassisSpeeds = new ChassisSpeeds();
 
+  private static DriveSubsystem m_Instance;
+
   // Constructor is private to prevent multiple instances from being made
   private DriveSubsystem() {
     zeroHeading();
@@ -109,6 +111,17 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem{
     );
 
     initialized = true;
+  }
+
+  /**
+   *
+   * @return The main Pivot object
+   */
+  public static DriveSubsystem getInstance() {
+    if(m_Instance == null) {
+      m_Instance = new DriveSubsystem();
+    }
+    return m_Instance;
   }
 
   @Override

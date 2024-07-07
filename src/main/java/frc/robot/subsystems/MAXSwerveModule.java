@@ -39,6 +39,9 @@ public class MAXSwerveModule implements CheckableSubsystem {
    * encoder, and PID controller. This configuration is specific to the REV
    * MAXSwerve Module built with NEOs, SPARKS MAX, and a Through Bore
    * Encoder.
+   *
+   * I am NOT using getInstance() here because we intend to have multiple
+   * instances of this class.
    */
   public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
     m_drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);

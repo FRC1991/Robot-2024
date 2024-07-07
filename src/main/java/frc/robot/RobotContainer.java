@@ -110,9 +110,6 @@ public class RobotContainer {
   public double intakeTaHandle;// Target Area (0% of image to 100% of image)
   //endregion
 
-  // The robot's subsystems
-  public final DriveSubsystem m_DriveTrain = new DriveSubsystem();
-
   // The operating interface communicating with the user
   private final OperatingInterface oi = new OperatingInterface();
 
@@ -134,16 +131,16 @@ public class RobotContainer {
     configureShuffleBoard();
 
     // Configure default commands
-    m_DriveTrain.setDefaultCommand(
+    DriveSubsystem.getInstance().setDefaultCommand(
         // The joystick controls translation of the robot.
         // Turning is controlled by rotating the joystick.
         new RunCommand(
-            () -> m_DriveTrain.drive(
+            () -> DriveSubsystem.getInstance().drive(
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
                 true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain));
+            DriveSubsystem.getInstance()));
 
     // Intake.getInstance().setDefaultCommand(new RunIntake(oi.auxController::getLeftY, Intake.getInstance()));
 
@@ -173,14 +170,14 @@ public class RobotContainer {
     // Stops movement while Button.kR1.value (the trigger) is held down
     new JoystickButton(oi.driverJoytick, 1)
         .whileTrue(new RunCommand(
-            () -> m_DriveTrain.setX(),
-            m_DriveTrain));
+            () -> DriveSubsystem.getInstance().setX(),
+            DriveSubsystem.getInstance()));
 
     // Zeros out the gyro (bottom thumb button)
     new JoystickButton(oi.driverJoytick, 2)
         .onTrue(new InstantCommand(
-            () -> m_DriveTrain.zeroHeading(),
-            m_DriveTrain));
+            () -> DriveSubsystem.getInstance().zeroHeading(),
+            DriveSubsystem.getInstance()));
 
     new JoystickButton(oi.driverJoytick, 5)
         .onTrue(new InstantCommand(
@@ -188,13 +185,13 @@ public class RobotContainer {
             Pivot.getInstance()));
 
     new JoystickButton(oi.driverJoytick, 8)
-        .whileTrue(new TurnToSource(145, oi, m_DriveTrain));
+        .whileTrue(new TurnToSource(145, oi, DriveSubsystem.getInstance()));
 
     // new JoystickButton(oi.driverJoytick, 9)
-    //     .whileTrue(new PIDTurnToTarget(intaketx::get, oi, m_DriveTrain));
+    //     .whileTrue(new PIDTurnToTarget(intaketx::get, oi, DriveSubsystem.getInstance()));
 
     // new JoystickButton(oi.driverJoytick, 14)
-    //     .whileTrue(new PIDTurnToTarget(tx::get, oi, m_DriveTrain));
+    //     .whileTrue(new PIDTurnToTarget(tx::get, oi, DriveSubsystem.getInstance()));
 
     // oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
     //     new ParallelCommandGroup(
@@ -239,12 +236,12 @@ public class RobotContainer {
 
   public void configureShuffleBoard() {
     // For easy configuration of the gyro at the start of every match
-    angleChooser.addOption("0", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(0), m_DriveTrain));
-    angleChooser.addOption("180", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
-    angleChooser.addOption("120", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
-    angleChooser.addOption("240", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
-    angleChooser.addOption("330", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(330), m_DriveTrain));
-    angleChooser.addOption("30", new InstantCommand(() -> m_DriveTrain.m_gyro.setYaw(30), m_DriveTrain));
+    angleChooser.addOption("0", new InstantCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(0), DriveSubsystem.getInstance()));
+    angleChooser.addOption("180", new InstantCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(180), DriveSubsystem.getInstance()));
+    angleChooser.addOption("120", new InstantCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(120), DriveSubsystem.getInstance()));
+    angleChooser.addOption("240", new InstantCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(240), DriveSubsystem.getInstance()));
+    angleChooser.addOption("330", new InstantCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(330), DriveSubsystem.getInstance()));
+    angleChooser.addOption("30", new InstantCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(30), DriveSubsystem.getInstance()));
 
     // To use in the Path Planner GUI
     NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, Shooter.getInstance()));
@@ -253,10 +250,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, Intake.getInstance()));
     NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> Intake.getInstance().setIntakeSpeed(0), Intake.getInstance()));
     NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, Intake.getInstance()).onlyWhile(proximityTrigger));
-    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> m_DriveTrain.drive(0,0,0,false,false,0), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(240), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(180), m_DriveTrain));
-    // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> m_DriveTrain.m_gyro.setYaw(120), m_DriveTrain));
+    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> DriveSubsystem.getInstance().drive(0,0,0,false,false,0), DriveSubsystem.getInstance()));
+    // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(240), DriveSubsystem.getInstance()));
+    // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(180), DriveSubsystem.getInstance()));
+    // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> DriveSubsystem.getInstance().m_gyro.setYaw(120), DriveSubsystem.getInstance()));
 
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     // All from PathPlanner and don't work
@@ -274,15 +271,15 @@ public class RobotContainer {
     // Untested
     autoChooser.addOption("BangBang Defense", new SequentialCommandGroup(
           new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-          new Defense(() -> tx.get(), m_DriveTrain)
+            () -> DriveSubsystem.getInstance().drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            DriveSubsystem.getInstance()).withTimeout(2),
+          new Defense(() -> tx.get(), DriveSubsystem.getInstance())
         ));
     autoChooser.addOption("PID Defense", new SequentialCommandGroup(
           new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-          new PIDDefense(() -> tx.get(), m_DriveTrain)
+            () -> DriveSubsystem.getInstance().drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            DriveSubsystem.getInstance()).withTimeout(2),
+          new PIDDefense(() -> tx.get(), DriveSubsystem.getInstance())
         ));
 
     // Hard coded autos
@@ -293,15 +290,15 @@ public class RobotContainer {
     autoChooser.addOption("Two note + movement", getTwoPieceAutoCommand());
     autoChooser.addOption("manual blue interference auto", new SequentialCommandGroup(
         new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-        new Interference(true, m_DriveTrain).withTimeout(1.9)
+            () -> DriveSubsystem.getInstance().drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            DriveSubsystem.getInstance()).withTimeout(2),
+        new Interference(true, DriveSubsystem.getInstance()).withTimeout(1.9)
     ));
     autoChooser.addOption("manual red interference auto", new SequentialCommandGroup(
         new RunCommand(
-            () -> m_DriveTrain.drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2),
-        new Interference(false, m_DriveTrain).withTimeout(1.9)
+            () -> DriveSubsystem.getInstance().drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
+            DriveSubsystem.getInstance()).withTimeout(2),
+        new Interference(false, DriveSubsystem.getInstance()).withTimeout(1.9)
     ));
 
     // Booleans
@@ -311,7 +308,7 @@ public class RobotContainer {
     // Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);
 
     // // Doubles
-    Shuffleboard.getTab("Main").addDouble("Heading", m_DriveTrain::getHeading);
+    Shuffleboard.getTab("Main").addDouble("Heading", DriveSubsystem.getInstance()::getHeading);
 
     Shuffleboard.getTab("Main").addDouble("pivot encoder", Pivot.getInstance()::getEncoderPosition);
     // Shuffleboard.getTab("Network Table Values").addDouble("shooter ta", ta::get);
@@ -358,11 +355,11 @@ public class RobotContainer {
     ParallelRaceGroup auto = getOnePieceAuto();
 
     auto.addCommands(
-              new RunCommand(() -> {}, m_DriveTrain).withTimeout(10),
+              new RunCommand(() -> {}, DriveSubsystem.getInstance()).withTimeout(10),
               new RunCommand(
-            () -> m_DriveTrain.drive(0.3, 0, 0,
+            () -> DriveSubsystem.getInstance().drive(0.3, 0, 0,
                 true, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain).withTimeout(2));
+            DriveSubsystem.getInstance()).withTimeout(2));
 
     return auto;
   }
@@ -408,51 +405,51 @@ public class RobotContainer {
 
     // SwerveControllerCommand pickUpNoteCommand = new SwerveControllerCommand(
     //     pickUpNote,
-    //     m_DriveTrain::getPose, // Functional interface to feed supplier
+    //     DriveSubsystem.getInstance()::getPose, // Functional interface to feed supplier
     //     DriveConstants.kDriveKinematics,
 
     //     // Position controllers
     //     new PIDController(AutoConstants.kPXController, 0, 0),
     //     new PIDController(AutoConstants.kPYController, 0, 0),
     //     thetaController,
-    //     m_DriveTrain::setModuleStates,
-    //     m_DriveTrain);
+    //     DriveSubsystem.getInstance()::setModuleStates,
+    //     DriveSubsystem.getInstance());
 
     // SwerveControllerCommand toSpeakerCommand = new SwerveControllerCommand(
     //     fromNoteToSpeaker,
-    //     m_DriveTrain::getPose, // Functional interface to feed supplier
+    //     DriveSubsystem.getInstance()::getPose, // Functional interface to feed supplier
     //     DriveConstants.kDriveKinematics,
 
     //     // Position controllers
     //     new PIDController(AutoConstants.kPXController, 0, 0),
     //     new PIDController(AutoConstants.kPYController, 0, 0),
     //     thetaController,
-    //     m_DriveTrain::setModuleStates,
-    //     m_DriveTrain);
+    //     DriveSubsystem.getInstance()::setModuleStates,
+    //     DriveSubsystem.getInstance());
 
     auto.addCommands(getOnePieceAuto(),
         new ParallelCommandGroup(
           new RunIntake(() -> 0.8, Intake.getInstance()),
           new RunCommand(
-            () -> m_DriveTrain.drive(-0.3, 0, 0,
+            () -> DriveSubsystem.getInstance().drive(-0.3, 0, 0,
                 false, false, TeleopConstants.kSwerveSpeed),
-            m_DriveTrain)
+            DriveSubsystem.getInstance())
         ).withTimeout(1.5),
 
         new ParallelCommandGroup(
           new RunIntake(() -> -0.1, Intake.getInstance()).withTimeout(0.5),
           new RunCommand(
-              () -> m_DriveTrain.drive(0.3, 0, 0,
+              () -> DriveSubsystem.getInstance().drive(0.3, 0, 0,
                   false, false, TeleopConstants.kSwerveSpeed),
-              m_DriveTrain).withTimeout(1.5)
+              DriveSubsystem.getInstance()).withTimeout(1.5)
         ),
         getOnePieceAuto());
 
     // Reset odometry to the starting pose of the trajectory.
-    // m_DriveTrain.resetOdometry(pickUpNote.getInitialPose());
+    // DriveSubsystem.getInstance().resetOdometry(pickUpNote.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return auto.andThen(() -> m_DriveTrain.drive(0, 0, 0, false, false, 0));
+    return auto.andThen(() -> DriveSubsystem.getInstance().drive(0, 0, 0, false, false, 0));
   }
 
 
@@ -497,21 +494,21 @@ public class RobotContainer {
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
         exampleTrajectory,
-        m_DriveTrain::getPose, // Functional interface to feed supplier
+        DriveSubsystem.getInstance()::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
         // Position controllers
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
         thetaController,
-        m_DriveTrain::setModuleStates,
-        m_DriveTrain);
+        DriveSubsystem.getInstance()::setModuleStates,
+        DriveSubsystem.getInstance());
 
     // Reset odometry to the starting pose of the trajectory.
-    m_DriveTrain.resetOdometry(exampleTrajectory.getInitialPose());
+    DriveSubsystem.getInstance().resetOdometry(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_DriveTrain.drive(0, 0, 0, false, false, 0));
+    return swerveControllerCommand.andThen(() -> DriveSubsystem.getInstance().drive(0, 0, 0, false, false, 0));
   }
 
   public void configureGyro() {
