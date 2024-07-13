@@ -8,10 +8,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.OperatingInterface;
 import frc.robot.Constants.IntakeConstants;
 import frc.utils.Utils;
 
@@ -22,8 +20,6 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   private CANSparkMax intakeMotor1, intakeMotor2;
   private static Intake m_Instance;
   private IntakeStates desiredState, currentState = IntakeStates.IDLE;
-  // The proximity sensor detecting the presence of a note in the Intake
-  private final DigitalInput proximitySensor = new DigitalInput(0);
 
   // Constructor is private to prevent multiple instances from being made
   private Intake() {
@@ -76,7 +72,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
    *This should only be used through a {@link Command}, not directly accessed.
    * @param speed The desired speed to run the motors at.
    */
-  public void setIntakeSpeed(double speed) {
+  public void setSpeed(double speed) {
     speed = Utils.normalize(speed);
     intakeMotor1.set(speed);
     intakeMotor2.set(speed);
@@ -123,10 +119,6 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
       case BROKEN:
         break;
       case INTAKING:
-        if(proximitySensor.get()) {
-          OperatingInterface.rumbleAuxController();
-          setDesiredState(IntakeStates.LOADED);
-        }
         break;
       case REVERSING:
         break;
@@ -139,7 +131,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
         break;
     }
 
-    if(checkSubsystem()) {
+    if(!checkSubsystem()) {
       setDesiredState(IntakeStates.BROKEN);
     }
   }
@@ -151,22 +143,22 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   public void handleStateTransition() {
     switch(desiredState) {
       case IDLE:
-        setIntakeSpeed(0);
+        setSpeed(0);
         break;
       case BROKEN:
         stop();
         break;
       case INTAKING:
-        setIntakeSpeed(0.8);
+        setSpeed(0.8);
         break;
       case REVERSING:
-        setIntakeSpeed(-0.6);
+        setSpeed(-0.6);
         break;
       case FEEDING:
-        setIntakeSpeed(0.8);
+        setSpeed(0.8);
         break;
       case LOADED:
-        setIntakeSpeed(0);
+        setSpeed(0);
         break;
 
       default:
@@ -185,6 +177,14 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
       desiredState = state;
       handleStateTransition();
     }
+  }
+
+  /**
+   *
+   * @return The current state of the subsystem
+   */
+  public IntakeStates getState() {
+    return currentState;
   }
 
   @Override

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -15,12 +16,14 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.Utils;
 
-public class Shooter extends SubsystemBase implements CheckableSubsystem {
+public class Shooter extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
 
   private boolean status = false;
   private boolean initialized = false;
+  private double spinUpStart;
   private CANSparkMax shooterMotor1, shooterMotor2;
   private static Shooter m_Instance;
+  private ShooterStates desiredState, currentState = ShooterStates.IDLE;
 
   // Constructor is private to prevent multiple instances from being made
   private Shooter() {
@@ -73,17 +76,17 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem {
    *This should only be used through a {@link Command}, not directly accessed.
    * @param speed The desired speed to run the motors at.
    */
-  public void setShooter(double speed) {
+  public void setSpeed(double speed) {
     speed = Utils.normalize(speed);
     shooterMotor1.set(speed);
     shooterMotor2.set(speed);
   }
 
-  public void setShooterRMP(double rpm) {
+  public void setSpeedRMP(double rpm) {
     //TODO test to find max rpm. 5000 max rpm is a guess
     rpm = rpm / 5000;
     rpm = Utils.normalize(rpm);
-    setShooter(rpm);
+    setSpeed(rpm);
   }
 
   /**
@@ -117,8 +120,91 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem {
     return status;
   }
 
+  /**
+   * Updates any information the subsystem needs
+   */
+  @Override
+  public void update() {
+    switch(currentState) {
+      case IDLE:
+        break;
+      case BROKEN:
+        break;
+      case SHOOTING:
+        break;
+      case SPINNING_UP:
+        if(spinUpStart + 0.6 <= Timer.getFPGATimestamp()) {
+          setDesiredState(ShooterStates.SHOOTING);
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    if(!checkSubsystem()) {
+      setDesiredState(ShooterStates.BROKEN);
+    }
+  }
+
+  /**
+   * Handles moving from one state to another
+   */
+  @Override
+  public void handleStateTransition() {
+    switch(desiredState) {
+      case IDLE:
+        setSpeed(0);
+        break;
+      case BROKEN:
+        stop();
+        break;
+      case SHOOTING:
+        if(desiredState != ShooterStates.SPINNING_UP) {
+          return;
+        }
+        setSpeed(1);
+        break;
+      case SPINNING_UP:
+        spinUpStart = Timer.getFPGATimestamp();
+        setSpeed(1);
+        break;
+
+      default:
+        break;
+    }
+
+    currentState = desiredState;
+  }
+
+  /**
+   * Sets the desired state of the subsystem
+   * @param state Desired state
+   */
+  public void setDesiredState(ShooterStates state) {
+    if(this.desiredState != state && this.currentState != ShooterStates.BROKEN) {
+      desiredState = state;
+      handleStateTransition();
+    }
+  }
+
+  /**
+   *
+   * @return The current state of the subsystem
+   */
+  public ShooterStates getState() {
+    return currentState;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public enum ShooterStates {
+    IDLE,
+    BROKEN,
+    SHOOTING, // At speed and ready to shoot a note
+    SPINNING_UP; // Spinning up to the desired speed
   }
 }
