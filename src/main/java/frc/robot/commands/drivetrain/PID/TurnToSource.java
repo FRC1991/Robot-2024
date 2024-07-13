@@ -26,7 +26,7 @@ public class TurnToSource extends PIDCommand {
    * @param targetAngle Angle the robot will turn to. Must be between 0 and 360
    * @param driveSubsystem The main drive train of the robot
    */
-  public TurnToSource(double targetAngle, OperatingInterface oi, DriveSubsystem driveSubsystem) {
+  public TurnToSource(double targetAngle, DriveSubsystem driveSubsystem) {
     super(
         // The controller that the command will use
         new PIDController(0.009, 0, 0),
@@ -48,15 +48,15 @@ public class TurnToSource extends PIDCommand {
             output = 0;
           }
           //Robot centric drive - DON'T USE because we took off the intake limelight
-          if(oi.driverJoytick.getRawButton(9)) {
+          if(OperatingInterface.driverJoytick.getRawButton(9)) {
             driveSubsystem.drive(
-              MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
-              MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+              MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+              MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
               output, false, false, .6);
           } else {
             driveSubsystem.drive(
-              -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
-              -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
               output, true, false, .6);
           }
         });

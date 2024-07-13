@@ -110,9 +110,6 @@ public class RobotContainer {
   public double intakeTaHandle;// Target Area (0% of image to 100% of image)
   //endregion
 
-  // The operating interface communicating with the user
-  private final OperatingInterface oi = new OperatingInterface();
-
   // The proximity sensor detecting the presence of a note in the Intake
   private final DigitalInput proximitySensor = new DigitalInput(0);
   private final Trigger proximityTrigger = new Trigger(proximitySensor::get);
@@ -136,17 +133,17 @@ public class RobotContainer {
         // Turning is controlled by rotating the joystick.
         new RunCommand(
             () -> DriveSubsystem.getInstance().drive(
-                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
                 true, false, TeleopConstants.kSwerveSpeed),
             DriveSubsystem.getInstance()));
 
-    // Intake.getInstance().setDefaultCommand(new RunIntake(oi.auxController::getLeftY, Intake.getInstance()));
+    // Intake.getInstance().setDefaultCommand(new RunIntake(OperatingInterface.auxController::getLeftY, Intake.getInstance()));
 
     // Shooter.getInstance().setDefaultCommand(new VisionShooter(ta, tid, Shooter.getInstance()));
 
-    Pivot.getInstance().setDefaultCommand(new RunPivot(oi.auxController::getLeftY, Pivot.getInstance()));
+    Pivot.getInstance().setDefaultCommand(new RunPivot(OperatingInterface.auxController::getLeftY, Pivot.getInstance()));
 
     // Configures the button bindings
     configureButtonBindings();
@@ -168,32 +165,32 @@ public class RobotContainer {
 
     // Stops movement while Button.kR1.value is held down
     // Stops movement while Button.kR1.value (the trigger) is held down
-    new JoystickButton(oi.driverJoytick, 1)
+    new JoystickButton(OperatingInterface.driverJoytick, 1)
         .whileTrue(new RunCommand(
             () -> DriveSubsystem.getInstance().setX(),
             DriveSubsystem.getInstance()));
 
     // Zeros out the gyro (bottom thumb button)
-    new JoystickButton(oi.driverJoytick, 2)
+    new JoystickButton(OperatingInterface.driverJoytick, 2)
         .onTrue(new InstantCommand(
             () -> DriveSubsystem.getInstance().zeroHeading(),
             DriveSubsystem.getInstance()));
 
-    new JoystickButton(oi.driverJoytick, 5)
+    new JoystickButton(OperatingInterface.driverJoytick, 5)
         .onTrue(new InstantCommand(
             () -> Pivot.getInstance().zeroMotorEncoders(),
             Pivot.getInstance()));
 
-    new JoystickButton(oi.driverJoytick, 8)
-        .whileTrue(new TurnToSource(145, oi, DriveSubsystem.getInstance()));
+    new JoystickButton(OperatingInterface.driverJoytick, 8)
+        .whileTrue(new TurnToSource(145, DriveSubsystem.getInstance()));
 
-    // new JoystickButton(oi.driverJoytick, 9)
-    //     .whileTrue(new PIDTurnToTarget(intaketx::get, oi, DriveSubsystem.getInstance()));
+    // new JoystickButton(OperatingInterface.driverJoytick, 9)
+    //     .whileTrue(new PIDTurnToTarget(intaketx::get, OperatingInterface, DriveSubsystem.getInstance()));
 
-    // new JoystickButton(oi.driverJoytick, 14)
-    //     .whileTrue(new PIDTurnToTarget(tx::get, oi, DriveSubsystem.getInstance()));
+    // new JoystickButton(OperatingInterface.driverJoytick, 14)
+    //     .whileTrue(new PIDTurnToTarget(tx::get, OperatingInterface, DriveSubsystem.getInstance()));
 
-    // oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
+    // OperatingInterface.auxRightBumper.whileTrue(new SequentialCommandGroup(
     //     new ParallelCommandGroup(
     //         new RunShooter(() -> 1.0, Shooter.getInstance()),
     //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
@@ -202,10 +199,10 @@ public class RobotContainer {
     //         new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
     //         new RunIntake(() -> 0.8, Intake.getInstance()))));
 
-    oi.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), () -> 0.0, Pivot.getInstance()));
+    OperatingInterface.auxYButton.whileTrue(new PIDVisionPivot(() -> ty.get(), () -> 0.0, Pivot.getInstance()));
 
     // Shooting
-    oi.auxRightBumper.whileTrue(new SequentialCommandGroup(
+    OperatingInterface.auxRightBumper.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance())).withTimeout(0.8),
@@ -214,7 +211,7 @@ public class RobotContainer {
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, Intake.getInstance()))));
 
-    oi.auxStartButton.whileTrue(new SequentialCommandGroup(
+    OperatingInterface.auxStartButton.whileTrue(new SequentialCommandGroup(
         new ParallelCommandGroup(
             new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance())).withTimeout(0.6),
@@ -222,16 +219,16 @@ public class RobotContainer {
             new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kLowShotPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, Intake.getInstance()))));
-    // oi.auxRightBumper.whileTrue(getOnePieceAuto());
+    // OperatingInterface.auxRightBumper.whileTrue(getOnePieceAuto());
 
-    oi.auxBButton.whileTrue(new RunIntake(() -> 0.8, Intake.getInstance()));
-    // oi.auxXButton.onTrue(new RunIntake(() -> 0.0, Intake.getInstance()));
-    oi.auxXButton.whileTrue(new RunShooter(() -> 1.0, Shooter.getInstance()));
-    proximityTrigger.onTrue(new InstantCommand(oi::rumbleAuxController));
-    oi.auxAButton.whileTrue(new RunIntake(() -> -0.6, Intake.getInstance()));
+    OperatingInterface.auxBButton.whileTrue(new RunIntake(() -> 0.8, Intake.getInstance()));
+    // OperatingInterface.auxXButton.onTrue(new RunIntake(() -> 0.0, Intake.getInstance()));
+    OperatingInterface.auxXButton.whileTrue(new RunShooter(() -> 1.0, Shooter.getInstance()));
+    proximityTrigger.onTrue(new InstantCommand(OperatingInterface::rumbleAuxController));
+    OperatingInterface.auxAButton.whileTrue(new RunIntake(() -> -0.6, Intake.getInstance()));
 
-    oi.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
-    // oi.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, Pivot.getInstance()));
+    OperatingInterface.auxLeftBumper.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
+    // OperatingInterface.auxXButton.whileTrue(new PIDPivotToSetpoint(() -> 0.1, () -> -AutoConstants.kSpeakerEncoderPosition, Pivot.getInstance()));
   }
 
   public void configureShuffleBoard() {
@@ -302,7 +299,7 @@ public class RobotContainer {
     ));
 
     // Booleans
-    // Shuffleboard.getTab("Main").addBoolean("intaking?", () -> oi.auxBButton.getAsBoolean());
+    // Shuffleboard.getTab("Main").addBoolean("intaking?", () -> OperatingInterface.auxBButton.getAsBoolean());
     Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximitySensor::get);
     // Shuffleboard.getTab("Main").addBoolean("lower limit switch", lowerPivotLimit::get);
     // Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);

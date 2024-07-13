@@ -18,7 +18,7 @@ import frc.robot.subsystems.DriveSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PIDTurnToTarget extends PIDCommand {
   /** Creates a new PIDTurnToTarget. */
-  public PIDTurnToTarget(Supplier<Double> xDiff, OperatingInterface oi, DriveSubsystem driveSubsystem) {
+  public PIDTurnToTarget(Supplier<Double> xDiff, DriveSubsystem driveSubsystem) {
     super(
         // The controller that the command will use
         new PIDController(0.009, 0, 0),
@@ -43,8 +43,8 @@ public class PIDTurnToTarget extends PIDCommand {
             output = 0;
           }
           driveSubsystem.drive(
-              -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
-              -MathUtil.applyDeadband(oi.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
               output, true, false, .6);
         });
     // Use addRequirements() here to declare subsystem dependencies.
