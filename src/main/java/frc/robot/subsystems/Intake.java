@@ -8,17 +8,22 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.OperatingInterface;
 import frc.robot.Constants.IntakeConstants;
 import frc.utils.Utils;
 
-public class Intake extends SubsystemBase implements CheckableSubsystem {
+public class Intake extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
 
   private boolean status = false;
   private boolean initialized = false;
   private CANSparkMax intakeMotor1, intakeMotor2;
   private static Intake m_Instance;
+  private IntakeStates desiredState, currentState = IntakeStates.IDLE;
+  // The proximity sensor detecting the presence of a note in the Intake
+  private final DigitalInput proximitySensor = new DigitalInput(0);
 
   // Constructor is private to prevent multiple instances from being made
   private Intake() {
@@ -49,7 +54,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem {
 
   /**
    *
-   * @return Has the constructor been executed
+   * @return Has the constructor executed successfully
    */
   @Override
   public boolean getInitialized() {
@@ -57,10 +62,10 @@ public class Intake extends SubsystemBase implements CheckableSubsystem {
   }
 
   /**
-   *
+   * Only visible inside of its own package
    * @return The main Shooter object
    */
-  public static Intake getInstance() {
+  static Intake getInstance() {
     if(m_Instance == null) {
       m_Instance = new Intake();
     }
@@ -98,7 +103,6 @@ public class Intake extends SubsystemBase implements CheckableSubsystem {
    *
    * @return Is the subsystem is okay to operate
    */
-
   @Override
   public boolean checkSubsystem() {
     status = Utils.checkMotor(intakeMotor1, IntakeConstants.kIntakeMotor1Id);
@@ -108,8 +112,92 @@ public class Intake extends SubsystemBase implements CheckableSubsystem {
     return status;
   }
 
+  /**
+   * Updates any information the subsystem needs
+   */
+  @Override
+  public void update() {
+    switch(currentState) {
+      case IDLE:
+        break;
+      case BROKEN:
+        break;
+      case INTAKING:
+        if(proximitySensor.get()) {
+          OperatingInterface.rumbleAuxController();
+          setDesiredState(IntakeStates.LOADED);
+        }
+        break;
+      case REVERSING:
+        break;
+      case FEEDING:
+        break;
+      case LOADED:
+        break;
+
+      default:
+        break;
+    }
+
+    if(checkSubsystem()) {
+      setDesiredState(IntakeStates.BROKEN);
+    }
+  }
+
+  /**
+   * Handles moving from one state to another
+   */
+  @Override
+  public void handleStateTransition() {
+    switch(desiredState) {
+      case IDLE:
+        setIntakeSpeed(0);
+        break;
+      case BROKEN:
+        stop();
+        break;
+      case INTAKING:
+        setIntakeSpeed(0.8);
+        break;
+      case REVERSING:
+        setIntakeSpeed(-0.6);
+        break;
+      case FEEDING:
+        setIntakeSpeed(0.8);
+        break;
+      case LOADED:
+        setIntakeSpeed(0);
+        break;
+
+      default:
+        break;
+    }
+
+    currentState = desiredState;
+  }
+
+  /**
+   * Sets the desired state of the subsystem
+   * @param state Desired state
+   */
+  public void setDesiredState(IntakeStates state) {
+    if(this.desiredState != state && this.currentState != IntakeStates.BROKEN) {
+      desiredState = state;
+      handleStateTransition();
+    }
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public enum IntakeStates {
+    IDLE,
+    BROKEN,
+    INTAKING, // Picking up note from the ground
+    REVERSING, // Spitting a note out under the bumpers
+    FEEDING, // Advancing a note into the shooter
+    LOADED; // Holding a note in the belts
   }
 }
