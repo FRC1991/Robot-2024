@@ -35,14 +35,14 @@ public class VisionShooter extends Command {
   public void execute() {
     // If one of the Speaker's april tags is in view, set Shooter to the size of the april tag
     if(tid.get() == 1 || tid.get() ==2) {
-      m_Shooter.setShooter(ta.get() * ShooterConstants.kVisionCoefficient);
+      m_Shooter.setSpeed(ta.get() * ShooterConstants.kVisionCoefficient);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Shooter.setShooter(0);
+    m_Shooter.setSpeed(0);
   }
 
   // Returns true when the command should end.

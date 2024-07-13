@@ -30,13 +30,13 @@ public class RunShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Shooter.setShooter(speed.get());
+    m_Shooter.setSpeed(speed.get());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Shooter.setShooter(0);
+    m_Shooter.setSpeed(0);
   }
 
   // Returns true when the command should end.
