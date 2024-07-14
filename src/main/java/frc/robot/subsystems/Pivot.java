@@ -71,7 +71,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
    */
   @Override
   public boolean getInitialized() {
-    return initialized;
+    return initialized && aimmingAngle != null;
   }
 
   /**
@@ -106,7 +106,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   /**
    *
-   * @param getter A method to get the desired angle for shooting
+   * @param getter A method to get the desired vertical angle for shooting
    */
   public void setAngleSupplier(DoubleSupplier getter) {
     aimmingAngle = getter;
@@ -229,6 +229,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     IDLE,
     BROKEN,
     AIMING, // Aims with the aimmingAngle Supplier
-    STORED, // Uses the aimming method with 0 degree angle
+    STORED; // Uses the aimming method with 0 degree angle
   }
 }

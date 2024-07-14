@@ -4,12 +4,16 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,10 +26,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.TeleopConstants;
+import frc.robot.OperatingInterface;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem {
+public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -78,6 +85,14 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem 
 
   private static DriveSubsystem m_Instance;
 
+  private SwerveStates desiredState, currentState = SwerveStates.IDLE;
+
+  private PIDController angleController = new PIDController(0.009, 0, 0);
+
+  private double sourceAngle = -1;
+
+  private DoubleSupplier aimmingAngle;
+
   // Constructor is private to prevent multiple instances from being made
   private DriveSubsystem() {
     zeroHeading();
@@ -90,7 +105,7 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem 
             this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                    new PIDConstants(0.009, 0.0, 0.0), // Rotation PID constants
                     4.5, // Max module speed, in m/s
                     //TODO calculate real radius, with bumpers on
                     0.4, // Drive base radius in meters. Distance from robot center to furthest module.
@@ -109,6 +124,16 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem 
             },
             this // Reference to this subsystem to set requirements
     );
+
+    // Continuously checks for alliance until correct angle is chosen
+    do {
+      if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+        sourceAngle = 145;
+      } else {
+        // RED_SIDE_ANGLE = ((180 - BLUE_SIDE_ANGLE) + 180)
+        sourceAngle = 215;
+      }
+    } while (sourceAngle == -1);
 
     initialized = true;
   }
@@ -135,6 +160,14 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem 
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+  }
+
+  /**
+   *
+   * @param getter A method to get the angle offset from the shooting target
+  */
+  public void setAngleSupplier(DoubleSupplier getter) {
+    aimmingAngle = getter;
   }
 
   /**
@@ -408,6 +441,106 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem 
    */
   @Override
   public boolean getInitialized() {
-    return initialized;
+    return initialized && aimmingAngle != null;
+  }
+
+  /**
+   * Updates any information the subsystem needs
+   */
+  @Override
+  public void update() {
+    switch(currentState) {
+      case IDLE:
+        break;
+      case BROKEN:
+        break;
+      case DRIVE:
+        drive(
+            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
+            true, false, TeleopConstants.kSwerveSpeed);
+        break;
+      case PICKUP:
+        drive(
+            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+            angleController.calculate(getHeading(), sourceAngle),
+            true, false, TeleopConstants.kSwerveSpeed * 0.6);
+        break;
+      case AIMMING:
+        drive(
+            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+            angleController.calculate(getHeading(), aimmingAngle.getAsDouble()),
+            true, false, TeleopConstants.kSwerveSpeed);
+        break;
+      case LOCKED:
+        break;
+
+      default:
+        break;
+    }
+
+    if(!checkSubsystem()) {
+      setDesiredState(SwerveStates.BROKEN);
+    }
+  }
+
+  /**
+   * Handles moving from one state to another
+   */
+  @Override
+  public void handleStateTransition() {
+    switch(desiredState) {
+      case IDLE:
+        drive(0,0,0,false,false);
+        break;
+      case BROKEN:
+        stop();
+        break;
+      case DRIVE:
+        break;
+      case PICKUP:
+        break;
+      case AIMMING:
+        break;
+      case LOCKED:
+        setX();
+        break;
+
+      default:
+        break;
+    }
+
+    currentState = desiredState;
+  }
+
+  /**
+   * Sets the desired state of the subsystem
+   * @param state Desired state
+   */
+  public void setDesiredState(SwerveStates state) {
+    if(this.desiredState != state && this.currentState != SwerveStates.BROKEN) {
+      desiredState = state;
+      handleStateTransition();
+    }
+  }
+
+  /**
+   *
+   * @return The current state of the subsystem
+   */
+  public SwerveStates getState() {
+    return currentState;
+  }
+
+  public enum SwerveStates {
+    IDLE,
+    BROKEN,
+    DRIVE,
+    PICKUP,
+    AIMMING,
+    LOCKED;
   }
 }
