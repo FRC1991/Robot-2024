@@ -167,7 +167,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
 
   /**
    *
-   * @param getter A method to get the angle offset from the shooting target
+   * @param getter A method to get the offset from the target in degrees
   */
   public void setAngleSupplier(DoubleSupplier getter) {
     aimmingAngle = getter;

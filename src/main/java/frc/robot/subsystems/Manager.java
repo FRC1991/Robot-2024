@@ -17,7 +17,10 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
 
   private ManagerStates desiredState, currentState = ManagerStates.IDLE;
 
-  public Manager(DoubleSupplier verticalOffset, DoubleSupplier horizontalOffset) {
+  public Manager(DoubleSupplier shootingAngle, DoubleSupplier horizontalOffset) {
+    Pivot.getInstance().setAngleSupplier(shootingAngle);
+    Swerve.getInstance().setAngleSupplier(horizontalOffset);
+
     initialized = Intake.getInstance().getInitialized();
     initialized &= Pivot.getInstance().getInitialized();
     initialized &= Shooter.getInstance().getInitialized();
