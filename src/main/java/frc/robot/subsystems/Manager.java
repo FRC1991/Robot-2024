@@ -106,6 +106,11 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
       default:
         break;
     }
+
+    Intake.getInstance().update();
+    Pivot.getInstance().update();
+    Shooter.getInstance().update();
+    Swerve.getInstance().update();
   }
 
   /**
