@@ -72,6 +72,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     return status;
   }
 
+  /**
+   * Updates any information the subsystem needs
+   */
   @Override
   public void update() {
     switch(currentState) {
@@ -105,6 +108,10 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     }
   }
 
+  /**
+   * Handles moving from one state to another. Also changes
+   * the state of all subsystems to their respective states
+   */
   @Override
   public void handleStateTransition() {
     switch(desiredState) {
