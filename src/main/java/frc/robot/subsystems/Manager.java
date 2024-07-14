@@ -80,6 +80,11 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
    */
   @Override
   public void update() {
+    Intake.getInstance().update();
+    Pivot.getInstance().update();
+    Shooter.getInstance().update();
+    Swerve.getInstance().update();
+
     switch(currentState) {
       case IDLE:
         break;
@@ -88,7 +93,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
       case DRIVE:
         break;
       case AIMMING:
-        if(Pivot.getInstance().atSetpoint() && Swerve.getInstance().facingTarget()) {
+        if(Pivot.getInstance().atSetpoint()
+            && Swerve.getInstance().facingTarget()
+            && Shooter.getInstance().getState() == ShooterStates.SHOOTING) {
           setDesiredState(ManagerStates.SHOOTING);
         }
         break;
@@ -97,7 +104,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
       case DEFENSE:
         break;
       case SUBWOOFER_AIMMING:
-        if(Pivot.getInstance().atSetpoint()) {
+        if(Pivot.getInstance().atSetpoint() && Shooter.getInstance().getState() == ShooterStates.SHOOTING) {
           setDesiredState(ManagerStates.SUBWOOFER_SHOOTING);
         }
         break;
@@ -109,11 +116,6 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
       default:
         break;
     }
-
-    Intake.getInstance().update();
-    Pivot.getInstance().update();
-    Shooter.getInstance().update();
-    Swerve.getInstance().update();
   }
 
   /**
