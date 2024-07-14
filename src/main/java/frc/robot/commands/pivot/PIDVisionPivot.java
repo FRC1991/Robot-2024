@@ -32,7 +32,7 @@ public class PIDVisionPivot extends PIDCommand {
           } else if (Math.abs(output) < .01) {
             output = 0;
           }
-          pivot.setPivot(output);
+          pivot.setSpeed(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(pivot);

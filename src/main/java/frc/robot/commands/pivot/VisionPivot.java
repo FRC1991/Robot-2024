@@ -36,13 +36,13 @@ public class VisionPivot extends Command {
         PivotConstants.kVisionC,
         PivotConstants.kVisionD);
 
-    m_Pivot.setPivot(speed);
+    m_Pivot.setSpeed(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Pivot.setPivot(0);
+    m_Pivot.setSpeed(0);
   }
 
   // Returns true when the command should end.

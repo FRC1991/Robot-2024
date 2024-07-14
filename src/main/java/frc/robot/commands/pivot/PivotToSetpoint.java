@@ -33,16 +33,16 @@ public class PivotToSetpoint extends Command {
   @Override
   public void execute() {
     if(m_Pivot.getEncoderPosition() < (setpoint.get() - tolerance)) {
-      m_Pivot.setPivot(0.1);
+      m_Pivot.setSpeed(0.1);
     } else if(m_Pivot.getEncoderPosition() > (setpoint.get() + tolerance)) {
-      m_Pivot.setPivot(-0.1);
+      m_Pivot.setSpeed(-0.1);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Pivot.setPivot(0);
+    m_Pivot.setSpeed(0);
   }
 
   // Returns true when the command should end.

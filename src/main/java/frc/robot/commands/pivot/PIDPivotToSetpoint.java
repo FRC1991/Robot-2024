@@ -26,7 +26,7 @@ public class PIDPivotToSetpoint extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          pivot.setPivot(output);
+          pivot.setSpeed(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(pivot);

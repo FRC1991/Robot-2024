@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,10 +21,15 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem {
   private boolean status = false;
   private boolean initialized = false;
   private CANSparkMax pivotMotor1, pivotMotor2;
+  private PIDController ctrl;
   private static Pivot m_Instance;
 
   // Constructor is private to prevent multiple instances from being made
   private Pivot() {
+    //TODO Retune PID now that the encoder is in degrees, not native units
+    ctrl = new PIDController(0.1, 0, 0);
+    ctrl.setTolerance(0.02);
+
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
     pivotMotor2 = new CANSparkMax(PivotConstants.kPivotMotor2Id, MotorType.kBrushless);
 
@@ -39,6 +45,10 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem {
     // Setting idle mode to brake so the pivot won't move during collisions
     pivotMotor1.setIdleMode(IdleMode.kBrake);
     pivotMotor2.setIdleMode(IdleMode.kBrake);
+
+    // Setting Encoder to return in degrees
+    pivotMotor1.getEncoder().setPositionConversionFactor((1/81)*360);
+    pivotMotor2.getEncoder().setPositionConversionFactor((1/81)*360);
 
     // Saving the desired settings
     pivotMotor1.burnFlash();
@@ -73,10 +83,19 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem {
    *This should only be used through a {@link Command}, not directly accessed.
    * @param speed The desired speed to run the motors at.
    */
-  public void setPivot(double speed) {
+  public void setSpeed(double speed) {
     speed = Utils.normalize(speed);
     pivotMotor1.set(speed);
     pivotMotor2.set(speed);
+  }
+
+  /**
+   * Uses this subsystem's PID controller to update the motor speed
+   * based off of the current position.
+   * @param angle Desired angle to move the pivot to.
+   */
+  public void updateSpeed(int angle) {
+    setSpeed(ctrl.calculate(getEncoderPosition(), angle));
   }
 
   /**
