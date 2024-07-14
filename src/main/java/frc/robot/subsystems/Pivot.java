@@ -32,7 +32,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   private Pivot() {
     // TODO Retune PID now that the encoder is in degrees, not native units
     ctrl = new PIDController(0.1, 0, 0);
-    ctrl.setTolerance(0.02);
+    ctrl.setTolerance(.5);
 
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
     pivotMotor2 = new CANSparkMax(PivotConstants.kPivotMotor2Id, MotorType.kBrushless);
@@ -59,8 +59,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     pivotMotor2.burnFlash();
 
     zeroMotorEncoders();
-
-    setDesiredState(PivotStates.STORED);
 
     initialized = true;
   }
@@ -102,6 +100,15 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
    */
   public void updateSpeed(double angle) {
     setSpeed(ctrl.calculate(getEncoderPosition(), angle));
+  }
+
+  /**
+   *
+   * @return True, if the pivot angle is within half a degree of the target
+   * <li> False, if the pivot angle is not withing the tolerance.
+   */
+  public boolean atSetpoint() {
+    return ctrl.atSetpoint();
   }
 
   /**
@@ -161,12 +168,15 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
         break;
       case BROKEN:
         break;
-      case AIMING:
+      case AIMMING:
         updateSpeed(aimmingAngle.getAsDouble());
         break;
       case STORED:
         updateSpeed(0);
         break;
+      case SETPOINT:
+        // From OG motor rotation values multiplied by (1/81)*360
+        updateSpeed(29.6);
 
       default:
         break;
@@ -189,9 +199,11 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
       case BROKEN:
         stop();
         break;
-      case AIMING:
+      case AIMMING:
         break;
       case STORED:
+        break;
+      case SETPOINT:
         break;
 
       default:
@@ -228,7 +240,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   public enum PivotStates {
     IDLE,
     BROKEN,
-    AIMING, // Aims with the aimmingAngle Supplier
-    STORED; // Uses the aimming method with 0 degree angle
+    AIMMING, // Aims with the aimmingAngle Supplier
+    STORED, // Uses the aimming method with 0 degree angle
+    SETPOINT; // Aims to the subwoofer angle which is also used to shoot over the stage
   }
 }

@@ -120,7 +120,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
         break;
       case INTAKING:
         break;
-      case REVERSING:
+      case OUTTAKING:
         break;
       case FEEDING:
         break;
@@ -151,7 +151,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
       case INTAKING:
         setSpeed(0.8);
         break;
-      case REVERSING:
+      case OUTTAKING:
         setSpeed(-0.6);
         break;
       case FEEDING:
@@ -196,7 +196,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
     IDLE,
     BROKEN,
     INTAKING, // Picking up note from the ground
-    REVERSING, // Spitting a note out under the bumpers
+    OUTTAKING, // Spitting a note out under the bumpers
     FEEDING, // Advancing a note into the shooter
     LOADED; // Holding a note in the belts
   }
