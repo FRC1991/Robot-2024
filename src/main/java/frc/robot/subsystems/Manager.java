@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Manager extends SubsystemBase implements CheckableSubsystem {
@@ -12,6 +14,20 @@ public class Manager extends SubsystemBase implements CheckableSubsystem {
     initialized &= Pivot.getInstance().getInitialized();
     initialized &= Shooter.getInstance().getInitialized();
     initialized &= DriveSubsystem.getInstance().getInitialized();
+
+    ShuffleboardTab diagnostics = Shuffleboard.getTab("diagnostics");
+
+    diagnostics.addBoolean("Manager initialized", this::getInitialized);
+    diagnostics.addBoolean("Intake initialized", Intake.getInstance()::getInitialized);
+    diagnostics.addBoolean("Pivot initialized", Pivot.getInstance()::getInitialized);
+    diagnostics.addBoolean("Shooter initialized", Shooter.getInstance()::getInitialized);
+    diagnostics.addBoolean("Swerve initialized", DriveSubsystem.getInstance()::getInitialized);
+
+    diagnostics.addBoolean("Manager operable", this::checkSubsystem);
+    diagnostics.addBoolean("Intake operable", Intake.getInstance()::checkSubsystem);
+    diagnostics.addBoolean("Pivot operable", Pivot.getInstance()::checkSubsystem);
+    diagnostics.addBoolean("Shooter operable", Shooter.getInstance()::checkSubsystem);
+    diagnostics.addBoolean("Swerve operable", DriveSubsystem.getInstance()::checkSubsystem);
   }
 
   /**
@@ -46,5 +62,10 @@ public class Manager extends SubsystemBase implements CheckableSubsystem {
     status &= DriveSubsystem.getInstance().checkSubsystem();
 
     return status;
+  }
+
+  @Override
+  public void periodic() {
+
   }
 }
