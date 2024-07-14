@@ -240,8 +240,11 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   public enum PivotStates {
     IDLE,
     BROKEN,
-    AIMMING, // Aims with the aimmingAngle Supplier
-    STORED, // Uses the aimming method with 0 degree angle
-    SETPOINT; // Aims to the subwoofer angle which is also used to shoot over the stage
+    /** Aims with the aimmingAngle Supplier */
+    AIMMING,
+    /** Uses the aimming method with 0 degree angle */
+    STORED,
+    /** Aims to the subwoofer angle which is also used to shoot over the stage */
+    SETPOINT;
   }
 }

@@ -195,9 +195,13 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   public enum IntakeStates {
     IDLE,
     BROKEN,
-    INTAKING, // Picking up note from the ground
-    OUTTAKING, // Spitting a note out under the bumpers
-    FEEDING, // Advancing a note into the shooter
-    LOADED; // Holding a note in the belts
+    /** Picking up note from the ground */
+    INTAKING,
+    /** Spitting a note out, under the bumpers */
+    OUTTAKING,
+    /** Advancing a note into the shooter */
+    FEEDING,
+    /** Holding a note in the belts */
+    LOADED;
   }
 }

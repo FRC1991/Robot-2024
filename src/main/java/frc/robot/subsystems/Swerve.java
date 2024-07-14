@@ -551,9 +551,17 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   public enum SwerveStates {
     IDLE,
     BROKEN,
+    /** Regular control of the robot */
     DRIVE,
+    /** Slows the robot to sixty percent of its normal speed and uses the angle PID controller
+     * to face perpendicular to the Source. This takes away yaw control.
+    */
     PICKUP,
+    /** Uses the angle PID controller minimize the offset provided by aimmingAngle.
+     * This takes away yaw control
+     */
     AIMMING,
+    /** Removes all control and locks the wheels in an X formation */
     LOCKED;
   }
 }

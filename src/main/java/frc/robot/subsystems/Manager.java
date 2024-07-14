@@ -218,13 +218,21 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   */
   public enum ManagerStates {
     IDLE,
-    INTAKING, // Picking up a note at the source
-    DRIVE, // Driving around the field
-    AIMMING, // Aimming at the speaker with vision
-    SHOOTING, // Shooting a note out with vision
-    DEFENSE, // Locking the wheels in an X
-    SUBWOOFER_AIMMING, // Shooting over the stage. Also doubles as our subwoofer shot
+    /** Picking up a note at the source */
+    INTAKING,
+    /** Driving around the field */
+    DRIVE,
+    /** Aimming at the speaker with vision */
+    AIMMING,
+    /** Shooting a note with vision */
+    SHOOTING,
+    /** Locking the wheels in an X formation */
+    DEFENSE,
+    /** Aimming up against the Subwoofer. Also doubles as our feeding aimming over the stage */
+    SUBWOOFER_AIMMING,
+    /** Shooting at the Subwoofer. Also doubles as our feeding shot over the stage */
     SUBWOOFER_SHOOTING,
-    OUTTAKING; // Pushing a note out under our bumpers
+    /** Pushing a note out under our bumpers */
+    OUTTAKING;
   }
 }

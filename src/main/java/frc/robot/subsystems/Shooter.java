@@ -160,9 +160,6 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
         stop();
         break;
       case SHOOTING:
-        if(desiredState != ShooterStates.SPINNING_UP) {
-          return;
-        }
         setSpeed(1);
         break;
       case SPINNING_UP:
@@ -204,7 +201,9 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
   public enum ShooterStates {
     IDLE,
     BROKEN,
-    SHOOTING, // At speed and ready to shoot a note
-    SPINNING_UP; // Spinning up to the desired speed
+    /** At speed and ready to shoot a note */
+    SHOOTING,
+    /** Spinning up to the desired speed */
+    SPINNING_UP;
   }
 }
