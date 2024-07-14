@@ -6,7 +6,7 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 
 import java.util.function.Supplier;
 
@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PIDDefense extends PIDCommand {
   /** Creates a new PIDDefense. */
-  public PIDDefense(Supplier<Double> tx, DriveSubsystem driveTrain) {
+  public PIDDefense(Supplier<Double> tx, Swerve driveTrain) {
     super(
         // The controller that the command will use
         new PIDController(0.009, 0, 0),

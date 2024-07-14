@@ -11,14 +11,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.OperatingInterface;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PIDTurnToTarget extends PIDCommand {
   /** Creates a new PIDTurnToTarget. */
-  public PIDTurnToTarget(Supplier<Double> xDiff, DriveSubsystem driveSubsystem) {
+  public PIDTurnToTarget(Supplier<Double> xDiff, Swerve driveSubsystem) {
     super(
         // The controller that the command will use
         new PIDController(0.009, 0, 0),

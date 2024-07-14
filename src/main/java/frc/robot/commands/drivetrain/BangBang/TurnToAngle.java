@@ -5,21 +5,21 @@
 package frc.robot.commands.drivetrain.BangBang;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 
 public class TurnToAngle extends Command {
 
   private double angle, currentHeading, tolerance;
-  private DriveSubsystem m_DriveSubsystem;
-  /** 
+  private Swerve m_DriveSubsystem;
+  /**
    * Minimizes difference between the robot heading and the target angle
    * The command ends when the difference is below the tolerance
-   * 
+   *
    * @param angle The angle between the target and the current heading of the robot
    * @param tolerance The tolerance in which the command will end
    * @param driveSubsystem The drive subsystem of the robot
   */
-  public TurnToAngle(double angle, double tolerance, DriveSubsystem driveSubsystem) {
+  public TurnToAngle(double angle, double tolerance, Swerve driveSubsystem) {
     this.angle = angle;
     this.tolerance = tolerance;
     this.m_DriveSubsystem = driveSubsystem;
@@ -42,7 +42,7 @@ public class TurnToAngle extends Command {
     } else if(currentHeading < (angle - 180)) {
       currentHeading += 360;
     }
-    
+
     //driving of the motors
     if(currentHeading < 180) {
       m_DriveSubsystem.drive(0, 0, -0.2, false, true);

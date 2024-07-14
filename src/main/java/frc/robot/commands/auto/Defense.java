@@ -7,15 +7,15 @@ package frc.robot.commands.auto;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 
 public class Defense extends Command {
 
   private Supplier<Double> tx;
-  private DriveSubsystem driveTrain;
+  private Swerve driveTrain;
 
   /** Creates a new Defense. */
-  public Defense(Supplier<Double> tx, DriveSubsystem driveTrain) {
+  public Defense(Supplier<Double> tx, Swerve driveTrain) {
     this.tx = tx;
     this.driveTrain = driveTrain;
 

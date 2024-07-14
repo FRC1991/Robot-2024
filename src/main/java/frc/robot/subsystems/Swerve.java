@@ -32,7 +32,7 @@ import frc.robot.OperatingInterface;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
+public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -83,7 +83,7 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem,
 
   private ChassisSpeeds m_RobotChassisSpeeds = new ChassisSpeeds();
 
-  private static DriveSubsystem m_Instance;
+  private static Swerve m_Instance;
 
   private SwerveStates desiredState, currentState = SwerveStates.IDLE;
 
@@ -94,7 +94,9 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem,
   private DoubleSupplier aimmingAngle;
 
   // Constructor is private to prevent multiple instances from being made
-  private DriveSubsystem() {
+  private Swerve() {
+    angleController.setTolerance(1);
+
     zeroHeading();
 
     // Configure AutoBuilder last
@@ -142,9 +144,9 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem,
    *
    * @return The main Pivot object
    */
-  public static DriveSubsystem getInstance() {
+  public static Swerve getInstance() {
     if(m_Instance == null) {
-      m_Instance = new DriveSubsystem();
+      m_Instance = new Swerve();
     }
     return m_Instance;
   }
@@ -168,6 +170,15 @@ public class DriveSubsystem extends SubsystemBase implements CheckableSubsystem,
   */
   public void setAngleSupplier(DoubleSupplier getter) {
     aimmingAngle = getter;
+  }
+
+  /**
+   *
+   * @return True, if the robot heading is within one degree of the target
+   * <li> False, if the heading is not withing the tolerance.
+   */
+  public boolean facingTarget() {
+    return angleController.atSetpoint();
   }
 
   /**

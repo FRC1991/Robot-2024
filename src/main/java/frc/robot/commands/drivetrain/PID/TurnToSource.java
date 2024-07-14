@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.OperatingInterface;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -26,7 +26,7 @@ public class TurnToSource extends PIDCommand {
    * @param targetAngle Angle the robot will turn to. Must be between 0 and 360
    * @param driveSubsystem The main drive train of the robot
    */
-  public TurnToSource(double targetAngle, DriveSubsystem driveSubsystem) {
+  public TurnToSource(double targetAngle, Swerve driveSubsystem) {
     super(
         // The controller that the command will use
         new PIDController(0.009, 0, 0),

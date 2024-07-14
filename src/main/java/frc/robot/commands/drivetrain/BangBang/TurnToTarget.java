@@ -7,19 +7,19 @@ package frc.robot.commands.drivetrain.BangBang;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 
 public class TurnToTarget extends Command {
 
   private Supplier<Double> xDiff;
-  private DriveSubsystem m_DriveSubsystem;
+  private Swerve m_DriveSubsystem;
   /**
    * Creates a command that minimizes the xDiff and doesn't end
    *
    * @param xDiff The angle between the target and the current heading of the robot
    * @param driveSubsystem The drive subsystem of the robot
   */
-  public TurnToTarget(Supplier<Double> xDiff, DriveSubsystem driveSubsystem) {
+  public TurnToTarget(Supplier<Double> xDiff, Swerve driveSubsystem) {
     this.xDiff = xDiff;
     this.m_DriveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.

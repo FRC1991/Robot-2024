@@ -7,15 +7,15 @@ package frc.robot.commands.drivetrain.BangBang;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 
 public class RunToTarget extends Command {
 
   private Supplier<Double> offset, speed;
-  private DriveSubsystem m_DriveSubsystem;
+  private Swerve m_DriveSubsystem;
 
   /** Creates a new RunToTarget. */
-  public RunToTarget(Supplier<Double> offset, Supplier<Double> speed, DriveSubsystem drive) {
+  public RunToTarget(Supplier<Double> offset, Supplier<Double> speed, Swerve drive) {
     this.offset = offset;
     this.speed = speed;
     m_DriveSubsystem = drive;
