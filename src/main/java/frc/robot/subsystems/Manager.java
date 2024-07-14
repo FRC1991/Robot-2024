@@ -66,6 +66,6 @@ public class Manager extends SubsystemBase implements CheckableSubsystem {
 
   @Override
   public void periodic() {
-
+    // This method will be called once per scheduler run
   }
 }
