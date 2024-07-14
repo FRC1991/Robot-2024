@@ -96,6 +96,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   // Constructor is private to prevent multiple instances from being made
   private Swerve() {
     angleController.setTolerance(1);
+    angleController.enableContinuousInput(0, 360);
 
     zeroHeading();
 
@@ -389,14 +390,14 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from (0, 360]
+   * @return the robot's heading in degrees, from [0, 360)
    */
   public double getHeading() {
     return Units.radiansToDegrees(SwerveUtils.WrapAngle(Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).getRadians()));
   }
 
   /**
-   * Returns the heading of the robot optimized around target angle
+   * Returns the heading of the robot relative to a target angle
    *
    * @return the robot's heading in degrees (180, -180), optimized for the TurnToAngle PID command
    */
@@ -483,7 +484,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
         drive(
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
-            angleController.calculate(getHeading(), aimmingAngle.getAsDouble()),
+            angleController.calculate(aimmingAngle.getAsDouble()),
             true, false, TeleopConstants.kSwerveSpeed);
         break;
       case LOCKED:
@@ -515,6 +516,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
       case PICKUP:
         break;
       case AIMMING:
+        angleController.setSetpoint(0);
         break;
       case LOCKED:
         setX();
