@@ -58,10 +58,10 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   * Only visible inside of its own package
+   *
    * @return The main Shooter object
    */
-  static Intake getInstance() {
+  public static Intake getInstance() {
     if(m_Instance == null) {
       m_Instance = new Intake();
     }
