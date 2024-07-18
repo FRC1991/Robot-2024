@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Swerve.SwerveStates;
 import frc.robot.subsystems.Intake.IntakeStates;
@@ -25,20 +23,6 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     initialized &= Pivot.getInstance().getInitialized();
     initialized &= Shooter.getInstance().getInitialized();
     initialized &= Swerve.getInstance().getInitialized();
-
-    ShuffleboardTab diagnostics = Shuffleboard.getTab("diagnostics");
-
-    diagnostics.addBoolean("Manager initialized", this::getInitialized);
-    diagnostics.addBoolean("Intake initialized", Intake.getInstance()::getInitialized);
-    diagnostics.addBoolean("Pivot initialized", Pivot.getInstance()::getInitialized);
-    diagnostics.addBoolean("Shooter initialized", Shooter.getInstance()::getInitialized);
-    diagnostics.addBoolean("Swerve initialized", Swerve.getInstance()::getInitialized);
-
-    diagnostics.addBoolean("Manager operable", this::checkSubsystem);
-    diagnostics.addBoolean("Intake operable", Intake.getInstance()::checkSubsystem);
-    diagnostics.addBoolean("Pivot operable", Pivot.getInstance()::checkSubsystem);
-    diagnostics.addBoolean("Shooter operable", Shooter.getInstance()::checkSubsystem);
-    diagnostics.addBoolean("Swerve operable", Swerve.getInstance()::checkSubsystem);
   }
 
   /**
@@ -135,6 +119,12 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         Intake.getInstance().setDesiredState(IntakeStates.INTAKING);
         Pivot.getInstance().setDesiredState(PivotStates.STORED);
         Shooter.getInstance().setDesiredState(ShooterStates.IDLE);
+        Swerve.getInstance().setDesiredState(SwerveStates.DRIVE);
+        break;
+      case SOURCE:
+        Intake.getInstance().setDesiredState(IntakeStates.INTAKING);
+        Pivot.getInstance().setDesiredState(PivotStates.STORED);
+        Shooter.getInstance().setDesiredState(ShooterStates.IDLE);
         Swerve.getInstance().setDesiredState(SwerveStates.PICKUP);
         break;
       case DRIVE:
@@ -220,8 +210,10 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   */
   public enum ManagerStates {
     IDLE,
-    /** Picking up a note at the source */
+    /** Picking up a note */
     INTAKING,
+    /** Picking up a note at the source */
+    SOURCE,
     /** Driving around the field */
     DRIVE,
     /** Aimming at the speaker with vision */
