@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -109,7 +110,11 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   private final SendableChooser<InstantCommand> angleChooser = new SendableChooser<InstantCommand>();
 
-  private final Manager m_Manager = m_Manager();
+  private final Manager m_Manager = Manager(new DoubleSupplier() {
+    public double getAsDouble() {return tx.get();};
+  }, new DoubleSupplier() {
+    public double getAsDouble() {return ty.get();};
+  });
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

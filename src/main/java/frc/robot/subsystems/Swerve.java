@@ -477,7 +477,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
         drive(
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
-            angleController.calculate(getHeading(), sourceAngle),
+            angleController.calculate(getHeading()),
             true, false, TeleopConstants.kSwerveSpeed * 0.6);
         break;
       case AIMMING:
@@ -514,6 +514,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
       case DRIVE:
         break;
       case PICKUP:
+        angleController.setSetpoint(sourceAngle);
         break;
       case AIMMING:
         angleController.setSetpoint(0);

@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
-
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Swerve.SwerveStates;
 import frc.robot.subsystems.Intake.IntakeStates;
@@ -13,11 +13,17 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   private boolean status = false;
   private boolean initialized = false;
 
+  private InterpolatingDoubleTreeMap pivotPosition;
+
   private ManagerStates desiredState, currentState = ManagerStates.IDLE;
 
-  public Manager(DoubleSupplier shootingAngle, DoubleSupplier horizontalOffset) {
-    Pivot.getInstance().setAngleSupplier(shootingAngle);
-    Swerve.getInstance().setAngleSupplier(horizontalOffset);
+  public Manager(DoubleSupplier tx, DoubleSupplier ty) {
+    // TODO fill with experimental values and add more data points
+    pivotPosition.put(0.0,0.0);
+    pivotPosition.put(-1.0,-1.0);
+
+    Pivot.getInstance().setAngleSupplier(() -> pivotPosition.get(ty.getAsDouble()));
+    Swerve.getInstance().setAngleSupplier(tx);
 
     initialized = Intake.getInstance().getInitialized();
     initialized &= Pivot.getInstance().getInitialized();
