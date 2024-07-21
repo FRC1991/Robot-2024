@@ -245,16 +245,16 @@ public class RobotContainer {
 
   private void configureAutos() {
     // To use in the Path Planner GUI
-    NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, Shooter.getInstance()));
-    NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()));
-    NamedCommands.registerCommand("Pivot flat", new PIDPivotToSetpoint(() -> 0.1, () -> 0.0, Pivot.getInstance()));
-    NamedCommands.registerCommand("Run Intake", new RunIntake(() -> 0.8, Intake.getInstance()));
-    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> Intake.getInstance().setSpeed(0), Intake.getInstance()));
-    NamedCommands.registerCommand("Run Intake - proximity sensor", new RunIntake(() -> 0.8, Intake.getInstance()).onlyWhile(proximityTrigger));
-    NamedCommands.registerCommand("Stop drivetrain", new RunCommand(() -> Swerve.getInstance().drive(0,0,0,false,false,0), Swerve.getInstance()));
-    // NamedCommands.registerCommand("gyro to 240", new RunCommand(() -> Swerve.getInstance().m_gyro.setYaw(240), Swerve.getInstance()));
-    // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> Swerve.getInstance().m_gyro.setYaw(180), Swerve.getInstance()));
-    // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> Swerve.getInstance().m_gyro.setYaw(120), Swerve.getInstance()));
+    NamedCommands.registerCommand("IDLE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.IDLE), m_Manager));
+    NamedCommands.registerCommand("INTAKING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING), m_Manager));
+    NamedCommands.registerCommand("SOURCE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SOURCE), m_Manager));
+    NamedCommands.registerCommand("DRIVE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+    NamedCommands.registerCommand("AIMMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.AIMMING), m_Manager));
+    NamedCommands.registerCommand("SHOOTING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SHOOTING), m_Manager));
+    NamedCommands.registerCommand("DEFENSE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DEFENSE), m_Manager));
+    NamedCommands.registerCommand("SUBWOOFER_AIMMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMMING), m_Manager));
+    NamedCommands.registerCommand("SUBWOOFER_SHOOTING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_SHOOTING), m_Manager));
+    NamedCommands.registerCommand("OUTTAKING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager));
 
     // Will immediantly crash code even though this is how the documenation recommends to do it
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
