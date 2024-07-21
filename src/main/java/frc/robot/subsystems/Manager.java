@@ -214,9 +214,14 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     // This method will be called once per scheduler run
   }
 
-
-  // TODO Add javadoc comments on ALL subsystem states
-  /* The BROKEN state which is present in all other subsystems
+  /**
+   * A Manager state integrates all of the other subsystem's states together
+   * to create one cohesive state. This ensures that every subsystem is in
+   * the correct state when performing an action. For example, when the
+   * pivot is aiming, the shooter should be spinning up. When setting
+   * the pivot state you may forget to spin up the shooter.
+   *
+   * <p>The "BROKEN" state which is present in all other subsystems
    * is not present here because it would mean that the whole
    * robot is broken. In that scenario the robot would be E-stopped
    * and no code would run after that anyway

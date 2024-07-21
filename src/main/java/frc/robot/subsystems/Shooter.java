@@ -53,7 +53,6 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
   }
 
   /**
-   *
    * @return Has the constructor been executed
    */
   @Override
@@ -62,7 +61,6 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
   }
 
   /**
-   *
    * @return The main Shooter object
    */
   public static Shooter getInstance() {
@@ -80,13 +78,6 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
     speed = Utils.normalize(speed);
     shooterMotor1.set(speed);
     shooterMotor2.set(speed);
-  }
-
-  public void setSpeedRMP(double rpm) {
-    //TODO test to find max rpm. 5000 max rpm is a guess
-    rpm = rpm / 5000;
-    rpm = Utils.normalize(rpm);
-    setSpeed(rpm);
   }
 
   /**
@@ -107,7 +98,6 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
   }
 
   /**
-   *
    * @return Is the subsystem is okay to operate
    */
 
@@ -186,7 +176,6 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
   }
 
   /**
-   *
    * @return The current state of the subsystem
    */
   public ShooterStates getState() {

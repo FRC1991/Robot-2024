@@ -142,7 +142,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return The main Pivot object
    */
   public static Swerve getInstance() {
@@ -166,7 +165,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @param getter A method to get the offset from the target in degrees
   */
   public void setAngleSupplier(DoubleSupplier getter) {
@@ -174,7 +172,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return True, if the robot heading is within one degree of the target
    * <li> False, if the heading is not withing the tolerance.
    */
@@ -433,7 +430,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return Is the subsystem is okay to operate
    */
   @Override
@@ -448,7 +444,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return Has the constructor been executed
    */
   @Override
@@ -542,7 +537,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return The current state of the subsystem
    */
   public SwerveStates getState() {

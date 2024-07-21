@@ -64,7 +64,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   /**
-   *
    * @return Has the constructor been executed
    */
   @Override
@@ -73,7 +72,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   /**
-   *
    * @return The main Pivot object
    */
   public static Pivot getInstance() {
@@ -103,7 +101,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   /**
-   *
    * @return True, if the pivot angle is within half a degree of the target
    * <li> False, if the pivot angle is not withing the tolerance.
    */
@@ -112,7 +109,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   /**
-   *
    * @param getter A method to get the desired vertical angle for shooting
    */
   public void setAngleSupplier(DoubleSupplier getter) {
@@ -120,7 +116,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   /**
-   *
    * @return The average encoder value between both motors internal relative encoders in degrees
    */
   public double getEncoderPosition() {
@@ -146,7 +141,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   /**
-   *
    * @return Is the subsystem is okay to operate
    */
   @Override
@@ -225,7 +219,6 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   }
 
   /**
-   *
    * @return The current state of the subsystem
    */
   public PivotStates getState() {

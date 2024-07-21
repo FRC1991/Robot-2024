@@ -182,7 +182,9 @@ public class RobotContainer {
   }
 
   public void configureShuffleBoard() {
+    // Diagnostics is used in case the robot is not acting like it normally should or for testing
     ShuffleboardTab diagnostics = Shuffleboard.getTab("Diagnostics");
+    // The main tab is used during a match to display relavent information
     ShuffleboardTab main = Shuffleboard.getTab("Main");
 
     // For easy configuration of the gyro at the start of every match
@@ -314,7 +316,7 @@ public class RobotContainer {
   }
 
   /**
-   *
+   * This does NOT use the subsystem manager and instead uses the command based paradigm
    * @return A new ParallelRaceGroup which shoots the preloaded note and does not move
    */
   public ParallelRaceGroup getOnePieceAuto() {

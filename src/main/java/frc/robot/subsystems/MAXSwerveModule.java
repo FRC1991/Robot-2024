@@ -49,6 +49,7 @@ public class MAXSwerveModule implements CheckableSubsystem {
 
     // Factory reset, so we get the SPARKS MAX to a known state before configuring
     // them. This is useful in case a SPARK MAX is swapped out.
+    // I should've read this comment before the season ended
     m_drivingSparkMax.restoreFactoryDefaults();
     m_turningSparkMax.restoreFactoryDefaults();
 
@@ -181,7 +182,6 @@ public class MAXSwerveModule implements CheckableSubsystem {
   }
 
   /**
-   *
    * @return Is the subsystem is okay to operate
    */
   @Override
@@ -194,7 +194,6 @@ public class MAXSwerveModule implements CheckableSubsystem {
   }
 
   /**
-   *
    * @return Has the constructor been executed
    */
   @Override

@@ -49,7 +49,6 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return Has the constructor executed successfully
    */
   @Override
@@ -58,7 +57,6 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return The main Shooter object
    */
   public static Intake getInstance() {
@@ -96,7 +94,6 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return Is the subsystem is okay to operate
    */
   @Override
@@ -180,7 +177,6 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
   }
 
   /**
-   *
    * @return The current state of the subsystem
    */
   public IntakeStates getState() {
