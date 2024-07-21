@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
@@ -16,16 +15,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.TeleopConstants;
 import frc.robot.commands.auto.Defense;
 import frc.robot.commands.auto.Interference;
 import frc.robot.commands.auto.PIDDefense;
-import frc.robot.commands.drivetrain.PID.TurnToSource;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.pivot.PIDPivotToSetpoint;
-import frc.robot.commands.pivot.PIDVisionPivot;
-import frc.robot.commands.pivot.RunPivot;
 import frc.robot.commands.shooter.RunShooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Manager.ManagerStates;
@@ -44,7 +39,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -110,17 +104,14 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   private final SendableChooser<InstantCommand> angleChooser = new SendableChooser<InstantCommand>();
 
-  private final Manager m_Manager = Manager(new DoubleSupplier() {
-    public double getAsDouble() {return tx.get();};
-  }, new DoubleSupplier() {
-    public double getAsDouble() {return ty.get();};
-  });
+  private final Manager m_Manager = new Manager(tx::get, ty::get);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
+    // Configures the limelights for the match
+    configureLimelights();
 
     // Configures network table listeners
     configureNetworkTables();
@@ -131,8 +122,7 @@ public class RobotContainer {
     // Configures the button bindings
     configureButtonBindings();
 
-    // Configures the limelights for the match
-    configureLimelights();
+
   }
 
   /**
@@ -175,6 +165,9 @@ public class RobotContainer {
   }
 
   public void configureShuffleBoard() {
+    ShuffleboardTab diagnostics = Shuffleboard.getTab("Diagnostics");
+    ShuffleboardTab main = Shuffleboard.getTab("Main");
+
     // For easy configuration of the gyro at the start of every match
     angleChooser.addOption("0", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(0), Swerve.getInstance()));
     angleChooser.addOption("180", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(180), Swerve.getInstance()));
@@ -182,7 +175,57 @@ public class RobotContainer {
     angleChooser.addOption("240", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(240), Swerve.getInstance()));
     angleChooser.addOption("330", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(330), Swerve.getInstance()));
     angleChooser.addOption("30", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(30), Swerve.getInstance()));
+    main.add("auto chooser", autoChooser);
 
+    // Adds the SendableChooser with all of the autos on it
+    configureAutos();
+
+    // The proximity sensor on the intake
+    main.addBoolean("proximity sensor", proximitySensor::get);
+
+    // Is the pivot ready to shoot
+    main.addBoolean("Pivot at setpoint", Pivot.getInstance()::atSetpoint);
+
+    // Robot heading
+    diagnostics.addDouble("Heading", Swerve.getInstance()::getHeading);
+
+    // Pivot angle
+    diagnostics.addDouble("Pivot angle", Pivot.getInstance()::getEncoderPosition);
+
+    // Limelight values
+    diagnostics.addDouble("shooter tx", tx::get);
+    diagnostics.addDouble("shooter ty", ty::get);
+    diagnostics.addDouble("shooter tid", tid::get);
+    diagnostics.addDouble("shooter tv (has target)", tv::get);
+    diagnostics.addDouble("intake ta", intaketa::get);
+    diagnostics.addDouble("intake tid", intaketid::get);
+    diagnostics.addDouble("intake tx", intaketx::get);
+    diagnostics.addDouble("intake tv (has target)", intaketv::get);
+
+
+    // Initialization status
+    diagnostics.addBoolean("Manager initialized", m_Manager::getInitialized);
+    diagnostics.addBoolean("Intake initialized", Intake.getInstance()::getInitialized);
+    diagnostics.addBoolean("Pivot initialized", Pivot.getInstance()::getInitialized);
+    diagnostics.addBoolean("Shooter initialized", Shooter.getInstance()::getInitialized);
+    diagnostics.addBoolean("Swerve initialized", Swerve.getInstance()::getInitialized);
+
+    // Subsystem operating status
+    diagnostics.addBoolean("Manager operable", m_Manager::checkSubsystem);
+    diagnostics.addBoolean("Intake operable", Intake.getInstance()::checkSubsystem);
+    diagnostics.addBoolean("Pivot operable", Pivot.getInstance()::checkSubsystem);
+    diagnostics.addBoolean("Shooter operable", Shooter.getInstance()::checkSubsystem);
+    diagnostics.addBoolean("Swerve operable", Swerve.getInstance()::checkSubsystem);
+
+    // Current state of each subsystem
+    diagnostics.addString("Robot state", () -> m_Manager.getState().toString());
+    diagnostics.addString("Intake state", () -> Intake.getInstance().getState().toString());
+    diagnostics.addString("Pivot state", () -> Pivot.getInstance().getState().toString());
+    diagnostics.addString("Shooter state", () -> Shooter.getInstance().getState().toString());
+    diagnostics.addString("Swerve state", () -> Swerve.getInstance().getState().toString());
+  }
+
+  private void configureAutos() {
     // To use in the Path Planner GUI
     NamedCommands.registerCommand("Run Shooter", new RunShooter(() -> 1.0, Shooter.getInstance()));
     NamedCommands.registerCommand("Pivot to Setpoint", new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()));
@@ -195,7 +238,9 @@ public class RobotContainer {
     // NamedCommands.registerCommand("gyro to 180", new RunCommand(() -> Swerve.getInstance().m_gyro.setYaw(180), Swerve.getInstance()));
     // NamedCommands.registerCommand("gyro to 120", new RunCommand(() -> Swerve.getInstance().m_gyro.setYaw(120), Swerve.getInstance()));
 
+    // Will immediantly crash code even though this is how the documenation recommends to do it
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+
     // All from PathPlanner and don't work
     autoChooser.addOption("Blue Midside One note + movement", new PathPlannerAuto("mid One Note Blue"));
     autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
@@ -239,39 +284,7 @@ public class RobotContainer {
         new Interference(false, Swerve.getInstance()).withTimeout(1.9)
     ));
 
-    // Booleans
-    // Shuffleboard.getTab("Main").addBoolean("intaking?", () -> OperatingInterface.auxBButton.getAsBoolean());
-    Shuffleboard.getTab("Main").addBoolean("proximity sensor", proximitySensor::get);
-    // Shuffleboard.getTab("Main").addBoolean("lower limit switch", lowerPivotLimit::get);
-    // Shuffleboard.getTab("Main").addBoolean("upper limit switch", upperPivotLimit::get);
-
-    // // Doubles
-    Shuffleboard.getTab("Main").addDouble("Heading", Swerve.getInstance()::getHeading);
-
-    Shuffleboard.getTab("Main").addDouble("pivot encoder", Pivot.getInstance()::getEncoderPosition);
-    // Shuffleboard.getTab("Network Table Values").addDouble("shooter ta", ta::get);
-    // Shuffleboard.getTab("Network Table Values").addDouble("shooter tid", tid::get);
-    // Shuffleboard.getTab("Network Table Values").addDouble("shooter thor", thor::get);
-    // Shuffleboard.getTab("Network Table Values").addDouble("shooter tvert", tvert::get);
-    // Shuffleboard.getTab("Network Table Values").addDouble("intake ta", intaketa::get);
-    // Shuffleboard.getTab("Network Table Values").addDouble("intake tid", intaketid::get);
-    // Shuffleboard.getTab("Network Table Values").addDouble("intake tx", intaketx::get);
-    Shuffleboard.getTab("Main").add("auto chooser", autoChooser);
     Shuffleboard.getTab("Main").add("angle chooser", angleChooser);
-
-    ShuffleboardTab diagnostics = Shuffleboard.getTab("diagnostics");
-
-    diagnostics.addBoolean("Manager initialized", m_Manager::getInitialized);
-    diagnostics.addBoolean("Intake initialized", Intake.getInstance()::getInitialized);
-    diagnostics.addBoolean("Pivot initialized", Pivot.getInstance()::getInitialized);
-    diagnostics.addBoolean("Shooter initialized", Shooter.getInstance()::getInitialized);
-    diagnostics.addBoolean("Swerve initialized", Swerve.getInstance()::getInitialized);
-
-    diagnostics.addBoolean("Manager operable", m_Manager::checkSubsystem);
-    diagnostics.addBoolean("Intake operable", Intake.getInstance()::checkSubsystem);
-    diagnostics.addBoolean("Pivot operable", Pivot.getInstance()::checkSubsystem);
-    diagnostics.addBoolean("Shooter operable", Shooter.getInstance()::checkSubsystem);
-    diagnostics.addBoolean("Swerve operable", Swerve.getInstance()::checkSubsystem);
   }
 
   /**
@@ -313,9 +326,11 @@ public class RobotContainer {
             new RunShooter(() -> 1.0, Shooter.getInstance()),
             new PIDPivotToSetpoint(() -> 0.1, () -> AutoConstants.kSpeakerMidPosition, Pivot.getInstance()),
             new RunIntake(() -> 0.8, Intake.getInstance()))).withTimeout(7);
-
   }
 
+  /**
+   * Runs the selected Instant command that sets the gyro angle.
+   */
   public void configureGyro() {
     angleChooser.getSelected().schedule();
   }
@@ -324,19 +339,25 @@ public class RobotContainer {
    * Make sure to tune your pipelines at every event. This is to ensure you get accurate readings
    * under varying lighting conditions.
    *
-   * Automatically configures the intake limelight to pipeline zero.
+   * Configures the intake limelight to pipeline zero if
+   * on the blue alliance and pipeline one if on the red alliance.
    *
-   * Automatically configures the shooter limelight to pipeline zero if
+   * Configures the shooter limelight to pipeline zero if
    * on the blue alliance and pipeline one if on the red alliance.
    */
   public void configureLimelights() {
+    // TODO make each pipeline only look for one specific Apriltag
     if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
       LimelightHelpers.setPipelineIndex("limelight-shooter", 0);
     } else {
       LimelightHelpers.setPipelineIndex("limelight-shooter", 1);
     }
 
-    LimelightHelpers.setPipelineIndex("limelight-intake", 0);
+    if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+      LimelightHelpers.setPipelineIndex("limelight-intake", 0);
+    } else {
+      LimelightHelpers.setPipelineIndex("limelight-intake", 1);
+    }
   }
 
   /**
