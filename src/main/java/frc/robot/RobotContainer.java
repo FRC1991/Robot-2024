@@ -102,7 +102,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   private final SendableChooser<InstantCommand> angleChooser = new SendableChooser<InstantCommand>();
 
-  private final Manager m_Manager = new Manager(tx::get, ty::get);
+  public final Manager m_Manager = new Manager(tx::get, ty::get);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
