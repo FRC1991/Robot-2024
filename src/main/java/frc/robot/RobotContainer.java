@@ -160,8 +160,9 @@ public class RobotContainer {
               m_Manager.setDesiredState(ManagerStates.SOURCE);
             } else {
               m_Manager.setDesiredState(ManagerStates.INTAKING);
-            }
-        }, m_Manager));
+            }},
+            m_Manager))
+        .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Shooting
     new JoystickButton(OperatingInterface.driverJoytick, 7)
@@ -170,12 +171,14 @@ public class RobotContainer {
               m_Manager.setDesiredState(ManagerStates.AIMMING);
             } else {
               m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMMING);
-            }
-        }, m_Manager));
+            }},
+            m_Manager))
+        .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Outaking
     new JoystickButton(OperatingInterface.driverJoytick, 6)
-        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager));
+        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager))
+        .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
   }
 
   public void configureShuffleBoard() {
