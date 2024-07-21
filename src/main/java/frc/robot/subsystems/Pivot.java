@@ -121,7 +121,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   /**
    *
-   * @return The average encoder value between both motors internal relative encoders
+   * @return The average encoder value between both motors internal relative encoders in degrees
    */
   public double getEncoderPosition() {
     // Pivot motor 2 is subtracted because it is run in reverse
