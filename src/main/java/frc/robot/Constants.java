@@ -170,21 +170,10 @@ public final class Constants {
   public static final class ShooterConstants {
     public static final int kShooterMotor1Id = 13;
     public static final int kShooterMotor2Id = 14;
-
-    public static final double kVisionCoefficient = 1;
   }
 
   public static final class PivotConstants {
     public static final int kPivotMotor1Id = 17;
     public static final int kPivotMotor2Id = 18;
-
-    public static final double kVisionA = 1;
-    public static final double kVisionB = 1;
-    public static final double kVisionC = 0;
-    public static final double kVisionD = 1;
-
-    //TODO find actual limits
-    public static final float kForwardLimit = 2;
-    public static final float kBackLimit = (float) -14.2;
   }
 }
