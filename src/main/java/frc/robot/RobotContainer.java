@@ -138,7 +138,8 @@ public class RobotContainer {
 
     // Stops movement
     new JoystickButton(OperatingInterface.driverJoytick, 1)
-        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DEFENSE), m_Manager));
+        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DEFENSE), m_Manager))
+        .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Zeros out the gyro (bottom thumb button)
     new JoystickButton(OperatingInterface.driverJoytick, 2)
@@ -146,22 +147,35 @@ public class RobotContainer {
             () -> Swerve.getInstance().zeroHeading(),
             Swerve.getInstance()));
 
+    // Zeroing Pivot encoders
     new JoystickButton(OperatingInterface.driverJoytick, 5)
         .onTrue(new InstantCommand(
             () -> Pivot.getInstance().zeroMotorEncoders(),
             Pivot.getInstance()));
 
+    // Note pick up
     new JoystickButton(OperatingInterface.driverJoytick, 8)
-        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SOURCE), m_Manager));
+        .onTrue(new InstantCommand(() -> {
+            if(intaketv.get() == 1) {
+              m_Manager.setDesiredState(ManagerStates.SOURCE);
+            } else {
+              m_Manager.setDesiredState(ManagerStates.INTAKING);
+            }
+        }, m_Manager));
 
     // Shooting
-    OperatingInterface.auxRightBumper.onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.AIMMING), m_Manager));
-    OperatingInterface.auxBButton.whileTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager));
-    OperatingInterface.auxXButton.whileTrue(new RunShooter(() -> 1.0, Shooter.getInstance()));
-    proximityTrigger.onTrue(new InstantCommand(OperatingInterface::rumbleAuxController));
-    OperatingInterface.auxAButton.whileTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING), m_Manager));
+    new JoystickButton(OperatingInterface.driverJoytick, 7)
+        .onTrue(new InstantCommand(() -> {
+            if(tv.get() == 1) {
+              m_Manager.setDesiredState(ManagerStates.AIMMING);
+            } else {
+              m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMMING);
+            }
+        }, m_Manager));
 
-    OperatingInterface.auxLeftBumper.whileTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+    // Outaking
+    new JoystickButton(OperatingInterface.driverJoytick, 6)
+        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager));
   }
 
   public void configureShuffleBoard() {
