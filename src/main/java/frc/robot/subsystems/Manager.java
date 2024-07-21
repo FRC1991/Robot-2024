@@ -25,6 +25,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     Pivot.getInstance().setAngleSupplier(() -> pivotPosition.get(ty.getAsDouble()));
     Swerve.getInstance().setAngleSupplier(tx);
 
+    // All subsystems should initialize when calling getInstance()
     initialized = Intake.getInstance().getInitialized();
     initialized &= Pivot.getInstance().getInitialized();
     initialized &= Shooter.getInstance().getInitialized();
