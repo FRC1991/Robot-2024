@@ -155,7 +155,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
         setSpeed(-0.6);
         break;
       case FEEDING:
-        setSpeed(0.8);
+        setSpeed(1);
         break;
       case LOADED:
         setSpeed(0);

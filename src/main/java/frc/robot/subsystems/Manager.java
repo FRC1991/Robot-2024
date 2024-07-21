@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Swerve.SwerveStates;
+import frc.utils.Utils;
 import frc.robot.subsystems.Intake.IntakeStates;
 import frc.robot.subsystems.Pivot.PivotStates;
 import frc.robot.subsystems.Shooter.ShooterStates;
@@ -13,11 +14,15 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
   private boolean status = false;
   private boolean initialized = false;
 
+  private DoubleSupplier ty;
+
   private InterpolatingDoubleTreeMap pivotPosition;
 
   private ManagerStates desiredState, currentState = ManagerStates.IDLE;
 
   public Manager(DoubleSupplier tx, DoubleSupplier ty) {
+    this.ty = ty;
+
     // TODO fill with experimental values and add more data points
     pivotPosition.put(0.0,0.0);
     pivotPosition.put(-1.0,-1.0);
@@ -86,6 +91,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
       case AIMMING:
         if(Pivot.getInstance().atSetpoint()
             && Swerve.getInstance().facingTarget()
+            && Utils.getDistanceToTag(ty.getAsDouble()) <= 120
             && Shooter.getInstance().getState() == ShooterStates.SHOOTING) {
           setDesiredState(ManagerStates.SHOOTING);
         }
