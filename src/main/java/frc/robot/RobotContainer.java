@@ -99,7 +99,6 @@ public class RobotContainer {
 
   // The proximity sensor detecting the presence of a note in the Intake
   private final DigitalInput proximitySensor = new DigitalInput(0);
-  private final Trigger proximityTrigger = new Trigger(proximitySensor::get);
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   private final SendableChooser<InstantCommand> angleChooser = new SendableChooser<InstantCommand>();
@@ -193,7 +192,7 @@ public class RobotContainer {
     angleChooser.addOption("240", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(240), Swerve.getInstance()));
     angleChooser.addOption("330", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(330), Swerve.getInstance()));
     angleChooser.addOption("30", new InstantCommand(() -> Swerve.getInstance().m_gyro.setYaw(30), Swerve.getInstance()));
-    main.add("auto chooser", autoChooser);
+    main.add("angle chooser", angleChooser);
 
     // Adds the SendableChooser with all of the autos on it
     configureAutos();
@@ -287,8 +286,7 @@ public class RobotContainer {
 
     // Hard coded autos
     autoChooser.addOption("Nothing", new InstantCommand());
-    autoChooser.addOption("One note mid", getOnePieceAuto());
-    autoChooser.addOption("One note side", getOnePieceAuto());
+    autoChooser.addOption("One note", getOnePieceAuto());
     autoChooser.addOption("manual blue interference auto", new SequentialCommandGroup(
         new RunCommand(
             () -> Swerve.getInstance().drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
@@ -302,7 +300,7 @@ public class RobotContainer {
         new Interference(false, Swerve.getInstance()).withTimeout(1.9)
     ));
 
-    Shuffleboard.getTab("Main").add("angle chooser", angleChooser);
+    Shuffleboard.getTab("Main").add("auto chooser", autoChooser);
   }
 
   /**
