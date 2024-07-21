@@ -121,8 +121,6 @@ public class RobotContainer {
 
     // Configures the button bindings
     configureButtonBindings();
-
-
   }
 
   /**
@@ -135,6 +133,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+    m_Manager.setDefaultCommand(new RunCommand(m_Manager::update, m_Manager));
 
     // Stops movement
     new JoystickButton(OperatingInterface.driverJoytick, 1)
