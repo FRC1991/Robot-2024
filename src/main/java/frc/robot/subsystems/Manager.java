@@ -88,7 +88,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         break;
       case DRIVE:
         break;
-      case AIMMING:
+      case AIMING:
         if(Pivot.getInstance().atSetpoint()
             && Swerve.getInstance().facingTarget()
             && Utils.getDistanceToTag(ty.getAsDouble()) <= 120
@@ -100,7 +100,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         break;
       case DEFENSE:
         break;
-      case SUBWOOFER_AIMMING:
+      case SUBWOOFER_AIMING:
         if(Pivot.getInstance().atSetpoint() && Shooter.getInstance().getState() == ShooterStates.SHOOTING) {
           setDesiredState(ManagerStates.SUBWOOFER_SHOOTING);
         }
@@ -146,17 +146,17 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         Shooter.getInstance().setDesiredState(ShooterStates.IDLE);
         Swerve.getInstance().setDesiredState(SwerveStates.DRIVE);
         break;
-      case AIMMING:
+      case AIMING:
         Intake.getInstance().setDesiredState(IntakeStates.IDLE);
-        Pivot.getInstance().setDesiredState(PivotStates.AIMMING);
+        Pivot.getInstance().setDesiredState(PivotStates.AIMING);
         Shooter.getInstance().setDesiredState(ShooterStates.SPINNING_UP);
-        Swerve.getInstance().setDesiredState(SwerveStates.AIMMING);
+        Swerve.getInstance().setDesiredState(SwerveStates.AIMING);
         break;
       case SHOOTING:
         Intake.getInstance().setDesiredState(IntakeStates.FEEDING);
-        Pivot.getInstance().setDesiredState(PivotStates.AIMMING);
+        Pivot.getInstance().setDesiredState(PivotStates.AIMING);
         Shooter.getInstance().setDesiredState(ShooterStates.SHOOTING);
-        Swerve.getInstance().setDesiredState(SwerveStates.AIMMING);
+        Swerve.getInstance().setDesiredState(SwerveStates.AIMING);
         break;
       case DEFENSE:
         Intake.getInstance().setDesiredState(IntakeStates.IDLE);
@@ -164,7 +164,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
         Shooter.getInstance().setDesiredState(ShooterStates.IDLE);
         Swerve.getInstance().setDesiredState(SwerveStates.LOCKED);
         break;
-      case SUBWOOFER_AIMMING:
+      case SUBWOOFER_AIMING:
         Intake.getInstance().setDesiredState(IntakeStates.IDLE);
         Pivot.getInstance().setDesiredState(PivotStates.SETPOINT);
         Shooter.getInstance().setDesiredState(ShooterStates.SPINNING_UP);
@@ -235,13 +235,13 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     /** Driving around the field */
     DRIVE,
     /** Aimming at the speaker with vision */
-    AIMMING,
+    AIMING,
     /** Shooting a note with vision */
     SHOOTING,
     /** Locking the wheels in an X formation */
     DEFENSE,
-    /** Aimming up against the Subwoofer. Also doubles as our feeding aimming over the stage */
-    SUBWOOFER_AIMMING,
+    /** Aimming up against the Subwoofer. Also doubles as our feeding aiming over the stage */
+    SUBWOOFER_AIMING,
     /** Shooting at the Subwoofer. Also doubles as our feeding shot over the stage */
     SUBWOOFER_SHOOTING,
     /** Pushing a note out under our bumpers */

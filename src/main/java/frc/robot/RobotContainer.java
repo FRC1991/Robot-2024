@@ -165,9 +165,9 @@ public class RobotContainer {
     new JoystickButton(OperatingInterface.driverJoytick, 7)
         .onTrue(new InstantCommand(() -> {
             if(tv.get() == 1) {
-              m_Manager.setDesiredState(ManagerStates.AIMMING);
+              m_Manager.setDesiredState(ManagerStates.AIMING);
             } else {
-              m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMMING);
+              m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMING);
             }},
             m_Manager))
         .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
@@ -247,10 +247,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("INTAKING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING), m_Manager));
     NamedCommands.registerCommand("SOURCE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SOURCE), m_Manager));
     NamedCommands.registerCommand("DRIVE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
-    NamedCommands.registerCommand("AIMMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.AIMMING), m_Manager));
+    NamedCommands.registerCommand("AIMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.AIMING), m_Manager));
     NamedCommands.registerCommand("SHOOTING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SHOOTING), m_Manager));
     NamedCommands.registerCommand("DEFENSE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DEFENSE), m_Manager));
-    NamedCommands.registerCommand("SUBWOOFER_AIMMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMMING), m_Manager));
+    NamedCommands.registerCommand("SUBWOOFER_AIMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMING), m_Manager));
     NamedCommands.registerCommand("SUBWOOFER_SHOOTING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_SHOOTING), m_Manager));
     NamedCommands.registerCommand("OUTTAKING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager));
 

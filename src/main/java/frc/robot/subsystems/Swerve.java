@@ -91,7 +91,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
 
   private double sourceAngle = -1;
 
-  private DoubleSupplier aimmingAngle;
+  private DoubleSupplier aimingAngle;
 
   // Constructor is private to prevent multiple instances from being made
   private Swerve() {
@@ -168,7 +168,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
    * @param getter A method to get the offset from the target in degrees
   */
   public void setAngleSupplier(DoubleSupplier getter) {
-    aimmingAngle = getter;
+    aimingAngle = getter;
   }
 
   /**
@@ -448,7 +448,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
    */
   @Override
   public boolean getInitialized() {
-    return initialized && aimmingAngle != null;
+    return initialized && aimingAngle != null;
   }
 
   /**
@@ -475,11 +475,11 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
             angleController.calculate(getHeading()),
             true, false, TeleopConstants.kSwerveSpeed * 0.6);
         break;
-      case AIMMING:
+      case AIMING:
         drive(
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
-            angleController.calculate(aimmingAngle.getAsDouble()),
+            angleController.calculate(aimingAngle.getAsDouble()),
             true, false, TeleopConstants.kSwerveSpeed);
         break;
       case LOCKED:
@@ -511,7 +511,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
       case PICKUP:
         angleController.setSetpoint(sourceAngle);
         break;
-      case AIMMING:
+      case AIMING:
         angleController.setSetpoint(0);
         break;
       case LOCKED:
@@ -552,10 +552,10 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
      * to face perpendicular to the Source. This takes away yaw control.
     */
     PICKUP,
-    /** Uses the angle PID controller minimize the offset provided by aimmingAngle.
+    /** Uses the angle PID controller minimize the offset provided by aimingAngle.
      * This takes away yaw control
      */
-    AIMMING,
+    AIMING,
     /** Removes all control and locks the wheels in an X formation */
     LOCKED;
   }

@@ -24,7 +24,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   private boolean initialized = false;
   private CANSparkMax pivotMotor1, pivotMotor2;
   private PIDController ctrl;
-  private DoubleSupplier aimmingAngle;
+  private DoubleSupplier aimingAngle;
   private static Pivot m_Instance;
   private PivotStates desiredState, currentState = PivotStates.IDLE;
 
@@ -68,7 +68,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
    */
   @Override
   public boolean getInitialized() {
-    return initialized && aimmingAngle != null;
+    return initialized && aimingAngle != null;
   }
 
   /**
@@ -112,7 +112,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
    * @param getter A method to get the desired vertical angle for shooting
    */
   public void setAngleSupplier(DoubleSupplier getter) {
-    aimmingAngle = getter;
+    aimingAngle = getter;
   }
 
   /**
@@ -162,8 +162,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
         break;
       case BROKEN:
         break;
-      case AIMMING:
-        updateSpeed(aimmingAngle.getAsDouble());
+      case AIMING:
+        updateSpeed(aimingAngle.getAsDouble());
         break;
       case STORED:
         updateSpeed(0);
@@ -193,7 +193,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
       case BROKEN:
         stop();
         break;
-      case AIMMING:
+      case AIMING:
         break;
       case STORED:
         break;
@@ -233,9 +233,9 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
   public enum PivotStates {
     IDLE,
     BROKEN,
-    /** Aims with the aimmingAngle Supplier */
-    AIMMING,
-    /** Uses the aimming method with 0 degree angle */
+    /** Aims with the aimingAngle Supplier */
+    AIMING,
+    /** Uses the aiming method with 0 degree angle */
     STORED,
     /** Aims to the subwoofer angle which is also used to shoot over the stage */
     SETPOINT;
