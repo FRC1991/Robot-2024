@@ -312,23 +312,6 @@ public class RobotContainer {
 
   /**
    *
-   * @param ty
-   * @return
-   */
-  public double shootingAngle(double ty) {
-    double angle;
-
-    // Distance from the Limelight to the Apriltag
-    angle = (Math.atan(ty) * (57.13 - Constants.kLimelightHeight)) - 9.055;
-
-    // Angle to the center of the opening of the speaker
-    angle = Math.atan((Constants.kLimelightHeight - 80.515) / angle);
-
-    return angle;
-  }
-
-  /**
-   *
    * @return A new ParallelRaceGroup which shoots the preloaded note and does not move
    */
   public ParallelRaceGroup getOnePieceAuto() {

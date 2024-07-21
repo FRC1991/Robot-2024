@@ -26,7 +26,11 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   // Must be in inches - Assuming 3 feet until actually mounted
   // TODO find actual height
-  public static final double kLimelightHeight = 36;
+  public static final double kLimelightHeight = 24;
+  // TODO find actual horizontal distance
+  public static final double kPivotDistanceFromLL = 12;
+  // TODO find actual height
+  public static final double kPivotHeight = 36;
 
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of

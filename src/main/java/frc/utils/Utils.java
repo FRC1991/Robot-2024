@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 
+import frc.robot.Constants;
+
 public class Utils {
     /**
      * All speeds that a motor is set to should be between -1 and 1.
@@ -57,5 +59,25 @@ public class Utils {
     }
 
     return true;
+  }
+
+  /**
+   *
+   * @param ty Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
+   * @return The distance from the Limelight to the Apriltag
+   */
+  public double getDistanceToTag(double ty) {
+    // 57.13 is the height of the Apriltag
+    return (57.13 - Constants.kLimelightHeight) / Math.tan(ty);
+  }
+
+  /**
+   *
+   * @param ty Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
+   * @return The angle the pivot should be at to hit the optimal target
+   */
+  public double getPivotAngle(double ty) {
+    // 80.515 is the optimal target height. 9.055 is the horizontal distance from the Apriltag to the optimal target
+    return Math.atan((80.515 - Constants.kPivotHeight) / (getDistanceToTag(ty) + Constants.kPivotDistanceFromLL - 9.055));
   }
 }
