@@ -3,6 +3,7 @@ package frc.utils;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
+import com.revrobotics.CANSparkBase.FaultID;
 
 import frc.robot.Constants;
 
@@ -57,6 +58,28 @@ public class Utils {
     // Just in case
     // It should never enter the body of this if statement
     if(motor.getMotorType() != MotorType.fromId(CANId)) {
+      return false;
+    }
+
+    // Checks the output is within %5 of the desired output
+    // TODO check if %5 is realistic
+    if(motor.get() != 0) {
+      if(Math.abs(motor.get() - motor.getAppliedOutput()) > 0.05) {
+        return false;
+      }
+    }
+
+    // Checks if the controller is recieving less than .1 volts
+    // TODO check if .1v is realistic
+    if(motor.getBusVoltage() <= 0.1) {
+      return false;
+    }
+
+    // Checking faults
+    if(motor.getFault(FaultID.kBrownout)
+        || motor.getFault(FaultID.kMotorFault)
+        || motor.getFault(FaultID.kOvercurrent)
+        || motor.getFault(FaultID.kSensorFault)) {
       return false;
     }
 
