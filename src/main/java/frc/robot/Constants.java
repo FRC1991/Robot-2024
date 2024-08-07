@@ -154,8 +154,8 @@ public final class Constants {
   }
 
   public static final class TeleopConstants {
-    public static final double kShooterSpeed = 1;
-    public static final double kSwerveSpeed = 1.0;
+    public static final double kShooterSpeed = .4;
+    public static final double kSwerveSpeed = .1;
   }
 
   public static final class NeoMotorConstants {

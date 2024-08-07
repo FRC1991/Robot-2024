@@ -109,7 +109,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configures the limelights for the match
-    configureLimelights();
+    // configureLimelights();
 
     // Configures network table listeners
     configureNetworkTables();
@@ -162,9 +162,9 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Shooting
-    new JoystickButton(OperatingInterface.driverJoytick, 7)
+    new JoystickButton(OperatingInterface.driverJoytick, 9)
         .onTrue(new InstantCommand(() -> {
-            if(tv.get() == 1) {
+            if(!(tv.get() == null) && tv.get() == 1) {
               m_Manager.setDesiredState(ManagerStates.AIMING);
             } else {
               m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMING);
@@ -199,41 +199,41 @@ public class RobotContainer {
     // The proximity sensor on the intake
     main.addBoolean("proximity sensor", proximitySensor::get);
 
-    // Is the pivot ready to shoot
+    // // Is the pivot ready to shoot
     main.addBoolean("Pivot at setpoint", Pivot.getInstance()::atSetpoint);
 
-    // Robot heading
+    // // Robot heading
     diagnostics.addDouble("Heading", Swerve.getInstance()::getHeading);
 
-    // Pivot angle
+    // // Pivot angle
     diagnostics.addDouble("Pivot angle", Pivot.getInstance()::getEncoderPosition);
 
-    // Limelight values
-    diagnostics.addDouble("shooter tx", tx::get);
-    diagnostics.addDouble("shooter ty", ty::get);
-    diagnostics.addDouble("shooter tid", tid::get);
-    diagnostics.addDouble("shooter tv (has target)", tv::get);
-    diagnostics.addDouble("intake ta", intaketa::get);
-    diagnostics.addDouble("intake tid", intaketid::get);
-    diagnostics.addDouble("intake tx", intaketx::get);
-    diagnostics.addDouble("intake tv (has target)", intaketv::get);
+    // // Limelight values
+    // diagnostics.addDouble("shooter tx", tx::get);
+    // diagnostics.addDouble("shooter ty", ty::get);
+    // diagnostics.addDouble("shooter tid", tid::get);
+    // diagnostics.addDouble("shooter tv (has target)", tv::get);
+    // diagnostics.addDouble("intake ta", intaketa::get);
+    // diagnostics.addDouble("intake tid", intaketid::get);
+    // diagnostics.addDouble("intake tx", intaketx::get);
+    // diagnostics.addDouble("intake tv (has target)", intaketv::get);
 
 
-    // Initialization status
+    // // Initialization status
     diagnostics.addBoolean("Manager initialized", m_Manager::getInitialized);
     diagnostics.addBoolean("Intake initialized", Intake.getInstance()::getInitialized);
     diagnostics.addBoolean("Pivot initialized", Pivot.getInstance()::getInitialized);
     diagnostics.addBoolean("Shooter initialized", Shooter.getInstance()::getInitialized);
     diagnostics.addBoolean("Swerve initialized", Swerve.getInstance()::getInitialized);
 
-    // Subsystem operating status
+    // // Subsystem operating status
     diagnostics.addBoolean("Manager operable", m_Manager::checkSubsystem);
     diagnostics.addBoolean("Intake operable", Intake.getInstance()::checkSubsystem);
     diagnostics.addBoolean("Pivot operable", Pivot.getInstance()::checkSubsystem);
     diagnostics.addBoolean("Shooter operable", Shooter.getInstance()::checkSubsystem);
     diagnostics.addBoolean("Swerve operable", Swerve.getInstance()::checkSubsystem);
 
-    // Current state of each subsystem
+    // // Current state of each subsystem
     diagnostics.addString("Robot state", () -> m_Manager.getState().toString());
     diagnostics.addString("Intake state", () -> Intake.getInstance().getState().toString());
     diagnostics.addString("Pivot state", () -> Pivot.getInstance().getState().toString());
@@ -258,16 +258,16 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
 
     // All from PathPlanner and don't work
-    autoChooser.addOption("Blue Midside One note + movement", new PathPlannerAuto("mid One Note Blue"));
-    autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
-    autoChooser.addOption("Blue Ampside One note + movement", new PathPlannerAuto("amp One Note Blue"));
-    autoChooser.addOption("Red Openside One note + movement", new PathPlannerAuto("open One Note Red"));
-    autoChooser.addOption("Red Midside One note + movement", new PathPlannerAuto("mid One Note Red"));
-    autoChooser.addOption("Red Ampside One note + movement", new PathPlannerAuto("amp One Note Red"));
-    autoChooser.addOption("Interference Blue", new PathPlannerAuto("InterferenceAutoBlue"));
-    autoChooser.addOption("Interference Red", new PathPlannerAuto("InterferenceAutoRed"));
-    autoChooser.addOption("Two Note Blue", new PathPlannerAuto("Two Note Blue"));
-    autoChooser.addOption("Two Note Red", new PathPlannerAuto("Two Note Red"));
+    // autoChooser.addOption("Blue Midside One note + movement", new PathPlannerAuto("mid One Note Blue"));
+    // autoChooser.addOption("Blue Openside One note + movement", new PathPlannerAuto("open One Note Blue"));
+    // autoChooser.addOption("Blue Ampside One note + movement", new PathPlannerAuto("amp One Note Blue"));
+    // autoChooser.addOption("Red Openside One note + movement", new PathPlannerAuto("open One Note Red"));
+    // autoChooser.addOption("Red Midside One note + movement", new PathPlannerAuto("mid One Note Red"));
+    // autoChooser.addOption("Red Ampside One note + movement", new PathPlannerAuto("amp One Note Red"));
+    // autoChooser.addOption("Interference Blue", new PathPlannerAuto("InterferenceAutoBlue"));
+    // autoChooser.addOption("Interference Red", new PathPlannerAuto("InterferenceAutoRed"));
+    // autoChooser.addOption("Two Note Blue", new PathPlannerAuto("Two Note Blue"));
+    // autoChooser.addOption("Two Note Red", new PathPlannerAuto("Two Note Red"));
 
     // Untested
     autoChooser.addOption("BangBang Defense", new SequentialCommandGroup(

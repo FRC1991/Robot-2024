@@ -24,6 +24,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     this.ty = ty;
 
     // TODO fill with experimental values and add more data points
+    pivotPosition = new InterpolatingDoubleTreeMap();
     pivotPosition.put(0.0,0.0);
     pivotPosition.put(-1.0,-1.0);
 
@@ -59,7 +60,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
 
   /**
    *
-   * @return Is the subsystem is okay to operate
+   * @return Is the robot is okay to operate
    */
   @Override
   public boolean checkSubsystem() {
@@ -83,6 +84,7 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
 
     switch(currentState) {
       case IDLE:
+        setDesiredState(ManagerStates.DRIVE);
         break;
       case INTAKING:
         break;

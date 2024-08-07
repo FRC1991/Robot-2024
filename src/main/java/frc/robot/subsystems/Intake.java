@@ -101,6 +101,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
     status = Utils.checkMotor(intakeMotor1, IntakeConstants.kIntakeMotor1Id);
     status &= Utils.checkMotor(intakeMotor2, IntakeConstants.kIntakeMotor2Id);
     status &= getInitialized();
+    status &= currentState != IntakeStates.BROKEN;
 
     return status;
   }
@@ -170,7 +171,7 @@ public class Intake extends SubsystemBase implements CheckableSubsystem, StateSu
    * @param state Desired state
    */
   public void setDesiredState(IntakeStates state) {
-    if(this.desiredState != state && this.currentState != IntakeStates.BROKEN) {
+    if(this.desiredState != state /*&& this.currentState != IntakeStates.BROKEN*/) {
       desiredState = state;
       handleStateTransition();
     }

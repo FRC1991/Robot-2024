@@ -30,9 +30,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   // Constructor is private to prevent multiple instances from being made
   private Pivot() {
-    // TODO Retune PID now that the encoder is in degrees, not native units
-    ctrl = new PIDController(0.1, 0, 0);
-    ctrl.setTolerance(.5);
+    ctrl = new PIDController(0.01, 0, 0);
+    ctrl.setTolerance(3);
 
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
     pivotMotor2 = new CANSparkMax(PivotConstants.kPivotMotor2Id, MotorType.kBrushless);
@@ -43,16 +42,16 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     pivotMotor1.restoreFactoryDefaults();
     pivotMotor2.restoreFactoryDefaults();
 
-    // Motor is inverted because it faces the opposite direction of motor 1
-    pivotMotor2.setInverted(true);
+    // Motor is inverted because it faces the opposite direction of motor 2
+    pivotMotor1.setInverted(true);
 
     // Setting idle mode to brake so the pivot won't move during collisions
-    pivotMotor1.setIdleMode(IdleMode.kBrake);
-    pivotMotor2.setIdleMode(IdleMode.kBrake);
+    pivotMotor1.setIdleMode(IdleMode.kCoast);
+    pivotMotor2.setIdleMode(IdleMode.kCoast);
 
     // Setting Encoder to return in degrees
-    pivotMotor1.getEncoder().setPositionConversionFactor((1/81)*360);
-    pivotMotor2.getEncoder().setPositionConversionFactor((1/81)*360);
+    pivotMotor1.getEncoder().setPositionConversionFactor(4.44);
+    pivotMotor2.getEncoder().setPositionConversionFactor(4.44);
 
     // Saving the desired settings
     pivotMotor1.burnFlash();
@@ -97,7 +96,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
    * @param angle Desired angle to move the pivot to.
    */
   public void updateSpeed(double angle) {
-    setSpeed(ctrl.calculate(getEncoderPosition(), angle));
+    // The angle is turned back into motor rotations so I don't have to retune the PID controller
+    setSpeed(ctrl.calculate(getEncoderPosition()/4.44, angle/4.44));
   }
 
   /**
@@ -120,7 +120,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
    */
   public double getEncoderPosition() {
     // Pivot motor 2 is subtracted because it is run in reverse
-    return (pivotMotor1.getEncoder().getPosition() - pivotMotor2.getEncoder().getPosition()) / 2;
+    return (pivotMotor1.getEncoder().getPosition() + pivotMotor2.getEncoder().getPosition()) / 2;
   }
 
   /**
@@ -148,6 +148,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     status = Utils.checkMotor(pivotMotor1, PivotConstants.kPivotMotor1Id);
     status &= Utils.checkMotor(pivotMotor2, PivotConstants.kPivotMotor2Id);
     status &= getInitialized();
+    status &= currentState != PivotStates.BROKEN;
 
     return status;
   }
@@ -212,7 +213,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
    * @param state Desired state
    */
   public void setDesiredState(PivotStates state) {
-    if(this.desiredState != state && this.currentState != PivotStates.BROKEN) {
+    if(this.desiredState != state /*&& this.currentState != PivotStates.BROKEN*/) {
       desiredState = state;
       handleStateTransition();
     }

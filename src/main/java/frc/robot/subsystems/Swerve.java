@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.NoSuchElementException;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -129,14 +130,22 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
     );
 
     // Continuously checks for alliance until correct angle is chosen
-    do {
+    try {
       if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
         sourceAngle = 145;
       } else {
         // RED_SIDE_ANGLE = ((180 - BLUE_SIDE_ANGLE) + 180)
         sourceAngle = 215;
       }
-    } while (sourceAngle == -1);
+    } catch(NoSuchElementException e) {
+      /*
+       * I like blue alliance better, so I'm setting the angle to blue
+       * if we aren't connected to the driver station.
+       * 75% of people also like blue alliance best according to our
+       * silly goofy pit scouting at BattleCry 2024
+       */
+      sourceAngle = 145;
+    }
 
     initialized = true;
   }
@@ -439,6 +448,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
     status &= m_rearLeft.checkSubsystem();
     status &= m_rearRight.checkSubsystem();
     status &= getInitialized();
+    status &= currentState != SwerveStates.BROKEN;
 
     return status;
   }
@@ -530,7 +540,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
    * @param state Desired state
    */
   public void setDesiredState(SwerveStates state) {
-    if(this.desiredState != state && this.currentState != SwerveStates.BROKEN) {
+    if(this.desiredState != state /*&& this.currentState != SwerveStates.BROKEN*/) {
       desiredState = state;
       handleStateTransition();
     }

@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.TeleopConstants;
 import frc.utils.Utils;
 
 public class Shooter extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -106,6 +107,7 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
     status = Utils.checkMotor(shooterMotor1, ShooterConstants.kShooterMotor1Id);
     status &= Utils.checkMotor(shooterMotor2, ShooterConstants.kShooterMotor2Id);
     status &= getInitialized();
+    status &= currentState != ShooterStates.BROKEN;
 
     return status;
   }
@@ -150,11 +152,11 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
         stop();
         break;
       case SHOOTING:
-        setSpeed(1);
+        setSpeed(TeleopConstants.kShooterSpeed);
         break;
       case SPINNING_UP:
         spinUpStart = Timer.getFPGATimestamp();
-        setSpeed(1);
+        setSpeed(TeleopConstants.kShooterSpeed);
         break;
 
       default:
@@ -169,7 +171,7 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
    * @param state Desired state
    */
   public void setDesiredState(ShooterStates state) {
-    if(this.desiredState != state && this.currentState != ShooterStates.BROKEN) {
+    if(this.desiredState != state /*&& this.currentState != ShooterStates.BROKEN*/) {
       desiredState = state;
       handleStateTransition();
     }

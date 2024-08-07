@@ -1,6 +1,7 @@
 package frc.utils;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkBase.FaultID;
@@ -37,34 +38,41 @@ public class Utils {
     public static boolean checkMotor(CANSparkMax motor, int CANId) {
     // Check CAN Id
     if(motor.getDeviceId() != CANId) {
+      System.out.println("CAN Id: " + CANId + "   Error code: 1");
       return false;
     }
 
     // Check motor temp.
-    if(motor.getMotorTemperature() >= 25) {
+    if(motor.getMotorTemperature() >= 40) {
+      System.out.println("CAN Id: " + CANId + "   Error code: 2");
       return false;
     }
 
     // Check last error/fault
-    if(motor.getLastError() != REVLibError.kOk) {
-      return false;
-    }
+    // if(motor.getLastError() != REVLibError.kOk) {
+    //   System.out.println("CAN Id: " + CANId + "   Error code: 3");
+    //   return false;
+    // }
 
     // We should only be using Brushless motors
     if(motor.getMotorType() != MotorType.kBrushless) {
+      System.out.println("CAN Id: " + CANId + "   Error code: 4");
       return false;
     }
 
     // Just in case
     // It should never enter the body of this if statement
-    if(motor.getMotorType() != MotorType.fromId(CANId)) {
-      return false;
-    }
+    // Turns out this ALWAYS returns false
+    // if(motor.getMotorType() != MotorType.fromId(CANId)) {
+        // System.out.println("CAN Id: " + CANId + "   Error code: 5");
+    //   return false;
+    // }
 
     // Checks the output is within %5 of the desired output
     // TODO check if %5 is realistic
     if(motor.get() != 0) {
-      if(Math.abs(motor.get() - motor.getAppliedOutput()) > 0.05) {
+      if(motor.getOutputCurrent() >= 105) {
+        System.out.println("CAN Id: " + CANId + "   Error code: 6  " + motor.getOutputCurrent());
         return false;
       }
     }
@@ -72,6 +80,7 @@ public class Utils {
     // Checks if the controller is recieving less than .1 volts
     // TODO check if .1v is realistic
     if(motor.getBusVoltage() <= 0.1) {
+      System.out.println("CAN Id: " + CANId + "   Error code: 7");
       return false;
     }
 
@@ -80,7 +89,16 @@ public class Utils {
         || motor.getFault(FaultID.kMotorFault)
         || motor.getFault(FaultID.kOvercurrent)
         || motor.getFault(FaultID.kSensorFault)) {
+      System.out.println("CAN Id: " + CANId + "   Error code: 8");
       return false;
+    }
+
+    if(CANId == 11) {
+      System.out.println("11: " + motor.getAppliedOutput());
+    }
+
+    if(CANId == 18) {
+      System.out.println("18: " + motor.getAppliedOutput());
     }
 
     return true;
