@@ -137,6 +137,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
         // RED_SIDE_ANGLE = ((180 - BLUE_SIDE_ANGLE) + 180)
         sourceAngle = 215;
       }
+      initialized = true;
     } catch(NoSuchElementException e) {
       /*
        * I like blue alliance better, so I'm setting the angle to blue
@@ -146,8 +147,6 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
        */
       sourceAngle = 145;
     }
-
-    initialized = true;
   }
 
   /**
@@ -472,25 +471,31 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
       case BROKEN:
         break;
       case DRIVE:
-        drive(
+        if(DriverStation.isTeleopEnabled()) {
+          drive(
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
             -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(2), OIConstants.kDriveDeadband),
             true, false, TeleopConstants.kSwerveSpeed);
+        }
         break;
       case PICKUP:
-        drive(
-            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
-            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
-            angleController.calculate(getHeading()),
-            true, false, TeleopConstants.kSwerveSpeed * 0.6);
+        if(DriverStation.isTeleopEnabled()) {
+          drive(
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+              angleController.calculate(getHeading()),
+              true, false, TeleopConstants.kSwerveSpeed * 0.6);
+        }
         break;
       case AIMING:
-        drive(
-            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
-            -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
-            angleController.calculate(aimingAngle.getAsDouble()),
-            true, false, TeleopConstants.kSwerveSpeed);
+        if(DriverStation.isTeleopEnabled()) {
+          drive(
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(1), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(OperatingInterface.driverJoytick.getRawAxis(0), OIConstants.kDriveDeadband),
+              angleController.calculate(aimingAngle.getAsDouble()),
+              true, false, TeleopConstants.kSwerveSpeed);
+        }
         break;
       case LOCKED:
         break;

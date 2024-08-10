@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Swerve.SwerveStates;
 import frc.utils.Utils;
@@ -25,8 +26,9 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
 
     // TODO fill with experimental values and add more data points
     pivotPosition = new InterpolatingDoubleTreeMap();
-    pivotPosition.put(0.0,0.0);
-    pivotPosition.put(-1.0,-1.0);
+    garageShots();
+
+    Shuffleboard.getTab("Vision").addDouble("desired angle", () -> pivotPosition.get(ty.getAsDouble()));
 
     Pivot.getInstance().setAngleSupplier(() -> pivotPosition.get(ty.getAsDouble()));
     Swerve.getInstance().setAngleSupplier(tx);
@@ -47,6 +49,28 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
     Pivot.getInstance().stop();
     Shooter.getInstance().stop();
     Swerve.getInstance().stop();
+  }
+
+  /**
+   * To clarify the naming of this function, I am currently in my garage with the robot.
+   * All of these data points are from the robot on a tote on a dolly aiming at an apriltag
+   * which I taped to my garage wall. I then used these measurements a calculate the outputs with
+   * the desmos graph I made because I forgot to bring a note to test.
+   */
+  private void garageShots() {
+    pivotPosition.put(10.72, 32.62);
+    pivotPosition.put(10.31, 32.35);
+    pivotPosition.put(9.67, 31.92);
+    pivotPosition.put(9.15, 31.57);
+    pivotPosition.put(8.50, 31.13);
+    pivotPosition.put(7.93, 30.73);
+    pivotPosition.put(6.71, 29.89);
+    pivotPosition.put(5.08, 28.76);
+    pivotPosition.put(4.41, 28.28);
+    pivotPosition.put(3.52, 27.65);
+    pivotPosition.put(2.44, 26.88);
+    pivotPosition.put(1.22, 25.98);
+    pivotPosition.put(0.00, 25.08);
   }
 
   /**

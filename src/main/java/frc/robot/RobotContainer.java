@@ -133,18 +133,18 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_Manager.setDefaultCommand(new RunCommand(m_Manager::update, m_Manager));
 
-    // Stops movement
+    // Stops movement - Works
     new JoystickButton(OperatingInterface.driverJoytick, 1)
         .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DEFENSE), m_Manager))
         .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
-    // Zeros out the gyro (bottom thumb button)
+    // Zeros out the gyro (bottom thumb button) - Works
     new JoystickButton(OperatingInterface.driverJoytick, 2)
         .onTrue(new InstantCommand(
             () -> Swerve.getInstance().zeroHeading(),
             Swerve.getInstance()));
 
-    // Zeroing Pivot encoders
+    // Zeroing Pivot encoders - Works
     new JoystickButton(OperatingInterface.driverJoytick, 5)
         .onTrue(new InstantCommand(
             () -> Pivot.getInstance().zeroMotorEncoders(),
@@ -153,7 +153,7 @@ public class RobotContainer {
     // Note pick up
     new JoystickButton(OperatingInterface.driverJoytick, 8)
         .onTrue(new InstantCommand(() -> {
-            if(intaketv.get() == 1) {
+            if(intaketv.get() != null && intaketv.get() == 1) {
               m_Manager.setDesiredState(ManagerStates.SOURCE);
             } else {
               m_Manager.setDesiredState(ManagerStates.INTAKING);
@@ -164,7 +164,7 @@ public class RobotContainer {
     // Shooting
     new JoystickButton(OperatingInterface.driverJoytick, 9)
         .onTrue(new InstantCommand(() -> {
-            if(!(tv.get() == null) && tv.get() == 1) {
+            if(tv.get() != null && tv.get() == 1) {
               m_Manager.setDesiredState(ManagerStates.AIMING);
             } else {
               m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMING);
@@ -173,12 +173,14 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
 
     // Outaking
-    new JoystickButton(OperatingInterface.driverJoytick, 6)
+    new JoystickButton(OperatingInterface.driverJoytick, 10)
         .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager))
         .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
   }
 
   public void configureShuffleBoard() {
+    // Vision values are all the relavent values that are being read from the limelight
+    ShuffleboardTab vision = Shuffleboard.getTab("Vision");
     // Diagnostics is used in case the robot is not acting like it normally should or for testing
     ShuffleboardTab diagnostics = Shuffleboard.getTab("Diagnostics");
     // The main tab is used during a match to display relavent information
@@ -208,15 +210,15 @@ public class RobotContainer {
     // // Pivot angle
     diagnostics.addDouble("Pivot angle", Pivot.getInstance()::getEncoderPosition);
 
-    // // Limelight values
-    // diagnostics.addDouble("shooter tx", tx::get);
-    // diagnostics.addDouble("shooter ty", ty::get);
-    // diagnostics.addDouble("shooter tid", tid::get);
-    // diagnostics.addDouble("shooter tv (has target)", tv::get);
-    // diagnostics.addDouble("intake ta", intaketa::get);
-    // diagnostics.addDouble("intake tid", intaketid::get);
-    // diagnostics.addDouble("intake tx", intaketx::get);
-    // diagnostics.addDouble("intake tv (has target)", intaketv::get);
+    // Limelight values
+    vision.addDouble("shooter tx", ()->NetworkTableInstance.getDefault().getTable("limelight-shooter").getEntry("tx").getDouble(696969));
+    vision.addDouble("shooter ty", ()->NetworkTableInstance.getDefault().getTable("limelight-shooter").getEntry("ty").getDouble(696969));
+    vision.addDouble("shooter tid", ()->NetworkTableInstance.getDefault().getTable("limelight-shooter").getEntry("tid").getDouble(696969));
+    vision.addDouble("shooter tv (has target)", ()->NetworkTableInstance.getDefault().getTable("limelight-shooter").getEntry("tv").getDouble(696969));
+    // vision.addDouble("intake ta", ()->NetworkTableInstance.getDefault().getTable("limelight-intake").getEntry("tx").getDouble(696969));
+    // vision.addDouble("intake tid", ()->NetworkTableInstance.getDefault().getTable("limelight-intake").getEntry("ty").getDouble(696969));
+    // vision.addDouble("intake tx", ()->NetworkTableInstance.getDefault().getTable("limelight-intake").getEntry("tid").getDouble(696969));
+    // vision.addDouble("intake tv (has target)", ()->NetworkTableInstance.getDefault().getTable("limelight-intake").getEntry("tv").getDouble(696969));
 
 
     // // Initialization status

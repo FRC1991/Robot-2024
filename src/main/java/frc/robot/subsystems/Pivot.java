@@ -30,7 +30,7 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
 
   // Constructor is private to prevent multiple instances from being made
   private Pivot() {
-    ctrl = new PIDController(0.01, 0, 0);
+    ctrl = new PIDController(0.1, 0, 0);
     ctrl.setTolerance(3);
 
     pivotMotor1 = new CANSparkMax(PivotConstants.kPivotMotor1Id, MotorType.kBrushless);
