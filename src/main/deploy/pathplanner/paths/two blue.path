@@ -1,0 +1,155 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.4086015139394592,
+        "y": 5.596312345512838
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5789372812389768,
+        "y": 5.605010288934151
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.1701681427096604,
+        "y": 5.596312345512838
+      },
+      "prevControl": {
+        "x": 3.6701681427096604,
+        "y": 5.596312345512838
+      },
+      "nextControl": {
+        "x": 2.6701681427096604,
+        "y": 5.596312345512838
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.4086015139394592,
+        "y": 5.596312345512838
+      },
+      "prevControl": {
+        "x": 1.6396000413536944,
+        "y": 5.586344824283466
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "INTAKING",
+      "waypointRelativePos": 0.3,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "INTAKING"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "DRIVE",
+      "waypointRelativePos": 0.95,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "DRIVE"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "NOTE TWO",
+      "waypointRelativePos": 2.0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "AIMMING"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 5.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "IDLE"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "NOTE ONE",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "AIMMING"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 5.0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
