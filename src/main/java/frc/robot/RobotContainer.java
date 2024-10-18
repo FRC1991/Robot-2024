@@ -35,12 +35,15 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -104,13 +107,12 @@ public class RobotContainer {
 
   public final Manager m_Manager = new Manager(tx::get, ty::get);
 
+  public double testingAngle = 0;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configures the limelights for the match
-    // configureLimelights();
-
     // Configures network table listeners
     configureNetworkTables();
 
@@ -119,6 +121,9 @@ public class RobotContainer {
 
     // Configures the button bindings
     configureButtonBindings();
+
+    // Configures the limelights for the match
+    configureLimelights();
   }
 
   /**
@@ -150,6 +155,10 @@ public class RobotContainer {
             () -> Pivot.getInstance().zeroMotorEncoders(),
             Pivot.getInstance()));
 
+    new JoystickButton(OperatingInterface.driverJoytick, 6)
+        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMING), m_Manager))
+        .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+
     // Note pick up
     new JoystickButton(OperatingInterface.driverJoytick, 8)
         .onTrue(new InstantCommand(() -> {
@@ -164,6 +173,7 @@ public class RobotContainer {
     // Shooting
     new JoystickButton(OperatingInterface.driverJoytick, 9)
         .onTrue(new InstantCommand(() -> {
+          // TODO change after testing
             if(tv.get() != null && tv.get() == 1) {
               m_Manager.setDesiredState(ManagerStates.AIMING);
             } else {
@@ -176,6 +186,30 @@ public class RobotContainer {
     new JoystickButton(OperatingInterface.driverJoytick, 10)
         .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.OUTTAKING), m_Manager))
         .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+
+    new JoystickButton(OperatingInterface.driverJoytick, 11)
+        .onTrue(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.INTAKING), m_Manager))
+        .onFalse(new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
+
+    // TESTING ONLY
+    // new JoystickButton(OperatingInterface.driverJoytick, 12)
+    //     .whileTrue(new InstantCommand(() -> {testingAngle+=.5;
+    //     System.out.println(testingAngle);}));
+
+    // new JoystickButton(OperatingInterface.driverJoytick, 13)
+    //     .whileTrue(new InstantCommand(() -> {testingAngle-=.5;
+    //     System.out.println(testingAngle);}));
+
+    // new JoystickButton(OperatingInterface.driverJoytick, 14)
+    //     .whileTrue(new SequentialCommandGroup(
+    //         new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.IDLE), m_Manager),
+    //         new ParallelCommandGroup(
+    //             new RunShooter(() -> 1.0, Shooter.getInstance()),
+    //             new PIDPivotToSetpoint(() -> 0.1, () -> testingAngle, Pivot.getInstance())).withTimeout(0.8),
+    //         new ParallelCommandGroup(
+    //             new RunShooter(() -> 1.0, Shooter.getInstance()),
+    //             new PIDPivotToSetpoint(() -> 0.1, () -> testingAngle, Pivot.getInstance()),
+    //             new RunIntake(() -> 0.8, Intake.getInstance()))).withTimeout(7));
   }
 
   public void configureShuffleBoard() {
@@ -250,6 +284,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("SOURCE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SOURCE), m_Manager));
     NamedCommands.registerCommand("DRIVE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DRIVE), m_Manager));
     NamedCommands.registerCommand("AIMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.AIMING), m_Manager));
+    NamedCommands.registerCommand("AIMMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.AIMING), m_Manager));
     NamedCommands.registerCommand("SHOOTING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SHOOTING), m_Manager));
     NamedCommands.registerCommand("DEFENSE", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.DEFENSE), m_Manager));
     NamedCommands.registerCommand("SUBWOOFER_AIMING", new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMING), m_Manager));
@@ -268,10 +303,16 @@ public class RobotContainer {
     // autoChooser.addOption("Red Ampside One note + movement", new PathPlannerAuto("amp One Note Red"));
     // autoChooser.addOption("Interference Blue", new PathPlannerAuto("InterferenceAutoBlue"));
     // autoChooser.addOption("Interference Red", new PathPlannerAuto("InterferenceAutoRed"));
-    // autoChooser.addOption("Two Note Blue", new PathPlannerAuto("Two Note Blue"));
-    // autoChooser.addOption("Two Note Red", new PathPlannerAuto("Two Note Red"));
+    autoChooser.addOption("Two Note Blue", AutoBuilder.followPath(PathPlannerPath.fromPathFile("two blue")));
+    autoChooser.addOption("auto Two Note Blue", new PathPlannerAuto("two blue auto"));
+    autoChooser.addOption("Two Note Red", AutoBuilder.followPath(PathPlannerPath.fromPathFile("two red")));
 
     // Untested
+    autoChooser.addOption("untested one note", new SequentialCommandGroup(
+          new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.SUBWOOFER_AIMING), m_Manager),
+          new WaitCommand(5),
+          new InstantCommand(() -> m_Manager.setDesiredState(ManagerStates.IDLE), m_Manager)
+        ));
     autoChooser.addOption("BangBang Defense", new SequentialCommandGroup(
           new RunCommand(
             () -> Swerve.getInstance().drive(0.76257,0,0,true, false, TeleopConstants.kSwerveSpeed),
@@ -346,18 +387,24 @@ public class RobotContainer {
    * on the blue alliance and pipeline one if on the red alliance.
    */
   public void configureLimelights() {
-    // TODO make each pipeline only look for one specific Apriltag
-    if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-      LimelightHelpers.setPipelineIndex("limelight-shooter", 0);
-    } else {
-      LimelightHelpers.setPipelineIndex("limelight-shooter", 1);
-    }
+    Thread start = new Thread(() -> {
+      while(!DriverStation.getAlliance().isPresent()) {}
+      // TODO make each pipeline only look for one specific Apriltag
+      if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+        LimelightHelpers.setPipelineIndex("limelight-shooter", 0);
+      } else {
+        LimelightHelpers.setPipelineIndex("limelight-shooter", 1);
+      }
 
-    if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-      LimelightHelpers.setPipelineIndex("limelight-intake", 0);
-    } else {
-      LimelightHelpers.setPipelineIndex("limelight-intake", 1);
-    }
+      if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+        LimelightHelpers.setPipelineIndex("limelight-intake", 0);
+      } else {
+        LimelightHelpers.setPipelineIndex("limelight-intake", 1);
+      }
+    });
+
+
+    start.start();
   }
 
   /**

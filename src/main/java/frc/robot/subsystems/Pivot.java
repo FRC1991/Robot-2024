@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.AutoConstants;
 import frc.utils.Utils;
 
 public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSubsystem {
@@ -46,8 +47,8 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
     pivotMotor1.setInverted(true);
 
     // Setting idle mode to brake so the pivot won't move during collisions
-    pivotMotor1.setIdleMode(IdleMode.kCoast);
-    pivotMotor2.setIdleMode(IdleMode.kCoast);
+    pivotMotor1.setIdleMode(IdleMode.kBrake);
+    pivotMotor2.setIdleMode(IdleMode.kBrake);
 
     // Setting Encoder to return in degrees
     pivotMotor1.getEncoder().setPositionConversionFactor(4.44);
@@ -167,11 +168,11 @@ public class Pivot extends SubsystemBase implements CheckableSubsystem, StateSub
         updateSpeed(aimingAngle.getAsDouble());
         break;
       case STORED:
-        updateSpeed(0);
+        updateSpeed(2);
         break;
       case SETPOINT:
         // From OG motor rotation values multiplied by (1/81)*360
-        updateSpeed(29.6);
+        updateSpeed(AutoConstants.kSpeakerMidPosition);
 
       default:
         break;

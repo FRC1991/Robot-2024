@@ -78,7 +78,7 @@ public class Shooter extends SubsystemBase implements CheckableSubsystem, StateS
   public void setSpeed(double speed) {
     speed = Utils.normalize(speed);
     shooterMotor1.set(speed);
-    shooterMotor2.set(speed);
+    shooterMotor2.set(speed*0.9);
   }
 
   /**

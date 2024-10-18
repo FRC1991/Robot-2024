@@ -148,14 +148,14 @@ public final class Constants {
     // old numbers, idk why they changed. gear ratio, motors, mounting is all same
     // public static final double kSpeakerMidPosition = -12.15;
     // public static final double kSpeakerSidePosition = -12.25;
-    public static final double kSpeakerMidPosition = -6.66;
-    public static final double kSpeakerSidePosition = -6.66;
+    public static final double kSpeakerMidPosition = 56;
+    public static final double kSpeakerSidePosition = 56;
     public static final double kLowShotPosition = -4.6;
   }
 
   public static final class TeleopConstants {
-    public static final double kShooterSpeed = .4;
-    public static final double kSwerveSpeed = .1;
+    public static final double kShooterSpeed = 1;
+    public static final double kSwerveSpeed = .4;
   }
 
   public static final class NeoMotorConstants {

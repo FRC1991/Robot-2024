@@ -26,9 +26,12 @@ public class Manager extends SubsystemBase implements CheckableSubsystem, StateS
 
     // TODO fill with experimental values and add more data points
     pivotPosition = new InterpolatingDoubleTreeMap();
-    garageShots();
-
-    Shuffleboard.getTab("Vision").addDouble("desired angle", () -> pivotPosition.get(ty.getAsDouble()));
+    // garageShots();
+    pivotPosition.put(22.15,60.0);
+    pivotPosition.put(17.15,58.5);
+    pivotPosition.put(13.53,57.0);
+    pivotPosition.put(10.42,50.0);
+    pivotPosition.put(5.97,48.0);
 
     Pivot.getInstance().setAngleSupplier(() -> pivotPosition.get(ty.getAsDouble()));
     Swerve.getInstance().setAngleSupplier(tx);

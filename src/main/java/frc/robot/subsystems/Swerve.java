@@ -90,7 +90,7 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
 
   private PIDController angleController = new PIDController(0.009, 0, 0);
 
-  private double sourceAngle = -1;
+  private double sourceAngle = 145;
 
   private DoubleSupplier aimingAngle;
 
@@ -129,24 +129,28 @@ public class Swerve extends SubsystemBase implements CheckableSubsystem, StateSu
             this // Reference to this subsystem to set requirements
     );
 
-    // Continuously checks for alliance until correct angle is chosen
-    try {
-      if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+    Thread sourceConfig = new Thread(() -> {
+      // Continuously checks for alliance until correct angle is chosen
+      while(!DriverStation.getAlliance().isPresent()) {}
+      try {
+        if(DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+          sourceAngle = 145;
+        } else {
+          // RED_SIDE_ANGLE = ((180 - BLUE_SIDE_ANGLE) + 180)
+          sourceAngle = 215;
+        }
+      } catch(NoSuchElementException e) {
+        /*
+         * I like blue alliance better, so I'm setting the angle to blue
+         * if we aren't connected to the driver station.
+         * 75% of people also like blue alliance best according to our
+         * silly goofy pit scouting at BattleCry 2024
+         */
         sourceAngle = 145;
-      } else {
-        // RED_SIDE_ANGLE = ((180 - BLUE_SIDE_ANGLE) + 180)
-        sourceAngle = 215;
       }
-      initialized = true;
-    } catch(NoSuchElementException e) {
-      /*
-       * I like blue alliance better, so I'm setting the angle to blue
-       * if we aren't connected to the driver station.
-       * 75% of people also like blue alliance best according to our
-       * silly goofy pit scouting at BattleCry 2024
-       */
-      sourceAngle = 145;
-    }
+    });
+    sourceConfig.start();
+    initialized = true;
   }
 
   /**

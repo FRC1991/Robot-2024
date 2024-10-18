@@ -66,7 +66,7 @@
     },
     {
       "name": "DRIVE",
-      "waypointRelativePos": 0.95,
+      "waypointRelativePos": 1.3,
       "command": {
         "type": "sequential",
         "data": {
@@ -91,7 +91,7 @@
             {
               "type": "named",
               "data": {
-                "name": "AIMMING"
+                "name": "SUBWOOFER_AIMING"
               }
             },
             {
@@ -112,7 +112,7 @@
     },
     {
       "name": "NOTE ONE",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "sequential",
         "data": {
@@ -120,13 +120,19 @@
             {
               "type": "named",
               "data": {
-                "name": "AIMMING"
+                "name": "SUBWOOFER_AIMING"
               }
             },
             {
               "type": "wait",
               "data": {
                 "waitTime": 5.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "DRIVE"
               }
             }
           ]
